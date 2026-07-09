@@ -1,0 +1,10 @@
+/AI_AGENT_TRACKER.md
+/SESSION_TRACKER.md
+node_modules/
+build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+dist/
+

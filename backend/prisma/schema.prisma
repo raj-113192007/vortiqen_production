@@ -1,0 +1,386 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model School {
+  id        String    @id @default(uuid())
+  name      String
+  code      String?   @unique
+  address   String?
+  city      String?
+  state     String?
+  status    String    @default("ACTIVE") // ACTIVE, SUSPENDED, TRIAL, CHURNED
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  users         User[]
+  students      Student[]
+  classes       AcademicClass[]
+  subjects      Subject[]
+  vehicles      Vehicle[]
+  routes        Route[]
+  attendances   Attendance[]
+  feeCategories FeeCategory[]
+  feeLedgers    FeeLedger[]
+  feePayments   FeePayment[]
+  assignments   Assignment[]
+  exams         Exam[]
+
+  @@map("schools")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  schoolId  String? // Null for SuperAdmin
+  username  String?   @unique // std..., prt...
+  email     String?   @unique
+  phone     String?
+  password  String
+  role      String // SUPER_ADMIN, SCHOOL_ADMIN, TEACHER, DIRECTOR, DRIVER, PARENT, STUDENT
+  name      String
+  status    String    @default("ACTIVE")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  school School? @relation(fields: [schoolId], references: [id])
+
+  students          Student[]    @relation("StudentUser")
+  parentStudents    Student[]    @relation("ParentUser")
+  subjects          Subject[]    @relation("TeacherSubject")
+  vehicles          Vehicle[]    @relation("DriverVehicle")
+  markedAttendances Attendance[] @relation("MarkedBy")
+  assignments       Assignment[] @relation("TeacherAssignment")
+  sentMessages      Message[]    @relation("SentMessages")
+  receivedMessages  Message[]    @relation("ReceivedMessages")
+
+  @@index([schoolId])
+  @@map("users")
+}
+
+model Student {
+  id        String    @id @default(uuid())
+  schoolId  String
+  classId   String?
+  sectionId String?
+  userId    String?   @unique
+  parentId  String?
+  rollNo    String?
+  firstName String
+  lastName  String?
+  dob       DateTime?
+  gender    String?
+  status    String    @default("REGISTERED") // REGISTERED, ENROLLED, ALUMNI
+  routeId   String?
+  vehicleId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  school        School           @relation(fields: [schoolId], references: [id])
+  academicClass AcademicClass?   @relation(fields: [classId], references: [id])
+  section       AcademicSection? @relation(fields: [sectionId], references: [id])
+  user          User?            @relation("StudentUser", fields: [userId], references: [id])
+  parent        User?            @relation("ParentUser", fields: [parentId], references: [id])
+  route         Route?           @relation(fields: [routeId], references: [id])
+  vehicle       Vehicle?         @relation(fields: [vehicleId], references: [id])
+
+  attendances Attendance[]
+  feeLedgers  FeeLedger[]
+  feePayments FeePayment[]
+  submissions AssignmentSubmission[]
+  examResults ExamResult[]
+
+  @@index([schoolId])
+  @@map("students")
+}
+
+model AcademicClass {
+  id         String   @id @default(uuid())
+  schoolId   String
+  name       String
+  monthlyFee Float    @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  school   School            @relation(fields: [schoolId], references: [id])
+  sections AcademicSection[]
+  students Student[]
+  subjects Subject[]
+  exams    Exam[]
+
+  @@index([schoolId])
+  @@map("classes")
+}
+
+model AcademicSection {
+  id        String   @id @default(uuid())
+  classId   String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  academicClass AcademicClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  students      Student[]
+  assignments   Assignment[]
+
+  @@index([classId])
+  @@map("sections")
+}
+
+model Subject {
+  id        String   @id @default(uuid())
+  schoolId  String
+  classId   String
+  teacherId String?
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school        School        @relation(fields: [schoolId], references: [id])
+  academicClass AcademicClass @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher       User?         @relation("TeacherSubject", fields: [teacherId], references: [id])
+  assignments   Assignment[]
+  examSubjects  ExamSubject[]
+
+  @@index([schoolId])
+  @@index([classId])
+  @@map("subjects")
+}
+
+model Vehicle {
+  id          String   @id @default(uuid())
+  schoolId    String
+  driverId    String?  @unique
+  plateNumber String
+  capacity    Int      @default(0)
+  routeId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+  driver User?  @relation("DriverVehicle", fields: [driverId], references: [id])
+  route  Route? @relation(fields: [routeId], references: [id])
+
+  students Student[]
+
+  @@index([schoolId])
+  @@map("vehicles")
+}
+
+model Route {
+  id        String   @id @default(uuid())
+  schoolId  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  vehicles Vehicle[]
+  students Student[]
+
+  @@index([schoolId])
+  @@map("routes")
+}
+
+model Attendance {
+  id         String   @id @default(uuid())
+  schoolId   String
+  studentId  String
+  date       DateTime // We'll store the start of the day for class-level
+  status     String   @default("PRESENT") // PRESENT, ABSENT, LATE, HALF_DAY
+  markedById String?
+  remarks    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  school   School  @relation(fields: [schoolId], references: [id])
+  student  Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  markedBy User?   @relation("MarkedBy", fields: [markedById], references: [id])
+
+  @@unique([studentId, date])
+  @@index([schoolId])
+  @@index([date])
+  @@map("attendance")
+}
+
+model FeeCategory {
+  id        String   @id @default(uuid())
+  schoolId  String
+  name      String // e.g., Tuition Fee, Transport Fee
+  amount    Float // Default amount
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school     School      @relation(fields: [schoolId], references: [id])
+  feeLedgers FeeLedger[]
+
+  @@index([schoolId])
+  @@map("fee_categories")
+}
+
+model FeeLedger {
+  id         String   @id @default(uuid())
+  schoolId   String
+  studentId  String
+  categoryId String
+  dueDate    DateTime
+  amountDue  Float
+  amountPaid Float    @default(0)
+  status     String   @default("UNPAID") // UNPAID, PARTIAL, PAID
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  school   School       @relation(fields: [schoolId], references: [id])
+  student  Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  category FeeCategory  @relation(fields: [categoryId], references: [id])
+  payments FeePayment[]
+
+  @@index([schoolId])
+  @@index([studentId])
+  @@map("fee_ledgers")
+}
+
+model FeePayment {
+  id            String   @id @default(uuid())
+  schoolId      String
+  studentId     String
+  ledgerId      String
+  amountPaid    Float
+  paymentDate   DateTime @default(now())
+  paymentMethod String   @default("CASH") // CASH, CHEQUE, ONLINE
+  receiptNo     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  school  School    @relation(fields: [schoolId], references: [id])
+  student Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  ledger  FeeLedger @relation(fields: [ledgerId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId])
+  @@index([studentId])
+  @@index([ledgerId])
+  @@map("fee_payments")
+}
+
+model Assignment {
+  id            String   @id @default(uuid())
+  schoolId      String
+  sectionId     String
+  subjectId     String
+  teacherId     String
+  title         String
+  description   String?
+  attachmentUrl String?
+  dueDate       DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  school      School                 @relation(fields: [schoolId], references: [id])
+  section     AcademicSection        @relation(fields: [sectionId], references: [id])
+  subject     Subject                @relation(fields: [subjectId], references: [id])
+  teacher     User                   @relation("TeacherAssignment", fields: [teacherId], references: [id])
+  submissions AssignmentSubmission[]
+
+  @@index([schoolId])
+  @@index([sectionId])
+  @@index([subjectId])
+  @@map("assignments")
+}
+
+model AssignmentSubmission {
+  id            String   @id @default(uuid())
+  assignmentId  String
+  studentId     String
+  content       String?
+  attachmentUrl String?
+  status        String   @default("SUBMITTED") // PENDING, SUBMITTED, GRADED
+  grade         String?
+  teacherNotes  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@map("assignment_submissions")
+}
+
+model Exam {
+  id        String   @id @default(uuid())
+  schoolId  String
+  classId   String
+  name      String // e.g., "Mid-Term", "Finals"
+  startDate DateTime?
+  endDate   DateTime?
+  status    String   @default("UPCOMING") // UPCOMING, ACTIVE, COMPLETED, PUBLISHED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school        School        @relation(fields: [schoolId], references: [id])
+  academicClass AcademicClass @relation(fields: [classId], references: [id])
+  examSubjects  ExamSubject[]
+
+  @@index([schoolId])
+  @@index([classId])
+  @@map("exams")
+}
+
+model ExamSubject {
+  id        String   @id @default(uuid())
+  examId    String
+  subjectId String
+  examDate  DateTime?
+  maxMarks  Float    @default(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  exam        Exam         @relation(fields: [examId], references: [id], onDelete: Cascade)
+  subject     Subject      @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  examResults ExamResult[]
+
+  @@unique([examId, subjectId])
+  @@map("exam_subjects")
+}
+
+model ExamResult {
+  id            String   @id @default(uuid())
+  examSubjectId String
+  studentId     String
+  marksObtained Float?
+  grade         String?
+  remarks       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  examSubject ExamSubject @relation(fields: [examSubjectId], references: [id], onDelete: Cascade)
+  student     Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([examSubjectId, studentId])
+  @@map("exam_results")
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  schoolId   String
+  senderId   String
+  receiverId String
+  content    String
+  createdAt  DateTime @default(now())
+  isRead     Boolean  @default(false)
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  @@index([schoolId])
+  @@index([senderId, receiverId])
+  @@map("messages")
+}

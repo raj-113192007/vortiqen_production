@@ -1,0 +1,16 @@
+name: vortiqen_workspace
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  analyze:
+    run: melos exec -c 1 -- "flutter analyze"
+    description: Run analyzer in all packages.
+  test:
+    run: melos exec -c 1 -- "flutter test"
+    description: Run tests in all packages.
+  build_runner:
+    run: melos exec -c 1 --depends-on="build_runner" -- "flutter pub run build_runner build --delete-conflicting-outputs"
+    description: Run build_runner in all packages that depend on it.
