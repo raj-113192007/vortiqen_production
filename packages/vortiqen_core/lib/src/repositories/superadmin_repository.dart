@@ -1,9 +1,7 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../api/api_client.dart';
 import '../models/platform_stats.dart';
 import '../models/school.dart';
-
-part 'superadmin_repository.g.dart';
 
 class SuperadminRepository {
   final ApiClient _api;
@@ -29,17 +27,14 @@ class SuperadminRepository {
   }
 }
 
-@riverpod
-SuperadminRepository superadminRepository(SuperadminRepositoryRef ref) {
+final superadminRepositoryProvider = Provider<SuperadminRepository>((ref) {
   return SuperadminRepository(ref.watch(apiClientProvider));
-}
+});
 
-@riverpod
-Future<PlatformStats> platformStats(PlatformStatsRef ref) {
+final platformStatsProvider = FutureProvider<PlatformStats>((ref) {
   return ref.watch(superadminRepositoryProvider).getStats();
-}
+});
 
-@riverpod
-Future<List<School>> allSchools(AllSchoolsRef ref) {
+final allSchoolsProvider = FutureProvider<List<School>>((ref) {
   return ref.watch(superadminRepositoryProvider).getSchools();
-}
+});

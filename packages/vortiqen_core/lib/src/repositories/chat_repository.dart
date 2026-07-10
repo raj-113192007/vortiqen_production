@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/chat.dart';
 import 'package:dio/dio.dart';
-import '../providers/auth_provider.dart';
+import '../api/api_client.dart';
 
 class ChatRepository {
   final Dio _dio;

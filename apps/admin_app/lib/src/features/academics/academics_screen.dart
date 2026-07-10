@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 final adminSubjectsProvider = FutureProvider<List<Subject>>((ref) {
   return ref.watch(academicsRepositoryProvider).getSubjects('1');
@@ -67,7 +66,7 @@ class AcademicsScreen extends ConsumerWidget {
                           style: const TextStyle(color: Colors.white70),
                         ),
                       );
-                    }).toList(),
+                    }),
                     const Divider(color: Colors.white24),
                     const ListTile(
                       title: Text('Subjects', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),

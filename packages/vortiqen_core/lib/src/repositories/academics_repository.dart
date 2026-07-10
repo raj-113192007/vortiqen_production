@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_models/vortiqen_models.dart';
+import '../models/academic_class.dart';
 import '../models/subject.dart';
 import '../api/api_client.dart';
 
@@ -43,7 +43,7 @@ class AcademicsRepository {
 }
 
 final academicsRepositoryProvider = Provider<AcademicsRepository>((ref) {
-  final client = ref.watch(apiClientProvider);
+  final client = ref.watch(dioProvider);
   return AcademicsRepository(client);
 });
 
@@ -54,4 +54,3 @@ final classesProvider = FutureProvider.autoDispose<List<AcademicClass>>((ref) {
 final subjectsProvider = FutureProvider.family<List<Subject>, String>((ref, schoolId) {
   return ref.watch(academicsRepositoryProvider).getSubjects(schoolId);
 });
-

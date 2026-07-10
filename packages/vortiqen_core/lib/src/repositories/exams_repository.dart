@@ -62,7 +62,7 @@ class ExamsRepository {
 
 final examsRepositoryProvider = Provider<ExamsRepository>((ref) {
   final client = ref.watch(apiClientProvider);
-  return ExamsRepository(client);
+  return ExamsRepository(client.dio);
 });
 
 final examsProvider = FutureProvider<List<Exam>>((ref) {

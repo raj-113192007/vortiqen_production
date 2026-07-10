@@ -143,7 +143,7 @@ class _AddEmployeeModalState extends ConsumerState<AddEmployeeModal> {
             staffAsync.when(
               data: (staffList) {
                 return DropdownButtonFormField<String>(
-                  value: _selectedUserId,
+                  initialValue: _selectedUserId,
                   dropdownColor: const Color(0xFF2A2A3C),
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(

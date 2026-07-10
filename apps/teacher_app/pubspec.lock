@@ -764,13 +764,6 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
-  vortiqen_models:
-    dependency: "direct main"
-    description:
-      path: "../../packages/vortiqen_models"
-      relative: true
-    source: path
-    version: "0.0.1"
   vortiqen_ui:
     dependency: "direct main"
     description:

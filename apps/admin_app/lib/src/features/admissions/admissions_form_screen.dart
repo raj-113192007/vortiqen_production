@@ -36,7 +36,7 @@ class _AdmissionsFormScreenState extends ConsumerState<AdmissionsFormScreen> {
     setState(() => _isLoading = true);
     try {
       final apiClient = ref.read(apiClientProvider);
-      await apiClient.post('/admissions/enquiry', data: {
+      await apiClient.dio.post('/admissions/enquiry', data: {
         'studentName': _studentNameController.text,
         'parentName': _parentNameController.text,
         'phone': _phoneController.text,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:intl/intl.dart';
 
 class FeesScreen extends ConsumerStatefulWidget {
   const FeesScreen({super.key});
@@ -48,7 +46,7 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
             child: classesAsync.when(
               data: (classes) => DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: 'Filter by Class (Optional)'),
-                value: _selectedClassId,
+                initialValue: _selectedClassId,
                 items: [
                   const DropdownMenuItem(value: null, child: Text('All Classes')),
                   ...classes.map((dynamic c) => DropdownMenuItem<String>(value: c.id, child: Text(c.name))),

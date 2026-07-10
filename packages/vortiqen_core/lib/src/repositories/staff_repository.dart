@@ -25,7 +25,7 @@ class StaffRepository {
 
 final staffRepositoryProvider = Provider<StaffRepository>((ref) {
   final client = ref.watch(apiClientProvider);
-  return StaffRepository(client);
+  return StaffRepository(client.dio);
 });
 
 final staffProvider = FutureProvider.family<List<User>, String>((ref, schoolId) {

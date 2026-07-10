@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/analytics.dart';
-import 'api_client.dart';
-
-part 'analytics_repository.g.dart';
+import '../api/api_client.dart';
 
 class AnalyticsRepository {
   final Dio _dio;
@@ -26,18 +24,15 @@ class AnalyticsRepository {
   }
 }
 
-@riverpod
-AnalyticsRepository analyticsRepository(AnalyticsRepositoryRef ref) {
+final analyticsRepositoryProvider = Provider<AnalyticsRepository>((ref) {
   final dio = ref.watch(dioProvider);
   return AnalyticsRepository(dio);
-}
+});
 
-@riverpod
-Future<DashboardMetrics> dashboardMetrics(DashboardMetricsRef ref) {
+final dashboardMetricsProvider = FutureProvider<DashboardMetrics>((ref) {
   return ref.watch(analyticsRepositoryProvider).getDashboardMetrics();
-}
+});
 
-@riverpod
-Future<List<SavedReport>> savedReports(SavedReportsRef ref) {
+final savedReportsProvider = FutureProvider<List<SavedReport>>((ref) {
   return ref.watch(analyticsRepositoryProvider).getReports();
-}
+});

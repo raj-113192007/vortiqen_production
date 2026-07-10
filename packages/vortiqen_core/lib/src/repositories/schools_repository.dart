@@ -22,7 +22,7 @@ class SchoolsRepository {
 
 final schoolsRepositoryProvider = Provider<SchoolsRepository>((ref) {
   final client = ref.watch(apiClientProvider);
-  return SchoolsRepository(client);
+  return SchoolsRepository(client.dio);
 });
 
 final schoolsProvider = FutureProvider<List<School>>((ref) {

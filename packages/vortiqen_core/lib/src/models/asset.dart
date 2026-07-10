@@ -5,7 +5,7 @@ part 'asset.freezed.dart';
 part 'asset.g.dart';
 
 @freezed
-class Asset with _$Asset {
+abstract class Asset with _$Asset {
   const factory Asset({
     required String id,
     required String schoolId,
@@ -28,7 +28,7 @@ class Asset with _$Asset {
 }
 
 @freezed
-class AssetLog with _$AssetLog {
+abstract class AssetLog with _$AssetLog {
   const factory AssetLog({
     required String id,
     required String assetId,

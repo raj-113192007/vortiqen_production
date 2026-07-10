@@ -4,7 +4,7 @@ import '../models/school.dart';
 import '../api/api_client.dart';
 
 final schoolsRepositoryProvider = Provider<SchoolsRepository>((ref) {
-  return SchoolsRepository(ref.watch(apiClientProvider));
+  return SchoolsRepository(ref.watch(dioProvider));
 });
 
 final schoolsProvider = FutureProvider<List<School>>((ref) async {

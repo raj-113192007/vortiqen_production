@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/cctv_camera.dart';
 import '../api/api_client.dart';
-
-part 'cctv_repository.g.dart';
 
 class CctvRepository {
   final Dio _dio;
@@ -25,13 +23,11 @@ class CctvRepository {
   }
 }
 
-@riverpod
-CctvRepository cctvRepository(CctvRepositoryRef ref) {
+final cctvRepositoryProvider = Provider<CctvRepository>((ref) {
   final dio = ref.watch(dioProvider);
   return CctvRepository(dio);
-}
+});
 
-@riverpod
-Future<List<CctvCamera>> cctvCameras(CctvCamerasRef ref) {
+final cctvCamerasProvider = FutureProvider<List<CctvCamera>>((ref) {
   return ref.watch(cctvRepositoryProvider).getAllCameras();
-}
+});

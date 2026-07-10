@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_models/vortiqen_models.dart';
+
 import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:intl/intl.dart';
 
@@ -107,7 +107,7 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
                         data: (classes) => DropdownButtonFormField<String>(
                           decoration: const InputDecoration(labelText: 'Select Class'),
                           initialValue: _selectedClassId,
-                          items: classes.map<DropdownMenuItem<String>>((c) => DropdownMenuItem<String>(value: c.id, child: Text(c.name ?? ''))).toList(),
+                          items: classes.map<DropdownMenuItem<String>>((c) => DropdownMenuItem<String>(value: c.id, child: Text(c.name))).toList(),
                           onChanged: (val) {
                             setState(() {
                               _selectedClassId = val;
@@ -127,7 +127,7 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
                         : DropdownButtonFormField<String>(
                             decoration: const InputDecoration(labelText: 'Select Section (Optional)'),
                             initialValue: _selectedSectionId,
-                            items: (classesAsync.value?.where((c) => (c as AcademicClass?)?.id == _selectedClassId).firstOrNull?.sections ?? [])
+                            items: (classesAsync.value?.where((c) => c.id == _selectedClassId).firstOrNull?.sections ?? [])
                                 .map((s) => DropdownMenuItem<String>(value: s.id, child: Text(s.name)))
                                 .toList(),
                             onChanged: (val) {

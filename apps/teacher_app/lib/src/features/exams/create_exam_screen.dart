@@ -65,7 +65,7 @@ class _CreateExamScreenState extends ConsumerState<CreateExamScreen> {
                 initialValue: _selectedClassId,
                 items: classes.map<DropdownMenuItem<String>>((c) => DropdownMenuItem(
                   value: c.id,
-                  child: Text(c.name ?? ''),
+                  child: Text(c.name),
                 )).toList(),
                 onChanged: (val) => setState(() => _selectedClassId = val),
                 validator: (val) => val == null ? 'Please select a class' : null,

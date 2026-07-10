@@ -4,7 +4,7 @@ part 'cctv_camera.freezed.dart';
 part 'cctv_camera.g.dart';
 
 @freezed
-class CctvCamera with _$CctvCamera {
+abstract class CctvCamera with _$CctvCamera {
   const factory CctvCamera({
     required String id,
     required String schoolId,

@@ -4,7 +4,7 @@ part 'asset_category.freezed.dart';
 part 'asset_category.g.dart';
 
 @freezed
-class AssetCategory with _$AssetCategory {
+abstract class AssetCategory with _$AssetCategory {
   const factory AssetCategory({
     required String id,
     required String schoolId,

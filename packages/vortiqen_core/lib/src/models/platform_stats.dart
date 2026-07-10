@@ -4,7 +4,7 @@ part 'platform_stats.freezed.dart';
 part 'platform_stats.g.dart';
 
 @freezed
-class PlatformStats with _$PlatformStats {
+abstract class PlatformStats with _$PlatformStats {
   const factory PlatformStats({
     @Default(0) int totalSchools,
     @Default(0) int totalUsers,

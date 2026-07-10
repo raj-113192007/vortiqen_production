@@ -19,6 +19,8 @@ export 'src/models/cctv_camera.dart';
 export 'src/models/hr.dart';
 export 'src/models/chat.dart';
 export 'src/models/analytics.dart';
+export 'src/models/academic_class.dart';
+export 'src/models/admission_enquiry.dart';
 
 // Repositories
 export 'src/repositories/schools_repository.dart';

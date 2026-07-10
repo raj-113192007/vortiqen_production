@@ -111,7 +111,7 @@ class _AddExamSubjectModalState extends ConsumerState<AddExamSubjectModal> {
               data: (subjects) {
                 final classSubjects = subjects.where((s) => s.classId == widget.exam.classId).toList();
                 return DropdownButtonFormField<String>(
-                  value: _selectedSubjectId,
+                  initialValue: _selectedSubjectId,
                   dropdownColor: const Color(0xFF2A2A3C),
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(

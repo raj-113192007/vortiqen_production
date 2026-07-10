@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:intl/intl.dart';
 
@@ -41,7 +40,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                   child: classesAsync.when(
                     data: (classes) => DropdownButtonFormField<String>(
                       decoration: const InputDecoration(labelText: 'Select Class'),
-                      value: _selectedClassId,
+                      initialValue: _selectedClassId,
                       items: classes.map<DropdownMenuItem<String>>((dynamic c) {
                         return DropdownMenuItem<String>(value: c.id, child: Text(c.name));
                       }).toList(),

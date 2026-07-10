@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/hr.dart';
 import 'package:dio/dio.dart';
-import 'auth_repository.dart';
+import '../api/api_client.dart';
 
 class HrRepository {
   final Dio _dio;

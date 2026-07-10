@@ -107,7 +107,7 @@ class _CreateExamModalState extends ConsumerState<CreateExamModal> {
             const SizedBox(height: 24),
             classesAsync.when(
               data: (classes) => DropdownButtonFormField<String>(
-                value: _selectedClassId,
+                initialValue: _selectedClassId,
                 dropdownColor: const Color(0xFF2A2A3C),
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(

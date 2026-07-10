@@ -4,7 +4,7 @@ part 'analytics.freezed.dart';
 part 'analytics.g.dart';
 
 @freezed
-class DashboardMetrics with _$DashboardMetrics {
+abstract class DashboardMetrics with _$DashboardMetrics {
   const factory DashboardMetrics({
     required int totalStudents,
     required int totalTeachers,
@@ -18,7 +18,7 @@ class DashboardMetrics with _$DashboardMetrics {
 }
 
 @freezed
-class SavedReport with _$SavedReport {
+abstract class SavedReport with _$SavedReport {
   const factory SavedReport({
     required String id,
     required String schoolId,

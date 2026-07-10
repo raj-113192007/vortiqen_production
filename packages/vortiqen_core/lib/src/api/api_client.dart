@@ -1,17 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'api_client.g.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ApiClient {
   final Dio dio;
   ApiClient(this.dio);
 }
 
-@Riverpod(keepAlive: true)
-ApiClient apiClient(Ref ref) {
+final apiClientProvider = Provider<ApiClient>((ref) {
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://localhost:3000', // TODO: Update from .env
+    baseUrl: 'http://localhost:3000',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     headers: {
@@ -22,10 +19,15 @@ ApiClient apiClient(Ref ref) {
 
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) {
-      // Example: Attach Auth Token
+      // TODO: Attach Auth Token from secure storage
       return handler.next(options);
     },
   ));
 
   return ApiClient(dio);
-}
+});
+
+/// Convenience provider for direct Dio access (used by older repositories)
+final dioProvider = Provider<Dio>((ref) {
+  return ref.watch(apiClientProvider).dio;
+});

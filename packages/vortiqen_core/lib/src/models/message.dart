@@ -4,7 +4,7 @@ part 'message.freezed.dart';
 part 'message.g.dart';
 
 @freezed
-class Message with _$Message {
+abstract class Message with _$Message {
   const factory Message({
     required String id,
     required String schoolId,
@@ -19,7 +19,7 @@ class Message with _$Message {
 }
 
 @freezed
-class ChatContact with _$ChatContact {
+abstract class ChatContact with _$ChatContact {
   const factory ChatContact({
     required String id,
     required String name,

@@ -23,7 +23,7 @@ class InventoryNotifier extends AsyncNotifier<List<Asset>> {
       url += '?${queryParams.join('&')}';
     }
 
-    final response = await apiClient.get(url);
+    final response = await apiClient.dio.get(url);
     final List<Asset> assets = (response.data as List)
         .map((json) => Asset.fromJson(json))
         .toList();
@@ -37,13 +37,13 @@ class InventoryNotifier extends AsyncNotifier<List<Asset>> {
 
   Future<void> createAsset(Map<String, dynamic> data) async {
     final apiClient = ref.read(apiClientProvider);
-    await apiClient.post('/inventory/assets', data: data);
+    await apiClient.dio.post('/inventory/assets', data: data);
     await fetchAssets();
   }
 
   Future<void> assignAsset(String assetId, Map<String, dynamic> data) async {
     final apiClient = ref.read(apiClientProvider);
-    await apiClient.post('/inventory/assets/$assetId/assign', data: data);
+    await apiClient.dio.post('/inventory/assets/$assetId/assign', data: data);
     await fetchAssets();
   }
 }

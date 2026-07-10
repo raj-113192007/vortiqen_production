@@ -103,7 +103,7 @@ class AssignmentsRepository {
 
 final assignmentsRepositoryProvider = Provider<AssignmentsRepository>((ref) {
   final client = ref.watch(apiClientProvider);
-  return AssignmentsRepository(client);
+  return AssignmentsRepository(client.dio);
 });
 
 final sectionAssignmentsProvider = FutureProvider.family<List<Assignment>, String>((ref, sectionId) {

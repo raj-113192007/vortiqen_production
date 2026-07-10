@@ -69,7 +69,7 @@ class TransportRepository {
 
 final transportRepositoryProvider = Provider<TransportRepository>((ref) {
   final client = ref.watch(apiClientProvider);
-  return TransportRepository(client);
+  return TransportRepository(client.dio);
 });
 
 final routesProvider = FutureProvider<List<Route>>((ref) {
