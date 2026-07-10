@@ -35,9 +35,14 @@ dependencies:
   go_router: ^17.3.0
   vortiqen_core:
     path: ../../packages/vortiqen_core
+  vortiqen_models:
+    path: ../../packages/vortiqen_models
   vortiqen_ui:
     path: ../../packages/vortiqen_ui
   fl_chart: ^1.2.0
+  video_player: ^2.11.1
+  chewie: ^1.13.1
+  intl: ^0.20.3
 
 dev_dependencies:
   flutter_test:

@@ -6,6 +6,7 @@ class User {
   final String role;
   final String status;
   final String? schoolId;
+  final String? phone;
 
   User({
     required this.id,
@@ -15,6 +16,7 @@ class User {
     required this.role,
     required this.status,
     this.schoolId,
+    this.phone,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -27,5 +29,17 @@ class User {
       status: json['status'],
       schoolId: json['schoolId'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'username': username,
+      'email': email,
+      'name': name,
+      'role': role,
+      'status': status,
+      'schoolId': schoolId,
+    };
   }
 }

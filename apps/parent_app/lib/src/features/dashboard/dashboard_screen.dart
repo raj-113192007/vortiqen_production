@@ -10,7 +10,7 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final user = ref.watch(authProvider).valueOrNull?.user;
+    final user = ref.watch(authProvider).value?.user;
     
     if (user == null || user.schoolId == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

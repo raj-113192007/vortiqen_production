@@ -52,7 +52,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.background,
+              theme.colorScheme.surface,
               theme.colorScheme.surface,
             ],
           ),
@@ -68,9 +68,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Glassmorphism Card
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     padding: const EdgeInsets.all(32.0),
                     child: Column(
@@ -113,7 +113,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
+                              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                             ),
                           ),
                         ),
@@ -131,7 +131,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
+                              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
                             ),
                           ),
                         ),
@@ -171,3 +171,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 }
+

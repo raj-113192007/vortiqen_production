@@ -31,6 +31,14 @@ model School {
   feePayments   FeePayment[]
   assignments   Assignment[]
   exams         Exam[]
+  enquiries     AdmissionEnquiry[]
+  assetCategories AssetCategory[]
+  assets          Asset[]
+  savedReports    SavedReport[]
+  cctvCameras     CctvCamera[]
+  employees       Employee[]
+  payrolls        Payroll[]
+  chatGroups      ChatGroup[]
 
   @@map("schools")
 }
@@ -57,8 +65,11 @@ model User {
   vehicles          Vehicle[]    @relation("DriverVehicle")
   markedAttendances Attendance[] @relation("MarkedBy")
   assignments       Assignment[] @relation("TeacherAssignment")
-  sentMessages      Message[]    @relation("SentMessages")
-  receivedMessages  Message[]    @relation("ReceivedMessages")
+  sentMessages      Message[]         @relation("SentMessages")
+  receivedMessages  Message[]         @relation("ReceivedMessages")
+  assignedAssets    Asset[]           @relation("AssignedAssets")
+  employeeProfile   Employee?         @relation("EmployeeUser")
+  chatGroupMembers  ChatGroupMember[]
 
   @@index([schoolId])
   @@map("users")
@@ -372,15 +383,199 @@ model Message {
   id         String   @id @default(uuid())
   schoolId   String
   senderId   String
-  receiverId String
+  receiverId String?  // Optional for group messages
+  groupId    String?  // Optional for 1-1 messages
   content    String
   createdAt  DateTime @default(now())
   isRead     Boolean  @default(false)
 
-  sender   User @relation("SentMessages", fields: [senderId], references: [id])
-  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  sender   User      @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User?     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  group    ChatGroup? @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@index([schoolId])
   @@index([senderId, receiverId])
+  @@index([groupId])
   @@map("messages")
+}
+
+model ChatGroup {
+  id        String   @id @default(uuid())
+  schoolId  String
+  name      String
+  isGroup   Boolean  @default(true) // false for 1-on-1 chats if we want to unify, but we'll use Message receiverId for 1-1 for simplicity
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school    School            @relation(fields: [schoolId], references: [id])
+  members   ChatGroupMember[]
+  messages  Message[]
+
+  @@index([schoolId])
+  @@map("chat_groups")
+}
+
+model ChatGroupMember {
+  id        String   @id @default(uuid())
+  groupId   String
+  userId    String
+  role      String   @default("MEMBER") // ADMIN, MEMBER
+  joinedAt  DateTime @default(now())
+
+  group     ChatGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("chat_group_members")
+}
+
+model AdmissionEnquiry {
+  id            String    @id @default(uuid())
+  schoolId      String
+  parentName    String
+  studentName   String
+  email         String?
+  phone         String
+  classApplied  String?
+  status        String    @default("PENDING") // PENDING, INTERVIEW_SCHEDULED, REJECTED, APPROVED
+  interviewDate DateTime?
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
+  @@index([status])
+  @@map("admission_enquiries")
+}
+
+model AssetCategory {
+  id          String   @id @default(uuid())
+  schoolId    String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School   @relation(fields: [schoolId], references: [id])
+  assets      Asset[]
+
+  @@index([schoolId])
+  @@map("asset_categories")
+}
+
+model Asset {
+  id               String   @id @default(uuid())
+  schoolId         String
+  categoryId       String
+  name             String
+  sku              String?  @unique
+  purchaseDate     DateTime?
+  depreciationRate Float?
+  status           String   @default("AVAILABLE") // AVAILABLE, ASSIGNED, MAINTENANCE, RETIRED
+  condition        String   @default("GOOD") // NEW, GOOD, FAIR, POOR
+  assignedToUser   String?
+  location         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  school      School        @relation(fields: [schoolId], references: [id])
+  category    AssetCategory @relation(fields: [categoryId], references: [id])
+  assignedTo  User?         @relation("AssignedAssets", fields: [assignedToUser], references: [id])
+  logs        AssetLog[]
+
+  @@index([schoolId])
+  @@index([categoryId])
+  @@index([assignedToUser])
+  @@map("assets")
+}
+
+model AssetLog {
+  id          String   @id @default(uuid())
+  assetId     String
+  action      String // CHECK_IN, CHECK_OUT, MAINTENANCE, STATUS_CHANGE
+  userId      String?  // The user the asset was checked out to or checked in from
+  adminId     String?  // The admin who performed the action
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  asset       Asset    @relation(fields: [assetId], references: [id])
+
+  @@index([assetId])
+  @@map("asset_logs")
+}
+
+model SavedReport {
+  id        String   @id @default(uuid())
+  schoolId  String
+  type      String   // MONTHLY_SUMMARY, FINANCIAL, ATTENDANCE, ADMISSIONS
+  month     DateTime // Stores the start of the month for which this report is generated
+  summary   String
+  data      String   // JSON string containing raw metrics
+  createdAt DateTime @default(now())
+
+  school    School   @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
+  @@map("saved_reports")
+}
+
+model CctvCamera {
+  id        String   @id @default(uuid())
+  schoolId  String
+  name      String   // e.g. "Classroom 5B", "Main Gate"
+  location  String   // e.g. "Building A, 2nd Floor"
+  streamUrl String   // RTSP, HLS, or YouTube Live URL
+  status    String   @default("ACTIVE") // ACTIVE, OFFLINE, MAINTENANCE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  school    School   @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
+  @@map("cctv_cameras")
+}
+
+model Employee {
+  id          String   @id @default(uuid())
+  schoolId    String
+  userId      String   @unique
+  designation String
+  department  String?
+  baseSalary  Float    @default(0)
+  joinDate    DateTime @default(now())
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School   @relation(fields: [schoolId], references: [id])
+  user        User     @relation("EmployeeUser", fields: [userId], references: [id])
+  payrolls    Payroll[]
+
+  @@index([schoolId])
+  @@map("employees")
+}
+
+model Payroll {
+  id          String   @id @default(uuid())
+  schoolId    String
+  employeeId  String
+  month       Int
+  year        Int
+  baseSalary  Float
+  allowances  Float    @default(0)
+  deductions  Float    @default(0)
+  netPay      Float
+  status      String   @default("PENDING") // PENDING, PAID
+  paymentDate DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school      School   @relation(fields: [schoolId], references: [id])
+  employee    Employee @relation(fields: [employeeId], references: [id])
+
+  @@index([schoolId])
+  @@index([employeeId])
+  @@map("payrolls")
 }

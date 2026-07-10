@@ -1,19 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
-import 'features/auth/login_screen.dart';
-import 'features/dashboard/dashboard_layout.dart';
-import 'features/dashboard/home_screen.dart';
-import 'features/attendance/attendance_screen.dart';
-import 'features/assignments/assignments_screen.dart';
-import 'features/assignments/create_assignment_screen.dart';
-import 'features/attendance/mark_attendance_screen.dart';
-import 'features/exams/exams_screen.dart';
-import 'features/exams/create_exam_screen.dart';
-import 'features/exams/enter_marks_screen.dart';
+import '../features/auth/login_screen.dart';
+import '../features/dashboard/dashboard_layout.dart';
+import '../features/dashboard/home_screen.dart';
+import '../features/assignments/assignments_screen.dart';
+import '../features/assignments/create_assignment_screen.dart';
+import '../features/attendance/mark_attendance_screen.dart';
+import '../features/exams/exams_screen.dart';
+import '../features/exams/create_exam_screen.dart';
+import '../features/exams/enter_marks_screen.dart';
+import '../features/hr/payslips_screen.dart';
+import '../features/chat/presentation/chat_list_screen.dart';
+import '../features/chat/presentation/chat_room_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -21,7 +21,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final isLoggedIn = authState.valueOrNull?.token != null;
+      final isLoggedIn = authState.value?.token != null;
       final isLoggingIn = state.uri.path == '/login';
 
       if (!isLoggedIn && !isLoggingIn) return '/login';
@@ -42,10 +42,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/',
             builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: 'attendance',
-            builder: (context, state) => const AttendanceScreen(),
           ),
           GoRoute(
             path: 'assignments',
@@ -77,6 +73,23 @@ final routerProvider = Provider<GoRouter>((ref) {
                     subject: extra['subject'] as ExamSubject,
                     classId: extra['classId'] as String,
                   );
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'payslips',
+            builder: (context, state) => const PayslipsScreen(),
+          ),
+          GoRoute(
+            path: 'chat',
+            builder: (context, state) => const ChatListScreen(),
+            routes: [
+              GoRoute(
+                path: 'group/:id',
+                builder: (context, state) {
+                  final group = state.extra as ChatGroup;
+                  return ChatRoomScreen(group: group);
                 },
               ),
             ],

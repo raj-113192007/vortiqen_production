@@ -1,13 +1,20 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../api/api_client.dart';
+import '../models/user.dart';
 
 part 'auth_provider.g.dart';
+
+class AuthState {
+  final User? user;
+  final String? token;
+  const AuthState({this.user, this.token});
+}
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {
   @override
-  bool build() {
-    return false; // Initially not logged in
+  FutureOr<AuthState> build() {
+    return const AuthState(); // Initially not logged in
   }
 
   Future<bool> login(String email, String password) async {
@@ -19,7 +26,9 @@ class Auth extends _$Auth {
       });
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        state = true;
+        final user = User.fromJson(response.data['user']);
+        final token = response.data['access_token'] as String;
+        state = AsyncData(AuthState(user: user, token: token));
         return true;
       }
       return false;
@@ -30,6 +39,6 @@ class Auth extends _$Auth {
   }
 
   void logout() {
-    state = false;
+    state = const AsyncData(AuthState());
   }
 }

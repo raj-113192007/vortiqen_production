@@ -13,6 +13,13 @@ import '../students/students_screen.dart';
 import '../transport/transport_screen.dart';
 import '../attendance/attendance_screen.dart';
 import '../fees/fees_screen.dart';
+import '../inventory/presentation/inventory_list_screen.dart';
+import '../analytics/presentation/analytics_dashboard_screen.dart';
+import '../cctv/presentation/cctv_list_screen.dart';
+import '../exams/presentation/exams_list_screen.dart';
+import '../hr/presentation/hr_dashboard_screen.dart';
+import '../chat/presentation/chat_list_screen.dart';
+import '../admissions/admissions_list_screen.dart';
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -47,6 +54,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         break;
       case 7:
         content = const FeesScreen();
+        break;
+      case 8:
+        content = const AdmissionsListScreen();
+        break;
+      case 9:
+        content = const InventoryListScreen();
+        break;
+      case 10:
+        content = const ExamsListScreen();
+        break;
+      case 11:
+        content = const HrDashboardScreen();
+        break;
+      case 12:
+        content = const ChatListScreen();
+        break;
+      case 13:
+        content = const AnalyticsDashboardScreen();
+        break;
+      case 14:
+        content = const CctvListScreen();
         break;
       default:
         content = Center(
@@ -211,7 +239,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 isStrokeCapRound: true,
                                 belowBarData: BarAreaData(
                                   show: true,
-                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                                 ),
                               ),
                             ],
@@ -293,7 +321,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: colorScheme.primary),
@@ -301,7 +329,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isPositive ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                  color: isPositive ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -335,7 +363,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Text(
             title,
             style: TextStyle(
-              color: colorScheme.onSurface.withOpacity(0.6),
+              color: colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -350,7 +378,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.outline.withOpacity(0.2)),
+          border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -383,14 +411,14 @@ class GlassCard extends StatelessWidget {
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.7),
+        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -427,7 +455,7 @@ class _HoverableGlassCardState extends State<HoverableGlassCard> {
           boxShadow: _isHovered
               ? [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                     blurRadius: 15,
                     offset: const Offset(0, 10),
                   )
@@ -442,3 +470,4 @@ class _HoverableGlassCardState extends State<HoverableGlassCard> {
     );
   }
 }
+

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/fee.dart';
-import 'api_client.dart';
+import '../api/api_client.dart';
 
 final feesRepositoryProvider = Provider<FeesRepository>((ref) {
   return FeesRepository(ref.read(apiClientProvider));

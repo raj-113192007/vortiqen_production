@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 
@@ -17,6 +16,8 @@ class DashboardLayout extends ConsumerWidget {
     if (location.startsWith('/attendance')) return 1;
     if (location.startsWith('/assignments')) return 2;
     if (location.startsWith('/exams')) return 3;
+    if (location.startsWith('/payslips')) return 4;
+    if (location.startsWith('/chat')) return 5;
     return 0; // Home
   }
 
@@ -34,6 +35,12 @@ class DashboardLayout extends ConsumerWidget {
       case 3:
         context.go('/exams');
         break;
+      case 4:
+        context.go('/payslips');
+        break;
+      case 5:
+        context.go('/chat');
+        break;
     }
   }
 
@@ -41,7 +48,7 @@ class DashboardLayout extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final selectedIndex = _calculateSelectedIndex(context);
-    final user = ref.watch(authProvider).valueOrNull?.user;
+    final user = ref.watch(authProvider).value?.user;
 
     return Scaffold(
       appBar: AppBar(
@@ -90,6 +97,14 @@ class DashboardLayout extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.grade),
             label: 'Exams',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.attach_money),
+            label: 'Payslips',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
           ),
         ],
       ),

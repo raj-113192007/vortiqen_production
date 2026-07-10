@@ -20,6 +20,13 @@ import { join } from 'path';
 import { ExamsModule } from './exams/exams.module';
 import { ChatModule } from './chat/chat.module';
 import { SuperadminModule } from './superadmin/superadmin.module';
+import { AdmissionsModule } from './admissions/admissions.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { CctvModule } from './cctv/cctv.module';
+import { HrModule } from './hr/hr.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -27,6 +34,10 @@ import { SuperadminModule } from './superadmin/superadmin.module';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    ScheduleModule.forRoot(),
     PrismaModule, 
     AuthModule, 
     SchoolsModule, 
@@ -41,6 +52,11 @@ import { SuperadminModule } from './superadmin/superadmin.module';
     ExamsModule,
     ChatModule,
     SuperadminModule,
+    AdmissionsModule,
+    InventoryModule,
+    AnalyticsModule,
+    CctvModule,
+    HrModule,
   ],
   controllers: [AppController],
   providers: [

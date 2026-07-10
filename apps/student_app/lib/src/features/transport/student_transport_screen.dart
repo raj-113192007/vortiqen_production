@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import '../auth/auth_providers.dart';
 
 class StudentTransportScreen extends ConsumerStatefulWidget {
   const StudentTransportScreen({super.key});
@@ -13,18 +12,28 @@ class StudentTransportScreen extends ConsumerStatefulWidget {
 class _StudentTransportScreenState extends ConsumerState<StudentTransportScreen> {
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(currentUserProvider);
-    if (user == null || user.student == null) {
-      return const Scaffold(body: Center(child: Text('No student profile found.')));
+    final user = ref.watch(authProvider).value?.user;
+    if (user == null || user.schoolId == null) {
+      return const Scaffold(body: Center(child: Text('No student profile found (user missing).')));
     }
+    final studentProfileAsync = ref.watch(studentProfileProvider({
+      'schoolId': user.schoolId,
+      'userId': user.id,
+    }));
 
-    final transportAsync = ref.watch(studentTransportProvider(user.student!.id));
+    return studentProfileAsync.when(
+      data: (studentProfile) {
+        if (studentProfile == null) {
+          return const Scaffold(body: Center(child: Text('No student profile found.')));
+        }
 
-    return transportAsync.when(
-      data: (student) {
-          if (student.route == null && student.vehicle == null) {
-            return const Center(child: Text('You are not assigned to any transport.'));
-          }
+        final transportAsync = ref.watch(studentTransportProvider(studentProfile.id));
+
+        return transportAsync.when(
+          data: (student) {
+              if (student.route == null && student.vehicle == null) {
+                return const Center(child: Text('You are not assigned to any transport.'));
+              }
 
           return ListView(
             padding: const EdgeInsets.all(24.0),
@@ -69,8 +78,12 @@ class _StudentTransportScreenState extends ConsumerState<StudentTransportScreen>
             ],
           );
         },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) => Center(child: Text('Error: $err')),
+        );
+      },
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (err, stack) => Scaffold(body: Center(child: Text('Error: $err'))),
     );
   }
 }

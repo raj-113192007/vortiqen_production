@@ -34,7 +34,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
           const SizedBox(height: 24),
 
           // Filters
-          VortiqenCard(
+          Card(
             child: Row(
               children: [
                 Expanded(
@@ -42,8 +42,8 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                     data: (classes) => DropdownButtonFormField<String>(
                       decoration: const InputDecoration(labelText: 'Select Class'),
                       value: _selectedClassId,
-                      items: classes.map((c) {
-                        return DropdownMenuItem(value: c.id, child: Text(c.name));
+                      items: classes.map<DropdownMenuItem<String>>((dynamic c) {
+                        return DropdownMenuItem<String>(value: c.id, child: Text(c.name));
                       }).toList(),
                       onChanged: (val) {
                         setState(() {
@@ -123,7 +123,7 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
                                     subtitle: Text('Roll No: ${student?.rollNo ?? 'N/A'}'),
                                     trailing: Chip(
                                       label: Text(record.status),
-                                      backgroundColor: record.status == 'PRESENT' ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                                      backgroundColor: record.status == 'PRESENT' ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
                                     ),
                                   ),
                                 );
@@ -150,3 +150,4 @@ class _AttendanceScreenState extends ConsumerState<AttendanceScreen> {
     );
   }
 }
+

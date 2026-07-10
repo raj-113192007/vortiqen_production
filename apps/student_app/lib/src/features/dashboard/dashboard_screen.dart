@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../transport/student_transport_screen.dart' as vortiqen_transport_tab;
-import '../chat/chat_screen.dart' as vortiqen_chat_tab;
+import '../chat/presentation/chat_list_screen.dart' as vortiqen_chat_tab;
+import '../exams/utils/report_card_pdf.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -19,13 +19,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
 
   @override
   void initState() {
+    super.initState();
     _tabController = TabController(length: 6, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final user = ref.watch(authProvider).valueOrNull?.user;
+    final user = ref.watch(authProvider).value?.user;
     
     if (user == null || user.schoolId == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -74,7 +74,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
               _buildAssignmentsTab(student, user.schoolId!),
               _buildExamsTab(student, user.schoolId!),
               const vortiqen_transport_tab.StudentTransportScreen(),
-              const vortiqen_chat_tab.ChatScreen(),
+              const vortiqen_chat_tab.ChatListScreen(),
             ],
           );
         },
@@ -104,7 +104,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
               margin: const EdgeInsets.only(bottom: 12),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: record.status == 'PRESENT' ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                  backgroundColor: record.status == 'PRESENT' ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
                   child: Icon(
                     record.status == 'PRESENT' ? Icons.check : Icons.close,
                     color: record.status == 'PRESENT' ? Colors.green : Colors.red,
@@ -124,7 +124,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
   }
 
   Widget _buildFeesTab(Student student, String schoolId) {
-    final feeLedgersAsync = ref.watch(feeLedgersProvider(schoolId));
+    final feeLedgersAsync = ref.watch(feeLedgersProvider({'schoolId': schoolId}));
     
     return feeLedgersAsync.when(
       data: (ledgers) {
@@ -151,7 +151,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: ledger.status == 'PAID' ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+                        color: ledger.status == 'PAID' ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(ledger.status, style: TextStyle(
@@ -191,7 +191,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
               margin: const EdgeInsets.only(bottom: 12),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
                   child: Icon(Icons.assignment, color: Theme.of(context).colorScheme.primary),
                 ),
                 title: Text(assignment.title, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -227,10 +227,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
       data: (exams) {
         if (exams.isEmpty) return const Center(child: Text('No exam results found.'));
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: exams.length,
-          itemBuilder: (context, index) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton.icon(
+                onPressed: () => ReportCardPdf.generateAndPrint(student.firstName, exams),
+                icon: const Icon(Icons.picture_as_pdf),
+                label: const Text('Download Report Card (PDF)'),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: exams.length,
+                itemBuilder: (context, index) {
             final exam = exams[index];
             final subjects = (exam['subjects'] as List<dynamic>).cast<Map<String, dynamic>>();
 
@@ -254,7 +268,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(sub['grade'], style: TextStyle(
@@ -270,6 +284,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
               ),
             );
           },
+        ),
+            ),
+          ],
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -277,3 +294,4 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTi
     );
   }
 }
+

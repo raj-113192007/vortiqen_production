@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { SchoolId } from '../common/decorators/school-id.decorator';

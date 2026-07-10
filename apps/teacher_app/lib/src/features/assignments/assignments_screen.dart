@@ -36,7 +36,7 @@ class AssignmentsScreen extends ConsumerWidget {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(16),
                   leading: CircleAvatar(
-                    backgroundColor: theme.colorScheme.primary.withOpacity(0.2),
+                    backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                     child: Icon(Icons.assignment, color: theme.colorScheme.primary),
                   ),
                   title: Text(assignment.title, style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -67,3 +67,4 @@ class AssignmentsScreen extends ConsumerWidget {
     );
   }
 }
+

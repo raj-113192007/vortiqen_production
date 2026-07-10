@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/student.dart';
 import '../api/api_client.dart';
+import '../providers/auth_provider.dart';
 
 class StudentsRepository {
   final Dio _client;
@@ -49,4 +50,13 @@ final studentProfileProvider = FutureProvider.family<Student?, Map<String, dynam
   );
   return students.isNotEmpty ? students.first : null;
 });
-
+final studentListProvider = FutureProvider.family<List<Student>, Map<String, dynamic>>((ref, params) {
+  final schoolId = ref.watch(authProvider).value?.user?.schoolId;
+  if (schoolId == null) return Future.value([]);
+  
+  return ref.watch(studentsRepositoryProvider).getStudents(
+    schoolId,
+    classId: params['classId'] as String?,
+    sectionId: params['sectionId'] as String?,
+  );
+});

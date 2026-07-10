@@ -20,7 +20,8 @@ class TeacherApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'VortiQen Teacher',
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.getTheme(AppRole.teacher),
+      themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
     );

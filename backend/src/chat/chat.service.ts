@@ -5,87 +5,111 @@ import { PrismaService } from '../prisma/prisma.service';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async getStudentContacts(studentUserId: string, schoolId: string) {
-    // 1. Get the student's class
-    const student = await this.prisma.student.findUnique({
-      where: { userId: studentUserId }
-    });
-
-    if (!student || !student.classId) return [];
-
-    // 2. Find all subjects in that class
-    const subjects = await this.prisma.subject.findMany({
-      where: { classId: student.classId, schoolId, teacherId: { not: null } },
-      include: { teacher: true }
-    });
-
-    // 3. Return unique teachers
-    const teachersMap = new Map();
-    for (const sub of subjects) {
-      if (sub.teacher && !teachersMap.has(sub.teacher.id)) {
-        teachersMap.set(sub.teacher.id, {
-          id: sub.teacher.id,
-          name: sub.teacher.name,
-          role: sub.teacher.role,
-        });
-      }
-    }
-    return Array.from(teachersMap.values());
-  }
-
-  async getTeacherContacts(teacherUserId: string, schoolId: string) {
-    // 1. Find all subjects taught by this teacher
-    const subjects = await this.prisma.subject.findMany({
-      where: { teacherId: teacherUserId, schoolId },
-    });
-
-    const classIds = subjects.map(s => s.classId);
-
-    // 2. Find all students in those classes
-    const students = await this.prisma.student.findMany({
-      where: {
-        classId: { in: classIds },
+  async createGroup(schoolId: string, name: string, creatorId: string) {
+    return this.prisma.chatGroup.create({
+      data: {
         schoolId,
-        userId: { not: null }
+        name,
+        members: {
+          create: {
+            userId: creatorId,
+            role: 'ADMIN',
+          },
+        },
       },
-      include: { user: true, academicClass: true }
     });
-
-    const studentContactsMap = new Map();
-    for (const st of students) {
-      if (st.user && !studentContactsMap.has(st.user.id)) {
-        studentContactsMap.set(st.user.id, {
-          id: st.user.id,
-          name: `${st.firstName} ${st.lastName ?? ''}`.trim(),
-          role: 'STUDENT',
-          details: `Class: ${st.academicClass?.name ?? ''} | Roll: ${st.rollNo}`,
-        });
-      }
-    }
-    return Array.from(studentContactsMap.values());
   }
 
-  async saveMessage(schoolId: string, senderId: string, receiverId: string, content: string) {
+  async addMemberToGroup(groupId: string, userId: string, role: string = 'MEMBER') {
+    return this.prisma.chatGroupMember.create({
+      data: {
+        groupId,
+        userId,
+        role,
+      },
+    });
+  }
+
+  async getMyGroups(userId: string) {
+    const memberships = await this.prisma.chatGroupMember.findMany({
+      where: { userId },
+      include: {
+        group: {
+          include: {
+            members: true, // Just to get member count
+          }
+        },
+      },
+    });
+    return memberships.map(m => m.group);
+  }
+
+  async getGroupMessages(groupId: string, take: number = 50) {
+    return this.prisma.message.findMany({
+      where: { groupId },
+      orderBy: { createdAt: 'desc' },
+      take,
+      include: {
+        sender: {
+          select: { id: true, name: true, role: true }
+        }
+      }
+    });
+  }
+
+  async getDirectMessages(userId1: string, userId2: string, take: number = 50) {
+    return this.prisma.message.findMany({
+      where: {
+        OR: [
+          { senderId: userId1, receiverId: userId2 },
+          { senderId: userId2, receiverId: userId1 },
+        ]
+      },
+      orderBy: { createdAt: 'desc' },
+      take,
+      include: {
+        sender: {
+          select: { id: true, name: true, role: true }
+        },
+        receiver: {
+          select: { id: true, name: true, role: true }
+        }
+      }
+    });
+  }
+
+  async saveGroupMessage(schoolId: string, senderId: string, groupId: string, content: string) {
+    return this.prisma.message.create({
+      data: {
+        schoolId,
+        senderId,
+        groupId,
+        content,
+      },
+      include: {
+        sender: {
+          select: { id: true, name: true, role: true }
+        }
+      }
+    });
+  }
+
+  async saveDirectMessage(schoolId: string, senderId: string, receiverId: string, content: string) {
     return this.prisma.message.create({
       data: {
         schoolId,
         senderId,
         receiverId,
         content,
-      }
-    });
-  }
-
-  async getChatHistory(schoolId: string, userId: string, otherUserId: string) {
-    return this.prisma.message.findMany({
-      where: {
-        schoolId,
-        OR: [
-          { senderId: userId, receiverId: otherUserId },
-          { senderId: otherUserId, receiverId: userId }
-        ]
       },
-      orderBy: { createdAt: 'asc' }
+      include: {
+        sender: {
+          select: { id: true, name: true, role: true }
+        },
+        receiver: {
+          select: { id: true, name: true, role: true }
+        }
+      }
     });
   }
 }

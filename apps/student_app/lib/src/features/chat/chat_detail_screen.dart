@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 
-final chatHistoryProvider = FutureProvider.autoDispose.family<List<Message>, String>((ref, otherUserId) async {
+final chatHistoryProvider = FutureProvider.autoDispose.family<List<ChatMessage>, String>((ref, otherUserId) async {
   final repo = ref.watch(chatRepositoryProvider);
-  return repo.getChatHistory(otherUserId);
+  return repo.getDirectMessages(otherUserId);
 });
 
 class ChatDetailScreen extends ConsumerStatefulWidget {
@@ -18,34 +18,34 @@ class ChatDetailScreen extends ConsumerStatefulWidget {
 
 class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<Message> _realtimeMessages = [];
+  final List<ChatMessage> _realtimeMessages = [];
 
   @override
   void initState() {
     super.initState();
     // Setup socket listener
     final socketService = ref.read(socketServiceProvider);
-    socketService?.onMessageReceived = (message) {
+    socketService.onDirectMessage.listen((message) {
       if (message.senderId == widget.contact.id || message.receiverId == widget.contact.id) {
         setState(() {
           _realtimeMessages.add(message);
         });
       }
-    };
+    });
   }
 
   void _sendMessage() {
     if (_messageController.text.trim().isEmpty) return;
     
     final socketService = ref.read(socketServiceProvider);
-    socketService?.sendMessage(widget.contact.id, _messageController.text.trim());
+    socketService.sendDirectMessage(widget.contact.id, _messageController.text.trim());
     _messageController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(chatHistoryProvider(widget.contact.id));
-    final currentUserId = ref.watch(authProvider).valueOrNull?.user?.id;
+    final currentUserId = ref.watch(authProvider).value?.user?.id;
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.contact.name)),
@@ -56,7 +56,7 @@ class _ChatDetailScreenState extends ConsumerState<ChatDetailScreen> {
               data: (history) {
                 final allMessages = [...history, ..._realtimeMessages];
                 // Deduplicate by ID
-                final Map<String, Message> uniqueMessages = {};
+                final Map<String, ChatMessage> uniqueMessages = {};
                 for (var m in allMessages) {
                   uniqueMessages[m.id] = m;
                 }

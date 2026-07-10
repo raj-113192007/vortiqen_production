@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
-
 class EnterMarksScreen extends ConsumerStatefulWidget {
   final ExamSubject subject;
   final String classId;
@@ -88,7 +86,7 @@ class _EnterMarksScreenState extends ConsumerState<EnterMarksScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final studentsAsync = ref.watch(studentsByClassProvider(widget.classId));
+    final studentsAsync = ref.watch(studentListProvider({'classId': widget.classId}));
 
     return Scaffold(
       appBar: AppBar(
@@ -115,7 +113,7 @@ class _EnterMarksScreenState extends ConsumerState<EnterMarksScreen> {
               final student = students[index];
               return ListTile(
                 title: Text('${student.firstName} ${student.lastName ?? ''}'),
-                subtitle: Text('Roll No: ${student.rollNo ?? 'N/A'}'),
+                subtitle: Text('Roll No: ${student.rollNo}'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

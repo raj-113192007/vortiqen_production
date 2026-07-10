@@ -44,14 +44,14 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
           const SizedBox(height: 24),
 
           // Filters
-          VortiqenCard(
+          Card(
             child: classesAsync.when(
               data: (classes) => DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: 'Filter by Class (Optional)'),
                 value: _selectedClassId,
                 items: [
                   const DropdownMenuItem(value: null, child: Text('All Classes')),
-                  ...classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name))),
+                  ...classes.map((dynamic c) => DropdownMenuItem<String>(value: c.id, child: Text(c.name))),
                 ],
                 onChanged: (val) {
                   setState(() {
@@ -97,10 +97,10 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
                             trailing: Chip(
                               label: Text(ledger.status),
                               backgroundColor: ledger.status == 'PAID' 
-                                  ? Colors.green.withOpacity(0.2) 
+                                  ? Colors.green.withValues(alpha: 0.2) 
                                   : ledger.status == 'PARTIAL' 
-                                      ? Colors.orange.withOpacity(0.2)
-                                      : Colors.red.withOpacity(0.2),
+                                      ? Colors.orange.withValues(alpha: 0.2)
+                                      : Colors.red.withValues(alpha: 0.2),
                             ),
                           ),
                         );
@@ -118,3 +118,4 @@ class _FeesScreenState extends ConsumerState<FeesScreen> {
     );
   }
 }
+

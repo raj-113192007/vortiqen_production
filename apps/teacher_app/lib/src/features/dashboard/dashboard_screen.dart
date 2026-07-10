@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import '../chat/chat_screen.dart' as vortiqen_chat_tab;
+import '../chat/presentation/chat_list_screen.dart' as vortiqen_chat_tab;
 
 class TeacherDashboardScreen extends ConsumerStatefulWidget {
   const TeacherDashboardScreen({super.key});
@@ -46,7 +46,7 @@ class _TeacherDashboardScreenState extends ConsumerState<TeacherDashboardScreen>
         controller: _tabController,
         children: [
           _buildHomeTab(context),
-          const vortiqen_chat_tab.ChatScreen(),
+          const vortiqen_chat_tab.ChatListScreen(),
         ],
       ),
     );

@@ -84,8 +84,14 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                         _buildNavItem(5, Icons.directions_bus, 'Transport'),
                         _buildNavItem(6, Icons.check_circle_outline, 'Attendance'),
                         _buildNavItem(7, Icons.payment, 'Fees'),
-                        _buildNavItem(8, Icons.bar_chart, 'Reports'),
-                        _buildNavItem(9, Icons.settings, 'Settings'),
+                        _buildNavItem(8, Icons.assignment_ind, 'Admissions'),
+                        _buildNavItem(9, Icons.inventory, 'Inventory'),
+                        _buildNavItem(10, Icons.assignment, 'Exams'),
+                        _buildNavItem(11, Icons.people_alt, 'Human Resources'),
+                        _buildNavItem(12, Icons.chat, 'Communications'),
+                        _buildNavItem(13, Icons.bar_chart, 'Reports'),
+                        _buildNavItem(14, Icons.videocam, 'CCTV Cameras'),
+                        _buildNavItem(15, Icons.settings, 'Settings'),
                       ],
                     ),
                   ),
@@ -102,10 +108,10 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                   height: 70,
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   decoration: BoxDecoration(
-                    color: colorScheme.surface.withOpacity(0.8),
+                    color: colorScheme.surface.withValues(alpha: 0.8),
                     border: Border(
                       bottom: BorderSide(
-                        color: colorScheme.outline.withOpacity(0.1),
+                        color: colorScheme.outline.withValues(alpha: 0.1),
                       ),
                     ),
                   ),
@@ -162,7 +168,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: isSelected 
-                ? colorScheme.primary.withOpacity(0.1) 
+                ? colorScheme.primary.withValues(alpha: 0.1) 
                 : Colors.transparent,
           ),
           child: Row(
@@ -191,3 +197,4 @@ class _DashboardLayoutState extends State<DashboardLayout> {
     );
   }
 }
+

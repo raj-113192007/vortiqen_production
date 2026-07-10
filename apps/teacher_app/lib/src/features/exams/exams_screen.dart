@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class ExamsScreen extends ConsumerWidget {
   const ExamsScreen({super.key});

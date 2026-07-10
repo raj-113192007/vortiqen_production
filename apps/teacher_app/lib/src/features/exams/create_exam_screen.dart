@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class CreateExamScreen extends ConsumerStatefulWidget {
   const CreateExamScreen({super.key});
@@ -49,7 +48,7 @@ class _CreateExamScreenState extends ConsumerState<CreateExamScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final classesAsync = ref.watch(academicClassesProvider);
+    final classesAsync = ref.watch(classesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -63,10 +62,10 @@ class _CreateExamScreenState extends ConsumerState<CreateExamScreen> {
             children: [
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: 'Class'),
-                value: _selectedClassId,
-                items: classes.map((c) => DropdownMenuItem(
+                initialValue: _selectedClassId,
+                items: classes.map<DropdownMenuItem<String>>((c) => DropdownMenuItem(
                   value: c.id,
-                  child: Text(c.name),
+                  child: Text(c.name ?? ''),
                 )).toList(),
                 onChanged: (val) => setState(() => _selectedClassId = val),
                 validator: (val) => val == null ? 'Please select a class' : null,

@@ -36,9 +36,9 @@ class AcademicsScreen extends ConsumerWidget {
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
                 child: ExpansionTile(
                   title: Text(
@@ -195,7 +195,7 @@ class _AddClassModalState extends ConsumerState<AddClassModal> {
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E2C),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -215,7 +215,7 @@ class _AddClassModalState extends ConsumerState<AddClassModal> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 hintText: 'Class Name (e.g. Grade 10)',
                 hintStyle: const TextStyle(color: Colors.white54),
                 border: OutlineInputBorder(
@@ -230,7 +230,7 @@ class _AddClassModalState extends ConsumerState<AddClassModal> {
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 hintText: 'Sections (comma separated, e.g. A,B,C)',
                 hintStyle: const TextStyle(color: Colors.white54),
                 border: OutlineInputBorder(
@@ -246,7 +246,7 @@ class _AddClassModalState extends ConsumerState<AddClassModal> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.05),
+                fillColor: Colors.white.withValues(alpha: 0.05),
                 hintText: 'Base Monthly Fee (\u20B9)',
                 hintStyle: const TextStyle(color: Colors.white54),
                 border: OutlineInputBorder(
@@ -288,3 +288,4 @@ class _AddClassModalState extends ConsumerState<AddClassModal> {
     );
   }
 }
+

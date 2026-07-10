@@ -75,9 +75,9 @@ class _OnboardSchoolModalState extends ConsumerState<OnboardSchoolModal> {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E2C).withOpacity(0.9),
+          color: const Color(0xFF1E1E2C).withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         padding: const EdgeInsets.all(32),
         child: Form(
@@ -162,14 +162,14 @@ class _OnboardSchoolModalState extends ConsumerState<OnboardSchoolModal> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white.withOpacity(0.05),
+            fillColor: Colors.white.withValues(alpha: 0.05),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -189,3 +189,4 @@ class _OnboardSchoolModalState extends ConsumerState<OnboardSchoolModal> {
     );
   }
 }
+

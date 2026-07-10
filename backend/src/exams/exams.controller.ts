@@ -11,37 +11,37 @@ export class ExamsController {
 
   @Post()
   @Roles('SCHOOL_ADMIN', 'TEACHER')
-  create(@Body() createExamDto: CreateExamDto, @Request() req) {
+  create(@Body() createExamDto: CreateExamDto, @Request() req: any) {
     return this.examsService.create(createExamDto, req.user.schoolId);
   }
 
   @Get()
   @Roles('SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT')
-  findAll(@Request() req) {
+  findAll(@Request() req: any) {
     return this.examsService.findAllBySchool(req.user.schoolId);
   }
 
   @Get(':id')
   @Roles('SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT')
-  findOne(@Param('id') id: string, @Request() req) {
+  findOne(@Param('id') id: string, @Request() req: any) {
     return this.examsService.findOne(id, req.user.schoolId);
   }
 
   @Post(':id/subjects')
   @Roles('SCHOOL_ADMIN', 'TEACHER')
-  addExamSubject(@Param('id') id: string, @Body() dto: AddExamSubjectDto, @Request() req) {
+  addExamSubject(@Param('id') id: string, @Body() dto: AddExamSubjectDto, @Request() req: any) {
     return this.examsService.addExamSubject(id, dto, req.user.schoolId);
   }
 
   @Post('subjects/:subjectId/marks')
   @Roles('TEACHER', 'SCHOOL_ADMIN')
-  bulkSubmitResults(@Param('subjectId') subjectId: string, @Body() dto: BulkSubmitExamResultsDto, @Request() req) {
+  bulkSubmitResults(@Param('subjectId') subjectId: string, @Body() dto: BulkSubmitExamResultsDto, @Request() req: any) {
     return this.examsService.bulkSubmitResults(subjectId, dto, req.user.schoolId);
   }
 
   @Get('student/:studentId/report-card')
   @Roles('SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT')
-  getStudentReportCard(@Param('studentId') studentId: string, @Request() req) {
+  getStudentReportCard(@Param('studentId') studentId: string, @Request() req: any) {
     // Note: If role is STUDENT or PARENT, they should only be able to query their own ID. 
     // For MVP, we trust the client or could add logic here.
     return this.examsService.getStudentReportCard(studentId, req.user.schoolId);

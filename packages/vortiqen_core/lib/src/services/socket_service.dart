@@ -1,67 +1,96 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import '../repositories/auth_repository.dart';
-import '../models/message.dart';
+import '../models/chat.dart';
+import '../providers/auth_provider.dart';
 
 class SocketService {
   IO.Socket? _socket;
-  final String _token;
+  final String baseUrl;
   
-  // Callback for when a new message is received
-  Function(Message)? onMessageReceived;
+  // StreamControllers to broadcast received messages
+  final _groupMessageController = StreamController<ChatMessage>.broadcast();
+  final _directMessageController = StreamController<ChatMessage>.broadcast();
 
-  SocketService(this._token) {
-    _initSocket();
-  }
+  Stream<ChatMessage> get onGroupMessage => _groupMessageController.stream;
+  Stream<ChatMessage> get onDirectMessage => _directMessageController.stream;
 
-  void _initSocket() {
-    _socket = IO.io('http://localhost:3000', IO.OptionBuilder()
-      .setTransports(['websocket'])
-      .disableAutoConnect()
-      .setAuth({'token': 'Bearer $_token'})
-      .build()
-    );
+  SocketService(this.baseUrl);
 
-    _socket?.onConnect((_) {
-      print('Socket connected');
-    });
+  void connect(String token) {
+    if (_socket != null && _socket!.connected) return;
 
-    _socket?.on('newMessage', (data) {
-      if (onMessageReceived != null) {
-        onMessageReceived!(Message.fromJson(data));
+    _socket = IO.io(baseUrl, <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': false,
+      'extraHeaders': {
+        'Authorization': 'Bearer $token',
       }
     });
 
-    _socket?.onDisconnect((_) {
+    _socket!.onConnect((_) {
+      print('Socket connected');
+    });
+
+    _socket!.onDisconnect((_) {
       print('Socket disconnected');
     });
 
-    _socket?.connect();
+    _socket!.on('receiveGroupMessage', (data) {
+      final msg = ChatMessage.fromJson(data);
+      _groupMessageController.add(msg);
+    });
+
+    _socket!.on('receiveDirectMessage', (data) {
+      final msg = ChatMessage.fromJson(data);
+      _directMessageController.add(msg);
+    });
+
+    _socket!.connect();
   }
 
-  void sendMessage(String receiverId, String content) {
-    _socket?.emit('sendMessage', {
-      'receiverId': receiverId,
+  void disconnect() {
+    _socket?.disconnect();
+    _socket = null;
+  }
+
+  void sendGroupMessage(String groupId, String content) {
+    if (_socket == null || !_socket!.connected) return;
+    _socket!.emit('sendGroupMessage', {
+      'groupId': groupId,
       'content': content,
     });
   }
 
-  void dispose() {
-    _socket?.disconnect();
-    _socket?.dispose();
+  void sendDirectMessage(String receiverId, String content) {
+    if (_socket == null || !_socket!.connected) return;
+    _socket!.emit('sendDirectMessage', {
+      'receiverId': receiverId,
+      'content': content,
+    });
   }
 }
 
-final socketServiceProvider = Provider<SocketService?>((ref) {
-  final authState = ref.watch(authRepositoryProvider);
-  
-  if (authState.token == null) return null;
-  
-  final service = SocketService(authState.token!);
+final socketServiceProvider = Provider<SocketService>((ref) {
+  // Using 10.0.2.2 for emulator localhost
+  const baseUrl = 'http://10.0.2.2:3000';
+  final service = SocketService(baseUrl);
   
   ref.onDispose(() {
-    service.dispose();
+    service.disconnect();
   });
-  
+
   return service;
+});
+
+// A provider that automatically connects when auth changes
+final socketConnectionProvider = Provider<void>((ref) {
+  final authState = ref.watch(authProvider).value;
+  final socketService = ref.watch(socketServiceProvider);
+
+  if (authState?.token != null) {
+    socketService.connect(authState!.token!);
+  } else {
+    socketService.disconnect();
+  }
 });

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
@@ -25,7 +24,7 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
   PlatformFile? _attachment;
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
+    FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
@@ -84,14 +83,14 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              CustomTextField(
-                label: 'Title',
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Title'),
                 onSaved: (v) => _title = v ?? '',
                 validator: (v) => v == null || v.isEmpty ? 'Required' : null,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                label: 'Description (Optional)',
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Description (Optional)'),
                 maxLines: 3,
                 onSaved: (v) => _description = v ?? '',
               ),
@@ -100,8 +99,8 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
                 data: (classes) {
                   return DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: 'Class'),
-                    value: _selectedClassId,
-                    items: classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name))).toList(),
+                    initialValue: _selectedClassId,
+                    items: classes.map<DropdownMenuItem<String>>((c) => DropdownMenuItem(value: c.id, child: Text(c.name))).toList(),
                     onChanged: (v) => setState(() {
                       _selectedClassId = v;
                       _selectedSectionId = null;
@@ -116,24 +115,24 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
               if (_selectedClassId != null) ...[
                 DropdownButtonFormField<String>(
                   decoration: const InputDecoration(labelText: 'Section'),
-                  value: _selectedSectionId,
+                  initialValue: _selectedSectionId,
                   items: ref.read(classesProvider).value!
-                      .firstWhere((c) => c.id == _selectedClassId)
+                      .firstWhere((c) => (c).id == _selectedClassId)
                       .sections
                       .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
                       .toList(),
                   onChanged: (v) => setState(() => _selectedSectionId = v),
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(labelText: 'Subject'),
-                  value: _selectedSubjectId,
-                  items: ref.read(classesProvider).value!
-                      .firstWhere((c) => c.id == _selectedClassId)
-                      .subjects
-                      .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
-                      .toList(),
-                  onChanged: (v) => setState(() => _selectedSubjectId = v),
+                ref.watch(subjectsProvider(ref.watch(authProvider).value?.user?.schoolId ?? '')).when(
+                  data: (subjects) => DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(labelText: 'Subject'),
+                    initialValue: _selectedSubjectId,
+                    items: subjects.map((s) => DropdownMenuItem(value: s.id, child: Text(s.name))).toList(),
+                    onChanged: (v) => setState(() => _selectedSubjectId = v),
+                  ),
+                  loading: () => const LinearProgressIndicator(),
+                  error: (e, st) => const Text('Failed to load subjects'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -150,7 +149,7 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
                   if (date != null) setState(() => _dueDate = date);
                 },
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.grey.withOpacity(0.5)),
+                  side: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -160,7 +159,7 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
                 trailing: const Icon(Icons.attach_file),
                 onTap: _pickFile,
                 shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.grey.withOpacity(0.5)),
+                  side: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
@@ -170,10 +169,9 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
                   child: const Text('Remove Attachment', style: TextStyle(color: Colors.red)),
                 ),
               const SizedBox(height: 32),
-              PrimaryButton(
+              ElevatedButton(
                 onPressed: _isLoading ? null : _submit,
-                text: 'Create Assignment',
-                isLoading: _isLoading,
+                child: _isLoading ? const CircularProgressIndicator() : const Text('Create Assignment'),
               ),
             ],
           ),
@@ -182,3 +180,4 @@ class _CreateAssignmentScreenState extends ConsumerState<CreateAssignmentScreen>
     );
   }
 }
+

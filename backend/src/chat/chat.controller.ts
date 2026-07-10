@@ -1,25 +1,34 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { RolesGuard } from '../common/guards/roles.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('chat')
-@UseGuards(RolesGuard)
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Get('contacts')
-  getContacts(@Request() req) {
-    const user = req.user;
-    if (user.role === 'STUDENT') {
-      return this.chatService.getStudentContacts(user.id, user.schoolId);
-    } else if (user.role === 'TEACHER') {
-      return this.chatService.getTeacherContacts(user.id, user.schoolId);
-    }
-    return [];
+  @Post('groups')
+  createGroup(@Request() req: any, @Body('name') name: string) {
+    return this.chatService.createGroup(req.user.schoolId, name, req.user.userId);
   }
 
-  @Get('history/:otherUserId')
-  getChatHistory(@Param('otherUserId') otherUserId: string, @Request() req) {
-    return this.chatService.getChatHistory(req.user.schoolId, req.user.id, otherUserId);
+  @Post('groups/:id/members')
+  addMember(@Param('id') groupId: string, @Body('userId') userId: string) {
+    return this.chatService.addMemberToGroup(groupId, userId);
+  }
+
+  @Get('groups')
+  getMyGroups(@Request() req: any) {
+    return this.chatService.getMyGroups(req.user.userId);
+  }
+
+  @Get('groups/:id/messages')
+  getGroupMessages(@Param('id') groupId: string) {
+    return this.chatService.getGroupMessages(groupId);
+  }
+
+  @Get('direct/:userId/messages')
+  getDirectMessages(@Request() req: any, @Param('userId') otherUserId: string) {
+    return this.chatService.getDirectMessages(req.user.userId, otherUserId);
   }
 }

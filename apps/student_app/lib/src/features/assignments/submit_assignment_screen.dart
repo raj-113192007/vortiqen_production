@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/file_picker.dart' as fp;
 
 class SubmitAssignmentScreen extends ConsumerStatefulWidget {
   final String assignmentId;
@@ -18,11 +17,11 @@ class _SubmitAssignmentScreenState extends ConsumerState<SubmitAssignmentScreen>
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   String _content = '';
-  PlatformFile? _attachment;
+  fp.PlatformFile? _attachment;
 
   Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
+    fp.FilePickerResult? result = await fp.FilePicker.pickFiles(
+      type: fp.FileType.custom,
       allowedExtensions: ['pdf'],
     );
 
@@ -67,7 +66,7 @@ class _SubmitAssignmentScreenState extends ConsumerState<SubmitAssignmentScreen>
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider).valueOrNull?.user;
+    final user = ref.watch(authProvider).value?.user;
     if (user == null || user.schoolId == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -94,8 +93,8 @@ class _SubmitAssignmentScreenState extends ConsumerState<SubmitAssignmentScreen>
                 children: [
                   const Text('Submit your homework', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
-                  CustomTextField(
-                    label: 'Notes (Optional)',
+                  TextFormField(
+                    decoration: const InputDecoration(labelText: 'Notes (Optional)'),
                     maxLines: 4,
                     onSaved: (v) => _content = v ?? '',
                   ),
@@ -105,7 +104,7 @@ class _SubmitAssignmentScreenState extends ConsumerState<SubmitAssignmentScreen>
                     trailing: const Icon(Icons.attach_file),
                     onTap: _pickFile,
                     shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.grey.withOpacity(0.5)),
+                      side: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -115,10 +114,9 @@ class _SubmitAssignmentScreenState extends ConsumerState<SubmitAssignmentScreen>
                       child: const Text('Remove Attachment', style: TextStyle(color: Colors.red)),
                     ),
                   const SizedBox(height: 32),
-                  PrimaryButton(
+                  ElevatedButton(
                     onPressed: _isLoading ? null : () => _submit(student),
-                    text: 'Submit',
-                    isLoading: _isLoading,
+                    child: _isLoading ? const CircularProgressIndicator() : const Text('Submit'),
                   ),
                 ],
               ),
@@ -131,3 +129,4 @@ class _SubmitAssignmentScreenState extends ConsumerState<SubmitAssignmentScreen>
     );
   }
 }
+

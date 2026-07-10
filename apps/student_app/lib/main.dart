@@ -20,7 +20,7 @@ class StudentApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'VortiQen Student',
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.getTheme(AppRole.student),
       debugShowCheckedModeBanner: false,
       routerConfig: router,
     );

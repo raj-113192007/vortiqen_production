@@ -25,7 +25,7 @@ export class AssignmentsController {
   @UseInterceptors(FileInterceptor('file', { storage }))
   create(
     @Body() createAssignmentDto: CreateAssignmentDto, 
-    @Request() req,
+    @Request() req: any,
     @UploadedFile() file?: Express.Multer.File
   ) {
     const attachmentUrl = file ? `/uploads/assignments/${file.filename}` : undefined;
@@ -34,13 +34,13 @@ export class AssignmentsController {
 
   @Get('section/:sectionId')
   @Roles('TEACHER', 'STUDENT', 'PARENT')
-  findAllBySection(@Param('sectionId') sectionId: string, @Request() req) {
+  findAllBySection(@Param('sectionId') sectionId: string, @Request() req: any) {
     return this.assignmentsService.findAllBySection(sectionId, req.user.schoolId);
   }
 
   @Get('teacher')
   @Roles('TEACHER')
-  findAllByTeacher(@Request() req) {
+  findAllByTeacher(@Request() req: any) {
     return this.assignmentsService.findAllByTeacher(req.user.userId, req.user.schoolId);
   }
 
@@ -49,7 +49,7 @@ export class AssignmentsController {
   @UseInterceptors(FileInterceptor('file', { storage }))
   submitAssignment(
     @Param('id') id: string,
-    @Request() req,
+    @Request() req: any,
     @Body('content') content?: string,
     @UploadedFile() file?: Express.Multer.File
   ) {
@@ -64,7 +64,7 @@ export class AssignmentsController {
 
   @Get(':id/submissions')
   @Roles('TEACHER', 'SCHOOL_ADMIN')
-  getSubmissions(@Param('id') id: string, @Request() req) {
+  getSubmissions(@Param('id') id: string, @Request() req: any) {
     return this.assignmentsService.getSubmissions(id, req.user.schoolId);
   }
 

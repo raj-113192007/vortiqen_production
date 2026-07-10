@@ -11,43 +11,43 @@ export class TransportController {
 
   @Post('routes')
   @Roles('SCHOOL_ADMIN')
-  createRoute(@Body() dto: CreateRouteDto, @Request() req) {
+  createRoute(@Body() dto: CreateRouteDto, @Request() req: any) {
     return this.transportService.createRoute(dto, req.user.schoolId);
   }
 
   @Get('routes')
   @Roles('SCHOOL_ADMIN', 'TEACHER', 'DRIVER')
-  getRoutes(@Request() req) {
+  getRoutes(@Request() req: any) {
     return this.transportService.getRoutes(req.user.schoolId);
   }
 
   @Post('vehicles')
   @Roles('SCHOOL_ADMIN')
-  createVehicle(@Body() dto: CreateVehicleDto, @Request() req) {
+  createVehicle(@Body() dto: CreateVehicleDto, @Request() req: any) {
     return this.transportService.createVehicle(dto, req.user.schoolId);
   }
 
   @Get('vehicles')
   @Roles('SCHOOL_ADMIN', 'TEACHER', 'DRIVER')
-  getVehicles(@Request() req) {
+  getVehicles(@Request() req: any) {
     return this.transportService.getVehicles(req.user.schoolId);
   }
 
   @Post('assign')
   @Roles('SCHOOL_ADMIN')
-  assignStudent(@Body() dto: AssignStudentTransportDto, @Request() req) {
+  assignStudent(@Body() dto: AssignStudentTransportDto, @Request() req: any) {
     return this.transportService.assignStudent(dto, req.user.schoolId);
   }
 
   @Get('student/:studentId')
   @Roles('SCHOOL_ADMIN', 'TEACHER', 'STUDENT', 'PARENT')
-  getStudentTransportDetails(@Param('studentId') studentId: string, @Request() req) {
+  getStudentTransportDetails(@Param('studentId') studentId: string, @Request() req: any) {
     return this.transportService.getStudentTransportDetails(studentId, req.user.schoolId);
   }
 
   @Get('driver/my-details')
   @Roles('DRIVER')
-  getDriverTransportDetails(@Request() req) {
+  getDriverTransportDetails(@Request() req: any) {
     return this.transportService.getDriverTransportDetails(req.user.id, req.user.schoolId);
   }
 }

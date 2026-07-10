@@ -25,7 +25,7 @@ class _ChildDetailScreenState extends ConsumerState<ChildDetailScreen> with Sing
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final user = ref.watch(authProvider).valueOrNull?.user;
+    final user = ref.watch(authProvider).value?.user;
     
     if (user == null) return const Scaffold();
 

@@ -18,6 +18,9 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   file_picker: ^11.0.2
+  intl: ^0.20.3
+  vortiqen_models:
+    path: ../../packages/vortiqen_models
 
 dev_dependencies:
   flutter_test:

@@ -60,7 +60,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               constraints: const BoxConstraints(maxWidth: 400),
               child: Card(
                 elevation: 8,
-                shadowColor: theme.colorScheme.primary.withOpacity(0.2),
+                shadowColor: theme.colorScheme.primary.withValues(alpha: 0.2),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -152,3 +152,4 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 }
+

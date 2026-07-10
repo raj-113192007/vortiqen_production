@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
+import 'package:vortiqen_models/vortiqen_models.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:intl/intl.dart';
 
 class MarkAttendanceScreen extends ConsumerStatefulWidget {
@@ -16,7 +17,7 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
   String? _selectedClassId;
   String? _selectedSectionId;
   
-  Map<String, String> _studentStatuses = {}; // studentId -> status (PRESENT/ABSENT/LATE)
+  final Map<String, String> _studentStatuses = {}; // studentId -> status (PRESENT/ABSENT/LATE)
   bool _isSaving = false;
 
   void _loadExistingAttendance(List<Attendance> existing) {
@@ -33,7 +34,7 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
 
   Future<void> _submitAttendance() async {
     if (_selectedClassId == null) return;
-    final user = ref.read(authProvider).valueOrNull?.user;
+    final user = ref.read(authProvider).value?.user;
     if (user == null) return;
 
     setState(() => _isSaving = true);
@@ -105,8 +106,8 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
                       child: classesAsync.when(
                         data: (classes) => DropdownButtonFormField<String>(
                           decoration: const InputDecoration(labelText: 'Select Class'),
-                          value: _selectedClassId,
-                          items: classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name))).toList(),
+                          initialValue: _selectedClassId,
+                          items: classes.map<DropdownMenuItem<String>>((c) => DropdownMenuItem<String>(value: c.id, child: Text(c.name ?? ''))).toList(),
                           onChanged: (val) {
                             setState(() {
                               _selectedClassId = val;
@@ -125,8 +126,10 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
                         ? const SizedBox()
                         : DropdownButtonFormField<String>(
                             decoration: const InputDecoration(labelText: 'Select Section (Optional)'),
-                            value: _selectedSectionId,
-                            items: classesAsync.value?.firstWhere((c) => c.id == _selectedClassId).sections.map((s) => DropdownMenuItem(value: s.id, child: Text(s.name))).toList() ?? [],
+                            initialValue: _selectedSectionId,
+                            items: (classesAsync.value?.where((c) => (c as AcademicClass?)?.id == _selectedClassId).firstOrNull?.sections ?? [])
+                                .map((s) => DropdownMenuItem<String>(value: s.id, child: Text(s.name)))
+                                .toList(),
                             onChanged: (val) {
                               setState(() {
                                 _selectedSectionId = val;
@@ -186,7 +189,7 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
                                   margin: const EdgeInsets.symmetric(vertical: 4),
                                   child: ListTile(
                                     title: Text('${student.firstName} ${student.lastName}'),
-                                    subtitle: Text('Roll No: ${student.rollNumber ?? 'N/A'}'),
+                                    subtitle: Text('Roll No: ${student.rollNo}'),
                                     trailing: SegmentedButton<String>(
                                       segments: const [
                                         ButtonSegment(value: 'PRESENT', label: Text('Present')),
@@ -202,9 +205,9 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
                                       style: ButtonStyle(
                                         backgroundColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
                                           if (states.contains(WidgetState.selected)) {
-                                            if (status == 'PRESENT') return Colors.green.withOpacity(0.2);
-                                            if (status == 'ABSENT') return Colors.red.withOpacity(0.2);
-                                            if (status == 'LATE') return Colors.orange.withOpacity(0.2);
+                                            if (status == 'PRESENT') return Colors.green.withValues(alpha: 0.2);
+                                            if (status == 'ABSENT') return Colors.red.withValues(alpha: 0.2);
+                                            if (status == 'LATE') return Colors.orange.withValues(alpha: 0.2);
                                           }
                                           return null;
                                         }),
@@ -240,3 +243,4 @@ class _MarkAttendanceScreenState extends ConsumerState<MarkAttendanceScreen> {
     );
   }
 }
+

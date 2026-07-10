@@ -3,8 +3,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'api_client.g.dart';
 
+class ApiClient {
+  final Dio dio;
+  ApiClient(this.dio);
+}
+
 @Riverpod(keepAlive: true)
-Dio apiClient(Ref ref) {
+ApiClient apiClient(Ref ref) {
   final dio = Dio(BaseOptions(
     baseUrl: 'http://localhost:3000', // TODO: Update from .env
     connectTimeout: const Duration(seconds: 10),
@@ -22,5 +27,5 @@ Dio apiClient(Ref ref) {
     },
   ));
 
-  return dio;
+  return ApiClient(dio);
 }
