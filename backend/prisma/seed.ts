@@ -38,6 +38,83 @@ async function main() {
   });
 
   console.log(`User created: ${admin.email} (SUPER_ADMIN)`);
+
+  // Create Test School Admin User
+  const schoolAdmin = await prisma.user.upsert({
+    where: { email: 'schooladmin@vortiqen.com' },
+    update: {},
+    create: {
+      email: 'schooladmin@vortiqen.com',
+      password: hashedPassword,
+      name: 'Principal Sharma',
+      role: 'SCHOOL_ADMIN',
+      schoolId: school.id,
+      status: 'ACTIVE',
+    },
+  });
+  console.log(`User created: ${schoolAdmin.email} (SCHOOL_ADMIN)`);
+
+  // Create Test Teacher User
+  const teacher = await prisma.user.upsert({
+    where: { email: 'teacher@vortiqen.com' },
+    update: {},
+    create: {
+      email: 'teacher@vortiqen.com',
+      password: hashedPassword,
+      name: 'Raj Teacher',
+      role: 'TEACHER',
+      schoolId: school.id,
+      status: 'ACTIVE',
+    },
+  });
+  console.log(`User created: ${teacher.email} (TEACHER)`);
+
+  // Create Test Student User
+  const student = await prisma.user.upsert({
+    where: { email: 'student@vortiqen.com' },
+    update: {},
+    create: {
+      email: 'student@vortiqen.com',
+      password: hashedPassword,
+      name: 'Rahul Student',
+      role: 'STUDENT',
+      schoolId: school.id,
+      status: 'ACTIVE',
+    },
+  });
+  console.log(`User created: ${student.email} (STUDENT)`);
+
+  // Create Test Driver User
+  const driver = await prisma.user.upsert({
+    where: { email: 'driver@vortiqen.com' },
+    update: {},
+    create: {
+      email: 'driver@vortiqen.com',
+      password: hashedPassword,
+      name: 'Ramesh Driver',
+      role: 'DRIVER',
+      schoolId: school.id,
+      status: 'ACTIVE',
+    },
+  });
+
+  console.log(`User created: ${driver.email} (DRIVER)`);
+
+  const existingVehicle = await prisma.vehicle.findUnique({
+    where: { driverId: driver.id }
+  });
+  
+  if (!existingVehicle) {
+    const vehicle = await prisma.vehicle.create({
+      data: {
+        plateNumber: 'DL-10-AB-1234',
+        capacity: 40,
+        schoolId: school.id,
+        driverId: driver.id,
+      },
+    });
+    console.log(`Vehicle created: ${vehicle.plateNumber}`);
+  }
 }
 
 main()

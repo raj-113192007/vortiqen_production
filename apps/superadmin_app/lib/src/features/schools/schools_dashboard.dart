@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
+import 'package:go_router/go_router.dart';
 class SchoolsDashboard extends ConsumerWidget {
   const SchoolsDashboard({super.key});
 

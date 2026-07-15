@@ -1,14 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiClient {
   final Dio dio;
   ApiClient(this.dio);
 }
-
 final apiClientProvider = Provider<ApiClient>((ref) {
+  String baseUrl = 'http://localhost:3000';
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    baseUrl = 'http://10.0.2.2:3000';
+  }
+  
   final dio = Dio(BaseOptions(
-    baseUrl: 'http://localhost:3000',
+    baseUrl: baseUrl,
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
     headers: {

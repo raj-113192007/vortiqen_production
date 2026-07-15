@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:go_router/go_router.dart';
 
@@ -143,6 +142,55 @@ class _AddSchoolScreenState extends ConsumerState<AddSchoolScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomTextField extends StatelessWidget {
+  final String label;
+  final void Function(String?)? onSaved;
+  final String? Function(String?)? validator;
+  final bool obscureText;
+
+  const CustomTextField({
+    super.key,
+    required this.label,
+    this.onSaved,
+    this.validator,
+    this.obscureText = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+      onSaved: onSaved,
+      validator: validator,
+      obscureText: obscureText,
+    );
+  }
+}
+
+class PrimaryButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+
+  const PrimaryButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.isLoading = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: isLoading ? null : onPressed,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+      ),
+      child: isLoading ? const CircularProgressIndicator() : Text(text, style: const TextStyle(fontSize: 16)),
     );
   }
 }

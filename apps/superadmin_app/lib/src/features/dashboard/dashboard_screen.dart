@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class SuperAdminDashboardScreen extends ConsumerWidget {
   const SuperAdminDashboardScreen({super.key});
@@ -60,7 +59,17 @@ class SuperAdminDashboardScreen extends ConsumerWidget {
             ),
             
             const SizedBox(height: 48),
-            Text('Registered Schools', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Registered Schools', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/add-school'),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add School'),
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
             
             schoolsAsync.when(

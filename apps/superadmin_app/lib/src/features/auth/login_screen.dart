@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vortiqen_ui/vortiqen_ui.dart';
-import 'package:vortiqen_core/vortiqen_core.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -8,7 +7,9 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const VortiqenLoginScreen(
-      appRole: Role.SUPER_ADMIN,
+      title: 'VortiQen Super Admin',
+      subtitle: 'Platform Management Portal',
+      primaryColor: Colors.deepPurple,
     );
   }
 }

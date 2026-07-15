@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
+import '../features/splash/splash_screen.dart';
 import '../features/auth/login_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/admissions/admissions_form_screen.dart';
@@ -16,8 +17,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     redirect: (context, state) {
+      final isSplash = state.uri.path == '/splash';
+      if (isSplash) return null; // Don't redirect from splash automatically
+
       final isLoggedIn = authState.value?.token != null;
       final isLoggingIn = state.uri.path == '/login';
       if (!isLoggedIn && !isLoggingIn) return '/login';
@@ -25,6 +29,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
@@ -64,6 +72,26 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/exams/:id',
         builder: (context, state) => ExamDetailsScreen(exam: state.extra as Exam),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterSchoolPage(),
+      ),
+      GoRoute(
+        path: '/otp',
+        builder: (context, state) => const OtpVerificationPage(),
+      ),
+      GoRoute(
+        path: '/terms',
+        builder: (context, state) => const TermsPage(),
+      ),
+      GoRoute(
+        path: '/privacy',
+        builder: (context, state) => const PrivacyPage(),
+      ),
+      GoRoute(
+        path: '/set-password',
+        builder: (context, state) => const SetPasswordPage(),
       ),
     ],
   );

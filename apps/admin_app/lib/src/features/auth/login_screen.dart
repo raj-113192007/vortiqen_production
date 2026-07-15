@@ -12,7 +12,7 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailController = TextEditingController(text: 'admin@vortiqen.com');
+  final _emailController = TextEditingController(text: 'schooladmin@vortiqen.com');
   final _passwordController = TextEditingController(text: 'password123');
   bool _isLoading = false;
 

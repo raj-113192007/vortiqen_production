@@ -20,11 +20,7 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'VortiQen - SUPER_ADMIN',
-      theme: AppTheme.darkTheme.copyWith(
-        colorScheme: AppTheme.darkTheme.colorScheme.copyWith(
-          primary: Colors.redAccent,
-        ),
-      ),
+      theme: AppTheme.getTheme(AppRole.admin),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

@@ -20,7 +20,7 @@ class Auth extends _$Auth {
   Future<bool> login(String email, String password) async {
     try {
       final dio = ref.read(apiClientProvider);
-      final response = await dio.dio.post('/auth/login', data: {
+      final response = await dio.dio.post('/api/v1/auth/login', data: {
         'email': email,
         'password': password,
       });

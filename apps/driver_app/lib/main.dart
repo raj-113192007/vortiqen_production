@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/routing/app_router.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 void main() {
   runApp(
@@ -20,8 +19,8 @@ class MyApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'VortiQen - DRIVER',
-      theme: AppTheme.darkTheme.copyWith(
-        colorScheme: AppTheme.darkTheme.colorScheme.copyWith(
+      theme: ThemeData.dark().copyWith(
+        colorScheme: ThemeData.dark().colorScheme.copyWith(
           primary: Colors.amber,
         ),
       ),

@@ -14,6 +14,7 @@ dependencies:
     path: ../../packages/vortiqen_core
   vortiqen_ui:
     path: ../../packages/vortiqen_ui
+  intl: ^0.20.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import '../features/auth/login_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
+import '../features/schools/add_school_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -11,8 +12,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/login',
     redirect: (context, state) {
       final isLoggingIn = state.uri.path == '/login';
-      if (!authState && !isLoggingIn) return '/login';
-      if (authState && isLoggingIn) return '/dashboard';
+      final isLoggedIn = authState.value != null;
+      if (!isLoggedIn && !isLoggingIn) return '/login';
+      if (isLoggedIn && isLoggingIn) return '/dashboard';
       return null;
     },
     routes: [
@@ -23,6 +25,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const SuperAdminDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/add-school',
+        builder: (context, state) => const AddSchoolScreen(),
       ),
     ],
   );

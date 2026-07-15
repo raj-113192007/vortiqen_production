@@ -5,7 +5,8 @@ import '../features/auth/login_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final authStateAsync = ref.watch(authProvider);
+  final authState = authStateAsync.value?.token != null;
 
   return GoRouter(
     initialLocation: '/login',

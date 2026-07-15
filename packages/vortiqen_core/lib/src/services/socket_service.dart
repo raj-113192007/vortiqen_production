@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../models/chat.dart';
@@ -72,8 +73,10 @@ class SocketService {
 }
 
 final socketServiceProvider = Provider<SocketService>((ref) {
-  // Using 10.0.2.2 for emulator localhost
-  const baseUrl = 'http://10.0.2.2:3000';
+  String baseUrl = 'http://localhost:3000';
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+    baseUrl = 'http://10.0.2.2:3000';
+  }
   final service = SocketService(baseUrl);
   
   ref.onDispose(() {
