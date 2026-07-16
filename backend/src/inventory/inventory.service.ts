@@ -1,5 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class InventoryService {
@@ -12,7 +17,10 @@ export class InventoryService {
     });
   }
 
-  async createCategory(schoolId: string, data: any) {
+  async createCategory(
+    schoolId: string,
+    data: { name: string; description?: string },
+  ) {
     return this.prisma.assetCategory.create({
       data: {
         schoolId,
@@ -24,7 +32,7 @@ export class InventoryService {
 
   // Assets
   async getAssets(schoolId: string, categoryId?: string, status?: string) {
-    const whereClause: any = { schoolId };
+    const whereClause: Prisma.AssetWhereInput = { schoolId };
     if (categoryId) whereClause.categoryId = categoryId;
     if (status) whereClause.status = status;
 
@@ -33,13 +41,25 @@ export class InventoryService {
       include: {
         category: true,
         assignedTo: {
-          select: { id: true, name: true, role: true }
-        }
+          select: { id: true, name: true, role: true },
+        },
       },
     });
   }
 
-  async createAsset(schoolId: string, data: any) {
+  async createAsset(
+    schoolId: string,
+    data: {
+      categoryId: string;
+      name: string;
+      sku: string;
+      purchaseDate?: string | Date;
+      depreciationRate?: string | number;
+      status?: string;
+      condition?: string;
+      location?: string;
+    },
+  ) {
     return this.prisma.asset.create({
       data: {
         schoolId,
@@ -47,7 +67,11 @@ export class InventoryService {
         name: data.name,
         sku: data.sku,
         purchaseDate: data.purchaseDate ? new Date(data.purchaseDate) : null,
-        depreciationRate: data.depreciationRate ? parseFloat(data.depreciationRate) : null,
+        depreciationRate: data.depreciationRate
+          ? typeof data.depreciationRate === 'string'
+            ? parseFloat(data.depreciationRate)
+            : data.depreciationRate
+          : null,
         status: data.status || 'AVAILABLE',
         condition: data.condition || 'GOOD',
         location: data.location,
@@ -56,7 +80,11 @@ export class InventoryService {
   }
 
   // Assignment & Log
-  async assignAsset(schoolId: string, assetId: string, data: any) {
+  async assignAsset(
+    schoolId: string,
+    assetId: string,
+    data: { action: string; userId: string; adminId: string; notes?: string },
+  ) {
     const asset = await this.prisma.asset.findFirst({
       where: { id: assetId, schoolId },
     });
@@ -73,6 +101,7 @@ export class InventoryService {
     const assignedUser = data.action === 'CHECK_OUT' ? data.userId : null;
 
     // Transaction to update asset and create log
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [updatedAsset, _] = await this.prisma.$transaction([
       this.prisma.asset.update({
         where: { id: assetId },
@@ -89,7 +118,7 @@ export class InventoryService {
           adminId: data.adminId, // Who performed the action
           notes: data.notes,
         },
-      })
+      }),
     ]);
 
     return updatedAsset;

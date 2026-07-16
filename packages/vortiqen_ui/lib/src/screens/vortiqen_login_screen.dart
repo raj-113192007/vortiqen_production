@@ -172,6 +172,25 @@ class _VortiqenLoginScreenState extends ConsumerState<VortiqenLoginScreen> {
                               ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    // Sentry Test Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          throw StateError('This is test exception');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Verify Sentry Setup'),
+                      ),
+                    ),
                   ],
                 ),
               ),

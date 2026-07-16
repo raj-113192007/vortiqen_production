@@ -1,0 +1,8 @@
+# melos_managed_dependency_overrides: vortiqen_core,vortiqen_models,vortiqen_ui
+dependency_overrides:
+  vortiqen_core:
+    path: ..\\..\\packages\\vortiqen_core
+  vortiqen_models:
+    path: ..\\..\\packages\\vortiqen_models
+  vortiqen_ui:
+    path: ..\\..\\packages\\vortiqen_ui

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -20,7 +20,11 @@ export class ChatService {
     });
   }
 
-  async addMemberToGroup(groupId: string, userId: string, role: string = 'MEMBER') {
+  async addMemberToGroup(
+    groupId: string,
+    userId: string,
+    role: string = 'MEMBER',
+  ) {
     return this.prisma.chatGroupMember.create({
       data: {
         groupId,
@@ -37,11 +41,11 @@ export class ChatService {
         group: {
           include: {
             members: true, // Just to get member count
-          }
+          },
         },
       },
     });
-    return memberships.map(m => m.group);
+    return memberships.map((m) => m.group);
   }
 
   async getGroupMessages(groupId: string, take: number = 50) {
@@ -51,9 +55,9 @@ export class ChatService {
       take,
       include: {
         sender: {
-          select: { id: true, name: true, role: true }
-        }
-      }
+          select: { id: true, name: true, role: true },
+        },
+      },
     });
   }
 
@@ -63,22 +67,27 @@ export class ChatService {
         OR: [
           { senderId: userId1, receiverId: userId2 },
           { senderId: userId2, receiverId: userId1 },
-        ]
+        ],
       },
       orderBy: { createdAt: 'desc' },
       take,
       include: {
         sender: {
-          select: { id: true, name: true, role: true }
+          select: { id: true, name: true, role: true },
         },
         receiver: {
-          select: { id: true, name: true, role: true }
-        }
-      }
+          select: { id: true, name: true, role: true },
+        },
+      },
     });
   }
 
-  async saveGroupMessage(schoolId: string, senderId: string, groupId: string, content: string) {
+  async saveGroupMessage(
+    schoolId: string,
+    senderId: string,
+    groupId: string,
+    content: string,
+  ) {
     return this.prisma.message.create({
       data: {
         schoolId,
@@ -88,13 +97,18 @@ export class ChatService {
       },
       include: {
         sender: {
-          select: { id: true, name: true, role: true }
-        }
-      }
+          select: { id: true, name: true, role: true },
+        },
+      },
     });
   }
 
-  async saveDirectMessage(schoolId: string, senderId: string, receiverId: string, content: string) {
+  async saveDirectMessage(
+    schoolId: string,
+    senderId: string,
+    receiverId: string,
+    content: string,
+  ) {
     return this.prisma.message.create({
       data: {
         schoolId,
@@ -104,12 +118,12 @@ export class ChatService {
       },
       include: {
         sender: {
-          select: { id: true, name: true, role: true }
+          select: { id: true, name: true, role: true },
         },
         receiver: {
-          select: { id: true, name: true, role: true }
-        }
-      }
+          select: { id: true, name: true, role: true },
+        },
+      },
     });
   }
 }

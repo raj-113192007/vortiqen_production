@@ -8,7 +8,7 @@ describe('AttendanceController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AttendanceController],
-      providers: [{ provide: AttendanceService, useValue: {} }]
+      providers: [{ provide: AttendanceService, useValue: {} }],
     }).compile();
 
     controller = module.get<AttendanceController>(AttendanceController);

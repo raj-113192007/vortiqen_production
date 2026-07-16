@@ -1,0 +1,4 @@
+# melos_managed_dependency_overrides: vortiqen_core
+dependency_overrides:
+  vortiqen_core:
+    path: ..\\vortiqen_core

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/apps/admin_app/melos_admin_app.iml" filepath="$PROJECT_DIR$/apps/admin_app/melos_admin_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/director_app/melos_director_app.iml" filepath="$PROJECT_DIR$/apps/director_app/melos_director_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/driver_app/melos_driver_app.iml" filepath="$PROJECT_DIR$/apps/driver_app/melos_driver_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/parent_app/melos_parent_app.iml" filepath="$PROJECT_DIR$/apps/parent_app/melos_parent_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/student_app/melos_student_app.iml" filepath="$PROJECT_DIR$/apps/student_app/melos_student_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/superadmin_app/melos_superadmin_app.iml" filepath="$PROJECT_DIR$/apps/superadmin_app/melos_superadmin_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/apps/teacher_app/melos_teacher_app.iml" filepath="$PROJECT_DIR$/apps/teacher_app/melos_teacher_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/vortiqen_core/melos_vortiqen_core.iml" filepath="$PROJECT_DIR$/packages/vortiqen_core/melos_vortiqen_core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/vortiqen_models/melos_vortiqen_models.iml" filepath="$PROJECT_DIR$/packages/vortiqen_models/melos_vortiqen_models.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packages/vortiqen_ui/melos_vortiqen_ui.iml" filepath="$PROJECT_DIR$/packages/vortiqen_ui/melos_vortiqen_ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/melos_vortiqen_workspace.iml" filepath="$PROJECT_DIR$/melos_vortiqen_workspace.iml" />
+    </modules>
+  </component>
+</project>

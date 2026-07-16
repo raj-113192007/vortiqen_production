@@ -43,7 +43,11 @@ export class AdmissionsService {
     return enquiry;
   }
 
-  async update(id: string, schoolId: string, updateEnquiryDto: UpdateEnquiryDto) {
+  async update(
+    id: string,
+    schoolId: string,
+    updateEnquiryDto: UpdateEnquiryDto,
+  ) {
     await this.findOne(id, schoolId);
 
     const updated = await this.prisma.admissionEnquiry.update({
@@ -51,16 +55,28 @@ export class AdmissionsService {
       data: updateEnquiryDto,
     });
 
-    if (updateEnquiryDto.status === 'INTERVIEW_SCHEDULED' && updateEnquiryDto.interviewDate) {
+    if (
+      updateEnquiryDto.status === 'INTERVIEW_SCHEDULED' &&
+      updateEnquiryDto.interviewDate
+    ) {
       this.sendInterviewNotification(updated);
     }
 
     return updated;
   }
 
-  private sendInterviewNotification(enquiry: any) {
+  private sendInterviewNotification(enquiry: {
+    parentName: string;
+    phone: string;
+    email: string | null;
+    interviewDate: Date | null;
+  }) {
     // In a real application, integrate with an Email/SMS service here
-    console.log(`[Notification] Sending Interview Scheduled SMS/Email to ${enquiry.parentName} at ${enquiry.phone} / ${enquiry.email}`);
-    console.log(`[Notification] Interview Date: ${enquiry.interviewDate}`);
+    console.log(
+      `[Notification] Sending Interview Scheduled SMS/Email to ${enquiry.parentName} at ${enquiry.phone} / ${enquiry.email}`,
+    );
+    console.log(
+      `[Notification] Interview Date: ${enquiry.interviewDate ? enquiry.interviewDate.toISOString() : 'N/A'}`,
+    );
   }
 }

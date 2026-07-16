@@ -9,7 +9,8 @@ export class SchoolsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createSchoolDto: CreateSchoolDto) {
-    const { adminName, adminUsername, adminPassword, ...schoolData } = createSchoolDto;
+    const { adminName, adminUsername, adminPassword, ...schoolData } =
+      createSchoolDto;
 
     return this.prisma.$transaction(async (tx) => {
       // 1. Create the school

@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateRouteDto, CreateVehicleDto, AssignStudentTransportDto } from './dto/create-transport.dto';
+import {
+  CreateRouteDto,
+  CreateVehicleDto,
+  AssignStudentTransportDto,
+} from './dto/create-transport.dto';
 
 @Injectable()
 export class TransportService {
@@ -11,7 +15,7 @@ export class TransportService {
       data: {
         schoolId,
         name: dto.name,
-      }
+      },
     });
   }
 
@@ -20,9 +24,9 @@ export class TransportService {
       where: { schoolId },
       include: {
         vehicles: {
-          include: { driver: true }
-        }
-      }
+          include: { driver: true },
+        },
+      },
     });
   }
 
@@ -38,7 +42,7 @@ export class TransportService {
       include: {
         driver: true,
         route: true,
-      }
+      },
     });
   }
 
@@ -48,7 +52,7 @@ export class TransportService {
       include: {
         driver: true,
         route: true,
-      }
+      },
     });
   }
 
@@ -62,7 +66,7 @@ export class TransportService {
       include: {
         route: true,
         vehicle: true,
-      }
+      },
     });
   }
 
@@ -72,9 +76,9 @@ export class TransportService {
       include: {
         route: true,
         vehicle: {
-          include: { driver: true }
-        }
-      }
+          include: { driver: true },
+        },
+      },
     });
 
     if (!student) throw new NotFoundException('Student not found');
@@ -90,9 +94,9 @@ export class TransportService {
           include: {
             academicClass: true,
             section: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     return vehicle;

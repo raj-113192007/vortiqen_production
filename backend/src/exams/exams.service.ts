@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateExamDto, AddExamSubjectDto, BulkSubmitExamResultsDto } from './dto/create-exam.dto';
+import {
+  CreateExamDto,
+  AddExamSubjectDto,
+  BulkSubmitExamResultsDto,
+} from './dto/create-exam.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -12,8 +16,12 @@ export class ExamsService {
         schoolId,
         classId: createExamDto.classId,
         name: createExamDto.name,
-        startDate: createExamDto.startDate ? new Date(createExamDto.startDate) : undefined,
-        endDate: createExamDto.endDate ? new Date(createExamDto.endDate) : undefined,
+        startDate: createExamDto.startDate
+          ? new Date(createExamDto.startDate)
+          : undefined,
+        endDate: createExamDto.endDate
+          ? new Date(createExamDto.endDate)
+          : undefined,
       },
       include: {
         academicClass: true,
@@ -29,8 +37,8 @@ export class ExamsService {
         examSubjects: {
           include: {
             subject: true,
-          }
-        }
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -43,7 +51,7 @@ export class ExamsService {
         academicClass: {
           include: {
             sections: true,
-          }
+          },
         },
         examSubjects: {
           include: {
@@ -51,10 +59,10 @@ export class ExamsService {
             examResults: {
               include: {
                 student: true,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       },
     });
 
@@ -62,7 +70,11 @@ export class ExamsService {
     return exam;
   }
 
-  async addExamSubject(examId: string, dto: AddExamSubjectDto, schoolId: string) {
+  async addExamSubject(
+    examId: string,
+    dto: AddExamSubjectDto,
+    schoolId: string,
+  ) {
     // Verify exam belongs to school
     await this.findOne(examId, schoolId);
 
@@ -75,15 +87,19 @@ export class ExamsService {
       },
       include: {
         subject: true,
-      }
+      },
     });
   }
 
-  async bulkSubmitResults(examSubjectId: string, dto: BulkSubmitExamResultsDto, schoolId: string) {
+  async bulkSubmitResults(
+    examSubjectId: string,
+    dto: BulkSubmitExamResultsDto,
+    schoolId: string,
+  ) {
     // Verify examSubject belongs to an exam in the school
     const examSubject = await this.prisma.examSubject.findUnique({
       where: { id: examSubjectId },
-      include: { exam: true }
+      include: { exam: true },
     });
 
     if (!examSubject || examSubject.exam.schoolId !== schoolId) {
@@ -97,7 +113,7 @@ export class ExamsService {
           examSubjectId_studentId: {
             examSubjectId,
             studentId: res.studentId,
-          }
+          },
         },
         update: {
           marksObtained: res.marksObtained,
@@ -110,7 +126,7 @@ export class ExamsService {
           marksObtained: res.marksObtained,
           grade: res.grade,
           remarks: res.remarks,
-        }
+        },
       });
       results.push(result);
     }
@@ -132,14 +148,31 @@ export class ExamsService {
           include: {
             exam: true,
             subject: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     // Group by Exam ID
-    const examsMap = new Map<string, any>();
-    
+    const examsMap = new Map<
+      string,
+      {
+        id: string;
+        name: string;
+        startDate: Date | null;
+        endDate: Date | null;
+        status: string;
+        subjects: {
+          subjectName: string;
+          maxMarks: number;
+          examDate: Date | null;
+          marksObtained: number | null;
+          grade: string | null;
+          remarks: string | null;
+        }[];
+      }
+    >();
+
     for (const res of results) {
       const exam = res.examSubject.exam;
       if (!examsMap.has(exam.id)) {
@@ -149,11 +182,11 @@ export class ExamsService {
           startDate: exam.startDate,
           endDate: exam.endDate,
           status: exam.status,
-          subjects: []
+          subjects: [],
         });
       }
-      
-      examsMap.get(exam.id).subjects.push({
+
+      examsMap.get(exam.id)!.subjects.push({
         subjectName: res.examSubject.subject.name,
         maxMarks: res.examSubject.maxMarks,
         examDate: res.examSubject.examDate,

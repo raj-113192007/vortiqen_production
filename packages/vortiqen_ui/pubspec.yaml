@@ -13,6 +13,10 @@ dependencies:
     sdk: flutter
   flutter_animate: ^4.5.2
   google_fonts: ^8.1.0
+  flutter_riverpod: ^3.3.2
+  go_router: ^17.3.0
+  vortiqen_core:
+    path: ../vortiqen_core
 dev_dependencies:
   flutter_test:
     sdk: flutter

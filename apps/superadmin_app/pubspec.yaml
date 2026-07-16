@@ -5,6 +5,7 @@ version: 1.0.0+1
 environment:
   sdk: ^3.12.1
 dependencies:
+  sentry_flutter: ^8.6.0
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8

@@ -1,21 +1,36 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class StudentsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createStudentDto: any) {
+  async create(createStudentDto: {
+    schoolId: string;
+    studentUsername: string;
+    firstName: string;
+    lastName?: string;
+    password?: string;
+    parentUsername: string;
+    classId: string;
+    sectionId: string;
+    rollNo?: string;
+    gender?: string;
+  }) {
     // 1. Create User account for Student
     const studentUser = await this.prisma.user.create({
       data: {
         schoolId: createStudentDto.schoolId,
         username: createStudentDto.studentUsername,
         name: `${createStudentDto.firstName} ${createStudentDto.lastName || ''}`.trim(),
-        password: await bcrypt.hash(createStudentDto.password || 'Student@123', 10),
+        password: await bcrypt.hash(
+          createStudentDto.password || 'Student@123',
+          10,
+        ),
         role: 'STUDENT',
-      }
+      },
     });
 
     // 2. Create User account for Parent
@@ -24,9 +39,12 @@ export class StudentsService {
         schoolId: createStudentDto.schoolId,
         username: createStudentDto.parentUsername,
         name: `${createStudentDto.firstName}'s Parent`,
-        password: await bcrypt.hash(createStudentDto.password || 'Parent@123', 10),
+        password: await bcrypt.hash(
+          createStudentDto.password || 'Parent@123',
+          10,
+        ),
         role: 'PARENT',
-      }
+      },
     });
 
     // 3. Create Student profile
@@ -47,12 +65,18 @@ export class StudentsService {
         parent: { select: { id: true, username: true } },
         academicClass: { select: { id: true, name: true } },
         section: { select: { id: true, name: true } },
-      }
+      },
     });
   }
 
-  async findAll(schoolId: string, classId?: string, sectionId?: string, parentId?: string, userId?: string) {
-    const where: any = { schoolId };
+  async findAll(
+    schoolId: string,
+    classId?: string,
+    sectionId?: string,
+    parentId?: string,
+    userId?: string,
+  ) {
+    const where: Prisma.StudentWhereInput = { schoolId };
     if (classId) where.classId = classId;
     if (sectionId) where.sectionId = sectionId;
     if (parentId) where.parentId = parentId;
@@ -78,7 +102,7 @@ export class StudentsService {
         section: true,
         user: { select: { id: true, username: true, status: true } },
         parent: { select: { id: true, username: true, status: true } },
-      }
+      },
     });
     if (!student) throw new NotFoundException('Student not found');
     return student;

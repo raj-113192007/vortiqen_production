@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -43,15 +48,15 @@ export class UsersService {
         role: true,
         status: true,
         schoolId: true,
-      }
+      },
     });
   }
 
   async findAll(schoolId?: string, role?: string) {
-    const whereClause: any = {};
+    const whereClause: Prisma.UserWhereInput = {};
     if (schoolId) whereClause.schoolId = schoolId;
     if (role) whereClause.role = role;
-    
+
     return this.prisma.user.findMany({
       where: whereClause,
       select: {
@@ -90,7 +95,7 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto) {
     await this.findOne(id);
 
-    const updateData: any = { ...updateUserDto };
+    const updateData: Prisma.UserUpdateInput = { ...updateUserDto };
     if (updateUserDto.password) {
       updateData.password = await bcrypt.hash(updateUserDto.password, 10);
     }
@@ -105,7 +110,7 @@ export class UsersService {
         name: true,
         role: true,
         status: true,
-      }
+      },
     });
   }
 
@@ -119,10 +124,7 @@ export class UsersService {
   async findByEmailForAuth(email: string) {
     return this.prisma.user.findFirst({
       where: {
-        OR: [
-          { email: email },
-          { username: email }
-        ]
+        OR: [{ email: email }, { username: email }],
       },
     });
   }

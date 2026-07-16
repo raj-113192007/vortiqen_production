@@ -8,12 +8,12 @@ export class SuperadminService {
   async getStats() {
     const totalSchools = await this.prisma.school.count();
     const totalUsers = await this.prisma.user.count();
-    
+
     // Count only active/enrolled students for revenue calculation
     const totalStudents = await this.prisma.student.count({
       where: {
-        status: { in: ['REGISTERED', 'ENROLLED'] }
-      }
+        status: { in: ['REGISTERED', 'ENROLLED'] },
+      },
     });
 
     // VortiQen charges ₹299 per student
@@ -32,9 +32,9 @@ export class SuperadminService {
       orderBy: { createdAt: 'desc' },
       include: {
         _count: {
-          select: { students: true, users: true }
-        }
-      }
+          select: { students: true, users: true },
+        },
+      },
     });
   }
 

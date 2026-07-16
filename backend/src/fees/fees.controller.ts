@@ -14,7 +14,7 @@ export class FeesController {
   @Post('categories')
   async createCategory(
     @SchoolId() schoolId: string,
-    @Body() body: { name: string; amount: number }
+    @Body() body: { name: string; amount: number },
   ) {
     return this.feesService.createCategory(schoolId, body.name, body.amount);
   }
@@ -29,9 +29,14 @@ export class FeesController {
   @Post('ledgers/generate')
   async generateLedgers(
     @SchoolId() schoolId: string,
-    @Body() body: { categoryId: string; dueDate: string; classId?: string }
+    @Body() body: { categoryId: string; dueDate: string; classId?: string },
   ) {
-    return this.feesService.generateLedgers(schoolId, body.categoryId, body.dueDate, body.classId);
+    return this.feesService.generateLedgers(
+      schoolId,
+      body.categoryId,
+      body.dueDate,
+      body.classId,
+    );
   }
 
   @Roles('SUPER_ADMIN', 'SCHOOL_ADMIN', 'PARENT', 'STUDENT')
@@ -48,8 +53,20 @@ export class FeesController {
   @Post('pay')
   async recordPayment(
     @SchoolId() schoolId: string,
-    @Body() body: { ledgerId: string; amountPaid: number; paymentMethod: string; receiptNo?: string }
+    @Body()
+    body: {
+      ledgerId: string;
+      amountPaid: number;
+      paymentMethod: string;
+      receiptNo?: string;
+    },
   ) {
-    return this.feesService.recordPayment(schoolId, body.ledgerId, body.amountPaid, body.paymentMethod, body.receiptNo);
+    return this.feesService.recordPayment(
+      schoolId,
+      body.ledgerId,
+      body.amountPaid,
+      body.paymentMethod,
+      body.receiptNo,
+    );
   }
 }

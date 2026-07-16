@@ -1,6 +1,15 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import type { AuthenticatedRequest } from '../common/interfaces/authenticated-request.interface';
 
 @UseGuards(JwtAuthGuard)
 @Controller('chat')
@@ -8,8 +17,15 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post('groups')
-  createGroup(@Request() req: any, @Body('name') name: string) {
-    return this.chatService.createGroup(req.user.schoolId, name, req.user.userId);
+  createGroup(
+    @Request() req: AuthenticatedRequest,
+    @Body('name') name: string,
+  ) {
+    return this.chatService.createGroup(
+      req.user.schoolId!,
+      name,
+      req.user.userId,
+    );
   }
 
   @Post('groups/:id/members')
@@ -18,7 +34,7 @@ export class ChatController {
   }
 
   @Get('groups')
-  getMyGroups(@Request() req: any) {
+  getMyGroups(@Request() req: AuthenticatedRequest) {
     return this.chatService.getMyGroups(req.user.userId);
   }
 
@@ -28,7 +44,10 @@ export class ChatController {
   }
 
   @Get('direct/:userId/messages')
-  getDirectMessages(@Request() req: any, @Param('userId') otherUserId: string) {
+  getDirectMessages(
+    @Request() req: AuthenticatedRequest,
+    @Param('userId') otherUserId: string,
+  ) {
     return this.chatService.getDirectMessages(req.user.userId, otherUserId);
   }
 }

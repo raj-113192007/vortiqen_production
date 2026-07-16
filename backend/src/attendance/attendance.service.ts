@@ -1,11 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AttendanceService {
   constructor(private prisma: PrismaService) {}
 
-  async markAttendance(schoolId: string, date: string, studentStatuses: { studentId: string; status: string; remarks?: string }[], markedById: string) {
+  async markAttendance(
+    schoolId: string,
+    date: string,
+    studentStatuses: { studentId: string; status: string; remarks?: string }[],
+    markedById: string,
+  ) {
     const attendanceDate = new Date(date);
     attendanceDate.setUTCHours(0, 0, 0, 0); // Normalize to start of day
 
@@ -32,14 +37,19 @@ export class AttendanceService {
             remarks: ss.remarks,
             markedById,
           },
-        })
-      )
+        }),
+      ),
     );
 
     return { success: true, count: results.length };
   }
 
-  async getAttendanceByClass(schoolId: string, classId: string, sectionId: string, date: string) {
+  async getAttendanceByClass(
+    schoolId: string,
+    classId: string,
+    sectionId: string,
+    date: string,
+  ) {
     const attendanceDate = new Date(date);
     attendanceDate.setUTCHours(0, 0, 0, 0);
 
@@ -59,9 +69,9 @@ export class AttendanceService {
             rollNo: true,
             firstName: true,
             lastName: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 

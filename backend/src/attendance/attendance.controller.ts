@@ -14,9 +14,23 @@ export class AttendanceController {
   @Post()
   async markAttendance(
     @SchoolId() schoolId: string,
-    @Body() body: { date: string; studentStatuses: { studentId: string; status: string; remarks?: string }[]; markedById: string }
+    @Body()
+    body: {
+      date: string;
+      studentStatuses: {
+        studentId: string;
+        status: string;
+        remarks?: string;
+      }[];
+      markedById: string;
+    },
   ) {
-    return this.attendanceService.markAttendance(schoolId, body.date, body.studentStatuses, body.markedById);
+    return this.attendanceService.markAttendance(
+      schoolId,
+      body.date,
+      body.studentStatuses,
+      body.markedById,
+    );
   }
 
   @Roles('SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER')
@@ -27,7 +41,12 @@ export class AttendanceController {
     @Query('sectionId') sectionId: string,
     @Query('date') date: string,
   ) {
-    return this.attendanceService.getAttendanceByClass(schoolId, classId, sectionId, date);
+    return this.attendanceService.getAttendanceByClass(
+      schoolId,
+      classId,
+      sectionId,
+      date,
+    );
   }
 
   @Roles('SUPER_ADMIN', 'SCHOOL_ADMIN', 'TEACHER', 'PARENT', 'STUDENT')

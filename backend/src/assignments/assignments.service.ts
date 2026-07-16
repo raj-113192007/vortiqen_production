@@ -6,7 +6,12 @@ import { CreateAssignmentDto } from './dto/create-assignment.dto';
 export class AssignmentsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createAssignmentDto: CreateAssignmentDto, schoolId: string, teacherId: string, attachmentUrl?: string) {
+  async create(
+    createAssignmentDto: CreateAssignmentDto,
+    schoolId: string,
+    teacherId: string,
+    attachmentUrl?: string,
+  ) {
     return this.prisma.assignment.create({
       data: {
         schoolId,
@@ -36,14 +41,21 @@ export class AssignmentsService {
     return this.prisma.assignment.findMany({
       where: { teacherId, schoolId },
       include: {
-        section: { select: { name: true, academicClass: { select: { name: true } } } },
+        section: {
+          select: { name: true, academicClass: { select: { name: true } } },
+        },
         subject: { select: { name: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async submitAssignment(assignmentId: string, studentId: string, content?: string, attachmentUrl?: string) {
+  async submitAssignment(
+    assignmentId: string,
+    studentId: string,
+    content?: string,
+    attachmentUrl?: string,
+  ) {
     return this.prisma.assignmentSubmission.upsert({
       where: {
         assignmentId_studentId: { assignmentId, studentId },
@@ -73,12 +85,18 @@ export class AssignmentsService {
     return this.prisma.assignmentSubmission.findMany({
       where: { assignmentId },
       include: {
-        student: { select: { id: true, firstName: true, lastName: true, rollNo: true } },
+        student: {
+          select: { id: true, firstName: true, lastName: true, rollNo: true },
+        },
       },
     });
   }
 
-  async gradeSubmission(submissionId: string, grade: string, teacherNotes?: string) {
+  async gradeSubmission(
+    submissionId: string,
+    grade: string,
+    teacherNotes?: string,
+  ) {
     return this.prisma.assignmentSubmission.update({
       where: { id: submissionId },
       data: {

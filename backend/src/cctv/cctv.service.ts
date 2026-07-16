@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CctvService {
@@ -12,7 +13,15 @@ export class CctvService {
     });
   }
 
-  async addCamera(schoolId: string, data: any) {
+  async addCamera(
+    schoolId: string,
+    data: {
+      name: string;
+      location: string;
+      streamUrl: string;
+      status?: string;
+    },
+  ) {
     return this.prisma.cctvCamera.create({
       data: {
         schoolId,
@@ -24,7 +33,11 @@ export class CctvService {
     });
   }
 
-  async updateCamera(id: string, schoolId: string, data: any) {
+  async updateCamera(
+    id: string,
+    schoolId: string,
+    data: Prisma.CctvCameraUpdateInput,
+  ) {
     return this.prisma.cctvCamera.updateMany({
       where: { id, schoolId },
       data,
