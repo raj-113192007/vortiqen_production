@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 
+import '../onboarding/presentation/data_onboarding_hub_screen.dart';
+
 final adminStudentsProvider = FutureProvider<List<Student>>((ref) {
   return ref.watch(studentsRepositoryProvider).getStudents('1');
 });
@@ -26,17 +28,37 @@ class _StudentsScreenState extends ConsumerState<StudentsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Students',
+                  'Students Directory',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // TODO: Show enroll student modal
-                  },
-                  icon: const Icon(Icons.person_add),
-                  label: const Text('Enroll Student'),
+                Wrap(
+                  spacing: 12,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const DataOnboardingHubScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.cloud_upload_rounded),
+                      label: const Text('Bulk Import & Onboard'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF6C5CE7),
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        // Quick enroll
+                      },
+                      icon: const Icon(Icons.person_add),
+                      label: const Text('Quick Add'),
+                    ),
+                  ],
                 ),
               ],
             ),

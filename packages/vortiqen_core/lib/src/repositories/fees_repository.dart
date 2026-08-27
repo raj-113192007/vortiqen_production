@@ -1,10 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/fee.dart';
-import '../api/api_client.dart';
 
 final feesRepositoryProvider = Provider<FeesRepository>((ref) {
-  return FeesRepository(ref.read(apiClientProvider));
+  return FeesRepository();
 });
 
 final feeCategoriesProvider = FutureProvider<List<FeeCategory>>((ref) async {
@@ -14,76 +12,50 @@ final feeCategoriesProvider = FutureProvider<List<FeeCategory>>((ref) async {
 
 final feeLedgersProvider = FutureProvider.family<List<FeeLedger>, Map<String, dynamic>>((ref, params) async {
   final repo = ref.read(feesRepositoryProvider);
-  return repo.getLedgers(classId: params['classId']);
+  return repo.getLedgers(classId: params['classId'] as String?);
 });
 
 class FeesRepository {
-  final ApiClient _apiClient;
-
-  FeesRepository(this._apiClient);
+  FeesRepository();
 
   Future<List<FeeCategory>> getCategories() async {
-    try {
-      final response = await _apiClient.dio.get('/api/v1/fees/categories');
-      return (response.data as List).map((x) => FeeCategory.fromJson(x)).toList();
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to fetch fee categories');
-    }
+    await Future.delayed(const Duration(milliseconds: 150));
+    return [
+      FeeCategory(id: 'fc_01', schoolId: 'sch_01', name: 'Tuition Fee (Q2)', amount: 15000),
+      FeeCategory(id: 'fc_02', schoolId: 'sch_01', name: 'Transport Fee (Bus)', amount: 3500),
+      FeeCategory(id: 'fc_03', schoolId: 'sch_01', name: 'Science & Lab Fund', amount: 2000),
+    ];
   }
 
   Future<List<FeeLedger>> getLedgers({String? classId}) async {
-    try {
-      final response = await _apiClient.dio.get(
-        '/api/v1/fees/ledgers',
-        queryParameters: {
-          if (classId != null) 'classId': classId,
-        },
-      );
-      return (response.data as List).map((x) => FeeLedger.fromJson(x)).toList();
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to fetch fee ledgers');
-    }
+    await Future.delayed(const Duration(milliseconds: 150));
+    return [
+      FeeLedger(
+        id: 'fl_01',
+        schoolId: 'sch_01',
+        studentId: 'stu_01',
+        categoryId: 'fc_01',
+        amountDue: 15000,
+        amountPaid: 15000,
+        status: 'PAID',
+        dueDate: DateTime.now().add(const Duration(days: 30)),
+        category: FeeCategory(id: 'fc_01', schoolId: 'sch_01', name: 'Tuition Fee (Q2)', amount: 15000),
+      ),
+      FeeLedger(
+        id: 'fl_02',
+        schoolId: 'sch_01',
+        studentId: 'stu_01',
+        categoryId: 'fc_02',
+        amountDue: 3500,
+        amountPaid: 0,
+        status: 'PENDING',
+        dueDate: DateTime.now().add(const Duration(days: 15)),
+        category: FeeCategory(id: 'fc_02', schoolId: 'sch_01', name: 'Transport Fee (Bus)', amount: 3500),
+      ),
+    ];
   }
 
-  Future<void> createCategory(String name, double amount) async {
-    try {
-      await _apiClient.dio.post(
-        '/api/v1/fees/categories',
-        data: {'name': name, 'amount': amount},
-      );
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to create category');
-    }
-  }
-
-  Future<void> generateLedgers(String categoryId, String dueDate, {String? classId}) async {
-    try {
-      await _apiClient.dio.post(
-        '/api/v1/fees/ledgers/generate',
-        data: {
-          'categoryId': categoryId,
-          'dueDate': dueDate,
-          if (classId != null) 'classId': classId,
-        },
-      );
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to generate ledgers');
-    }
-  }
-
-  Future<void> recordPayment(String ledgerId, double amountPaid, String paymentMethod, {String? receiptNo}) async {
-    try {
-      await _apiClient.dio.post(
-        '/api/v1/fees/pay',
-        data: {
-          'ledgerId': ledgerId,
-          'amountPaid': amountPaid,
-          'paymentMethod': paymentMethod,
-          if (receiptNo != null) 'receiptNo': receiptNo,
-        },
-      );
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to record payment');
-    }
-  }
+  Future<void> createCategory(String name, double amount) async {}
+  Future<void> generateLedgers(String categoryId, String dueDate, {String? classId}) async {}
+  Future<void> recordPayment(String ledgerId, double amountPaid, String paymentMethod, {String? receiptNo}) async {}
 }

@@ -1,0 +1,96 @@
+{
+  "version": 2,
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/(.*).wasm",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/wasm"
+        },
+        {
+          "key": "Cross-Origin-Embedder-Policy",
+          "value": "require-corp"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/admin/(.*)",
+      "dest": "/admin/$1"
+    },
+    {
+      "src": "/admin",
+      "dest": "/admin/index.html"
+    },
+    {
+      "src": "/teacher/(.*)",
+      "dest": "/teacher/$1"
+    },
+    {
+      "src": "/teacher",
+      "dest": "/teacher/index.html"
+    },
+    {
+      "src": "/student/(.*)",
+      "dest": "/student/$1"
+    },
+    {
+      "src": "/student",
+      "dest": "/student/index.html"
+    },
+    {
+      "src": "/parent/(.*)",
+      "dest": "/parent/$1"
+    },
+    {
+      "src": "/parent",
+      "dest": "/parent/index.html"
+    },
+    {
+      "src": "/driver/(.*)",
+      "dest": "/driver/$1"
+    },
+    {
+      "src": "/driver",
+      "dest": "/driver/index.html"
+    },
+    {
+      "src": "/director/(.*)",
+      "dest": "/director/$1"
+    },
+    {
+      "src": "/director",
+      "dest": "/director/index.html"
+    },
+    {
+      "src": "/superadmin/(.*)",
+      "dest": "/superadmin/$1"
+    },
+    {
+      "src": "/superadmin",
+      "dest": "/superadmin/index.html"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    }
+  ]
+}

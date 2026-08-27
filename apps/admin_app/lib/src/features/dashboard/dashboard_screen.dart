@@ -18,6 +18,8 @@ import '../exams/presentation/exams_list_screen.dart';
 import '../hr/presentation/hr_dashboard_screen.dart';
 import '../chat/presentation/chat_list_screen.dart';
 import '../admissions/admissions_list_screen.dart';
+import '../onboarding/presentation/data_onboarding_hub_screen.dart';
+
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -73,6 +75,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         break;
       case 14:
         content = const CctvListScreen();
+        break;
+      case 15:
+        content = const DataOnboardingHubScreen();
         break;
       default:
         content = Center(

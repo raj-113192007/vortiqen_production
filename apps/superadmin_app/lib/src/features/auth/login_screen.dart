@@ -7,9 +7,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const VortiqenLoginScreen(
-      title: 'VortiQen Super Admin',
-      subtitle: 'Platform Management Portal',
-      primaryColor: Colors.deepPurple,
+      role: AppRole.superAdmin,
+      title: 'VortiQen SuperAdmin',
+      subtitle: 'Platform Control Tower & Multi-Tenant Fleet Monitor',
+      defaultEmail: 'superadmin@vortiqen.com',
     );
   }
 }

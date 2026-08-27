@@ -73,26 +73,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/exams/:id',
         builder: (context, state) => ExamDetailsScreen(exam: state.extra as Exam),
       ),
-      GoRoute(
-        path: '/register',
-        builder: (context, state) => const RegisterSchoolPage(),
-      ),
-      GoRoute(
-        path: '/otp',
-        builder: (context, state) => const OtpVerificationPage(),
-      ),
-      GoRoute(
-        path: '/terms',
-        builder: (context, state) => const TermsPage(),
-      ),
-      GoRoute(
-        path: '/privacy',
-        builder: (context, state) => const PrivacyPage(),
-      ),
-      GoRoute(
-        path: '/set-password',
-        builder: (context, state) => const SetPasswordPage(),
-      ),
     ],
   );
 });

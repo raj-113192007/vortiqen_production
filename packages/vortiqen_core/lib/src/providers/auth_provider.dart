@@ -1,5 +1,4 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../api/api_client.dart';
 import '../models/user.dart';
 
 part 'auth_provider.g.dart';
@@ -14,28 +13,50 @@ class AuthState {
 class Auth extends _$Auth {
   @override
   FutureOr<AuthState> build() {
-    return const AuthState(); // Initially not logged in
+    return const AuthState();
   }
 
   Future<bool> login(String email, String password) async {
-    try {
-      final dio = ref.read(apiClientProvider);
-      final response = await dio.dio.post('/api/v1/auth/login', data: {
-        'email': email,
-        'password': password,
-      });
+    // Offline / Mock Standalone Mode: Instant login with role-specific mock user
+    await Future.delayed(const Duration(milliseconds: 300));
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final user = User.fromJson(response.data['user']);
-        final token = response.data['access_token'] as String;
-        state = AsyncData(AuthState(user: user, token: token));
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print('Login error: $e');
-      return false;
+    final normalized = email.toLowerCase();
+    String role = 'SCHOOL_ADMIN';
+    String name = 'Principal Sharma';
+
+    if (normalized.contains('teacher')) {
+      role = 'TEACHER';
+      name = 'Dr. Priya Verma';
+    } else if (normalized.contains('student') || normalized.contains('stu')) {
+      role = 'STUDENT';
+      name = 'Aarav Sharma';
+    } else if (normalized.contains('parent')) {
+      role = 'PARENT';
+      name = 'Rajesh Sharma';
+    } else if (normalized.contains('driver')) {
+      role = 'DRIVER';
+      name = 'Ramesh Kumar (Route 04)';
+    } else if (normalized.contains('director')) {
+      role = 'DIRECTOR';
+      name = 'Director S. K. Gupta';
+    } else if (normalized.contains('superadmin')) {
+      role = 'SUPER_ADMIN';
+      name = 'Platform SuperAdmin';
     }
+
+    final mockUser = User(
+      id: 'mock_user_101',
+      username: email,
+      email: email,
+      name: name,
+      role: role,
+      status: 'ACTIVE',
+      schoolId: 'school_delhi_01',
+      phone: '+91 98765 43210',
+    );
+
+    state = AsyncData(AuthState(user: mockUser, token: 'mock_jwt_token_offline_mode'));
+    return true;
   }
 
   void logout() {

@@ -1,28 +1,44 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
+
 import '../features/auth/login_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 
-final appRouterProvider = Provider<GoRouter>((ref) {
-  final authStateAsync = ref.watch(authProvider);
-  final authState = authStateAsync.value?.token != null;
+final routerProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
 
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     redirect: (context, state) {
+      final isSplash = state.uri.path == '/splash';
+      if (isSplash) return null;
+
+      final isLoggedIn = authState.value?.token != null;
       final isLoggingIn = state.uri.path == '/login';
-      if (!authState && !isLoggingIn) return '/login';
-      if (authState && isLoggingIn) return '/dashboard';
+
+      if (!isLoggedIn && !isLoggingIn) return '/login';
+      if (isLoggedIn && isLoggingIn) return '/';
+
       return null;
     },
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const VortiqenSplashScreen(
+          role: AppRole.driver,
+          appTitle: 'VortiQen Driver',
+          appSubtitle: 'Fleet Navigation & Student Safety',
+          nextRoute: '/login',
+        ),
+      ),
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        path: '/dashboard',
+        path: '/',
         builder: (context, state) => const DashboardScreen(),
       ),
     ],

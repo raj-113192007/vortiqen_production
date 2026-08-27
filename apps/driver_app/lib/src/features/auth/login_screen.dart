@@ -6,10 +6,11 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return VortiqenLoginScreen(
-      title: 'Driver Portal',
-      subtitle: 'Manage your routes and vehicles',
-      primaryColor: Colors.amber,
+    return const VortiqenLoginScreen(
+      role: AppRole.driver,
+      title: 'VortiQen Driver',
+      subtitle: 'Sign in to access route stops, student boarding & live GPS',
+      defaultEmail: 'driver@vortiqen.com',
     );
   }
 }

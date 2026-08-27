@@ -1,34 +1,77 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../api/api_client.dart';
 import '../models/platform_stats.dart';
 import '../models/school.dart';
 
 class SuperadminRepository {
-  final ApiClient _api;
-
-  SuperadminRepository(this._api);
+  SuperadminRepository();
 
   Future<PlatformStats> getStats() async {
-    final response = await _api.dio.get('/superadmin/stats');
-    return PlatformStats.fromJson(response.data);
+    await Future.delayed(const Duration(milliseconds: 200));
+    return const PlatformStats(
+      totalSchools: 18,
+      totalUsers: 4320,
+      totalStudents: 3850,
+      totalRevenue: 1151150,
+    );
   }
 
   Future<List<School>> getSchools() async {
-    final response = await _api.dio.get('/superadmin/schools');
-    return (response.data as List).map((e) => School.fromJson(e)).toList();
+    await Future.delayed(const Duration(milliseconds: 200));
+    return [
+      School(
+        id: 'sch_01',
+        name: 'Delhi Public International School',
+        code: 'DPIS01',
+        city: 'New Delhi',
+        status: 'ACTIVE',
+        createdAt: DateTime.now().subtract(const Duration(days: 90)),
+        updatedAt: DateTime.now(),
+      ),
+      School(
+        id: 'sch_02',
+        name: 'St. Xavier Global Academy',
+        code: 'SXGA02',
+        city: 'Bengaluru',
+        status: 'ACTIVE',
+        createdAt: DateTime.now().subtract(const Duration(days: 45)),
+        updatedAt: DateTime.now(),
+      ),
+      School(
+        id: 'sch_03',
+        name: 'Greenwood World School',
+        code: 'GWWS03',
+        city: 'Pune',
+        status: 'TRIAL',
+        createdAt: DateTime.now().subtract(const Duration(days: 10)),
+        updatedAt: DateTime.now(),
+      ),
+      School(
+        id: 'sch_04',
+        name: 'Heritage Valley Convent',
+        code: 'HVC04',
+        city: 'Jaipur',
+        status: 'ACTIVE',
+        createdAt: DateTime.now().subtract(const Duration(days: 120)),
+        updatedAt: DateTime.now(),
+      ),
+    ];
   }
 
   Future<School> updateSchoolStatus(String id, String status) async {
-    final response = await _api.dio.patch(
-      '/superadmin/schools/$id/status',
-      data: {'status': status},
+    return School(
+      id: id,
+      name: 'Updated School',
+      code: 'SCH01',
+      city: 'Delhi',
+      status: status,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
-    return School.fromJson(response.data);
   }
 }
 
 final superadminRepositoryProvider = Provider<SuperadminRepository>((ref) {
-  return SuperadminRepository(ref.watch(apiClientProvider));
+  return SuperadminRepository();
 });
 
 final platformStatsProvider = FutureProvider<PlatformStats>((ref) {

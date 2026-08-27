@@ -1,75 +1,50 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/route.dart';
 import '../models/vehicle.dart';
 import '../models/student.dart';
-import '../api/api_client.dart';
 
 class TransportRepository {
-  final Dio _client;
-
-  TransportRepository(this._client);
+  TransportRepository();
 
   Future<List<Route>> getRoutes() async {
-    final response = await _client.get('/api/v1/transport/routes');
-    final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => Route.fromJson(e as Map<String, dynamic>)).toList();
-  }
-
-  Future<Route> createRoute(String name) async {
-    final response = await _client.post('/api/v1/transport/routes', data: {
-      'name': name,
-    });
-    return Route.fromJson(response.data['data'] as Map<String, dynamic>);
+    await Future.delayed(const Duration(milliseconds: 150));
+    return [
+      Route(id: 'r_01', name: 'Route 01: North Campus Express', schoolId: 'sch_01'),
+      Route(id: 'r_02', name: 'Route 02: City Center & Civil Lines', schoolId: 'sch_01'),
+      Route(id: 'r_03', name: 'Route 03: Green Park & Ring Road', schoolId: 'sch_01'),
+      Route(id: 'r_04', name: 'Route 04: Sector 14 to Main Gate', schoolId: 'sch_01'),
+    ];
   }
 
   Future<List<Vehicle>> getVehicles() async {
-    final response = await _client.get('/api/v1/transport/vehicles');
-    final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => Vehicle.fromJson(e as Map<String, dynamic>)).toList();
-  }
-
-  Future<Vehicle> createVehicle({
-    required String plateNumber,
-    required int capacity,
-    String? driverId,
-    String? routeId,
-  }) async {
-    final response = await _client.post('/api/v1/transport/vehicles', data: {
-      'plateNumber': plateNumber,
-      'capacity': capacity,
-      if (driverId != null) 'driverId': driverId,
-      if (routeId != null) 'routeId': routeId,
-    });
-    return Vehicle.fromJson(response.data['data'] as Map<String, dynamic>);
-  }
-
-  Future<void> assignStudent({
-    required String studentId,
-    String? routeId,
-    String? vehicleId,
-  }) async {
-    await _client.post('/api/v1/transport/assign', data: {
-      'studentId': studentId,
-      if (routeId != null) 'routeId': routeId,
-      if (vehicleId != null) 'vehicleId': vehicleId,
-    });
-  }
-
-  Future<Student> getStudentTransportDetails(String studentId) async {
-    final response = await _client.get('/api/v1/transport/student/$studentId');
-    return Student.fromJson(response.data['data'] as Map<String, dynamic>);
+    await Future.delayed(const Duration(milliseconds: 150));
+    return [
+      Vehicle(id: 'v_01', plateNumber: 'DL 01 AB 1234', capacity: 32, schoolId: 'sch_01'),
+      Vehicle(id: 'v_02', plateNumber: 'DL 01 CD 5678', capacity: 40, schoolId: 'sch_01'),
+      Vehicle(id: 'v_03', plateNumber: 'DL 01 EF 9012', capacity: 28, schoolId: 'sch_01'),
+    ];
   }
 
   Future<Vehicle> getDriverTransportDetails() async {
-    final response = await _client.get('/api/v1/transport/driver/my-details');
-    return Vehicle.fromJson(response.data['data'] as Map<String, dynamic>);
+    await Future.delayed(const Duration(milliseconds: 150));
+    return Vehicle(
+      id: 'v_04',
+      plateNumber: 'DL 01 PB 4488',
+      capacity: 36,
+      schoolId: 'sch_01',
+      route: Route(id: 'r_04', name: 'Route 04: Sector 14 to Campus', schoolId: 'sch_01'),
+      students: [
+        Student(id: 's_01', firstName: 'Aarav', lastName: 'Sharma', rollNo: '101', schoolId: 'sch_01'),
+        Student(id: 's_02', firstName: 'Ananya', lastName: 'Iyer', rollNo: '102', schoolId: 'sch_01'),
+        Student(id: 's_03', firstName: 'Rohan', lastName: 'Mehta', rollNo: '103', schoolId: 'sch_01'),
+        Student(id: 's_04', firstName: 'Diya', lastName: 'Patel', rollNo: '104', schoolId: 'sch_01'),
+      ],
+    );
   }
 }
 
 final transportRepositoryProvider = Provider<TransportRepository>((ref) {
-  final client = ref.watch(apiClientProvider);
-  return TransportRepository(client.dio);
+  return TransportRepository();
 });
 
 final routesProvider = FutureProvider<List<Route>>((ref) {
@@ -80,10 +55,19 @@ final vehiclesProvider = FutureProvider<List<Vehicle>>((ref) {
   return ref.watch(transportRepositoryProvider).getVehicles();
 });
 
-final studentTransportProvider = FutureProvider.family<Student, String>((ref, studentId) {
-  return ref.watch(transportRepositoryProvider).getStudentTransportDetails(studentId);
-});
-
 final driverTransportProvider = FutureProvider<Vehicle>((ref) {
   return ref.watch(transportRepositoryProvider).getDriverTransportDetails();
+});
+
+final studentTransportProvider = FutureProvider.family<Student, String>((ref, studentId) async {
+  await Future.delayed(const Duration(milliseconds: 150));
+  return Student(
+    id: studentId,
+    firstName: 'Aarav',
+    lastName: 'Sharma',
+    rollNo: '101',
+    schoolId: 'sch_01',
+    route: Route(id: 'r_04', name: 'Route 04: Sector 14 to Campus', schoolId: 'sch_01'),
+    vehicle: Vehicle(id: 'v_04', plateNumber: 'DL 01 PB 4488', capacity: 36, schoolId: 'sch_01'),
+  );
 });

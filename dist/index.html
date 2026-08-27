@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VortiQen — Multi-App Web Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F8F9FE;
+      --card-bg: #FFFFFF;
+      --border: #E2E8F0;
+      --text-main: #1E293B;
+      --text-muted: #64748B;
+      --admin-color: #6C5CE7;
+      --teacher-color: #00B894;
+      --student-color: #0984E3;
+      --parent-color: #FF7675;
+      --driver-color: #F39C12;
+      --director-color: #D4AF37;
+      --superadmin-color: #E84393;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--border);
+      padding: 18px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #6C5CE7, #8E44AD);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-tag {
+      background: #F1F5F9;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      flex: 1;
+      width: 100%;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero-section h2 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .hero-section p {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Apps Grid */
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+    }
+
+    .app-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .app-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+
+    .app-info h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .app-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .app-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-launch {
+      flex: 1;
+      text-align: center;
+      padding: 12px 18px;
+      border-radius: 12px;
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: opacity 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-launch:hover {
+      opacity: 0.9;
+    }
+
+    .btn-preview {
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: #F8FAFC;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-preview:hover {
+      background: #F1F5F9;
+    }
+
+    /* Simulator Modal Frame */
+    .simulator-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .phone-container {
+      width: 400px;
+      height: 820px;
+      max-height: 94vh;
+      background: #000;
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-notch {
+      width: 140px;
+      height: 24px;
+      background: #000;
+      border-radius: 0 0 16px 16px;
+      margin: 0 auto;
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    .phone-screen {
+      flex: 1;
+      background: white;
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .phone-screen iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .close-sim {
+      position: absolute;
+      top: -48px;
+      right: 0;
+      background: white;
+      border: none;
+      color: #000;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      background: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">V</div>
+      <div class="brand-text">
+        <h1>VortiQen</h1>
+        <p>Unified Flutter Web Monorepo</p>
+      </div>
+    </div>
+    <div class="header-tag">Live Vercel Preview Hub</div>
+  </header>
+
+  <!-- Main Grid -->
+  <main>
+    <div class="hero-section">
+      <h2>VortiQen Multi-App Interactive Suite</h2>
+      <p>Select any application below to launch in full-screen or preview inside the mobile simulator frame.</p>
+    </div>
+
+    <div class="apps-grid">
+
+      <!-- 1. Admin App -->
+      <div class="app-card" style="border-top: 4px solid var(--admin-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(108, 92, 231, 0.1); color: var(--admin-color);">🏫</div>
+            <div class="app-info">
+              <h3>Admin App</h3>
+              <span class="app-badge" style="background: rgba(108, 92, 231, 0.1); color: var(--admin-color);">School Operations</span>
+            </div>
+          </div>
+          <p class="app-desc">Student/Staff management, Fees ledgers, Exams setup, HR payroll & the 5-in-1 Data Onboarding Hub.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./admin/" class="btn-launch" style="background: var(--admin-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./admin/', 'VortiQen Admin')">📱 Phone View</button>
+        </div>
+      </div>
+
+      <!-- 2. Teacher App -->
+      <div class="app-card" style="border-top: 4px solid var(--teacher-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(0, 184, 148, 0.1); color: var(--teacher-color);">👩‍🏫</div>
+            <div class="app-info">
+              <h3>Teacher App</h3>
+              <span class="app-badge" style="background: rgba(0, 184, 148, 0.1); color: var(--teacher-color);">Academics & Marks</span>
+            </div>
+          </div>
+          <p class="app-desc">Daily class attendance marking, homework assignments, student marks entry and payslips view.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./teacher/" class="btn-launch" style="background: var(--teacher-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./teacher/', 'VortiQen Teacher')">📱 Phone View</button>
+        </div>
+      </div>
+
+      <!-- 3. Student App -->
+      <div class="app-card" style="border-top: 4px solid var(--student-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(9, 132, 227, 0.1); color: var(--student-color);">🎓</div>
+            <div class="app-info">
+              <h3>Student App</h3>
+              <span class="app-badge" style="background: rgba(9, 132, 227, 0.1); color: var(--student-color);">Learning Portal</span>
+            </div>
+          </div>
+          <p class="app-desc">Class timetables, homework tracking, online exam marks and instant PDF report card download.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./student/" class="btn-launch" style="background: var(--student-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./student/', 'VortiQen Student')">📱 Phone View</button>
+        </div>
+      </div>
+
+      <!-- 4. Parent App -->
+      <div class="app-card" style="border-top: 4px solid var(--parent-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(255, 118, 117, 0.1); color: var(--parent-color);">👨‍👩‍👦</div>
+            <div class="app-info">
+              <h3>Parent App</h3>
+              <span class="app-badge" style="background: rgba(255, 118, 117, 0.1); color: var(--parent-color);">Family & Safety</span>
+            </div>
+          </div>
+          <p class="app-desc">Multi-child performance switcher, 1-click school fee payment and real-time live bus GPS tracking.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./parent/" class="btn-launch" style="background: var(--parent-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./parent/', 'VortiQen Parent')">📱 Phone View</button>
+        </div>
+      </div>
+
+      <!-- 5. Driver App -->
+      <div class="app-card" style="border-top: 4px solid var(--driver-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(243, 156, 18, 0.1); color: var(--driver-color);">🚌</div>
+            <div class="app-info">
+              <h3>Driver App</h3>
+              <span class="app-badge" style="background: rgba(243, 156, 18, 0.1); color: var(--driver-color);">Transport Cockpit</span>
+            </div>
+          </div>
+          <p class="app-desc">High-contrast route navigation with 1-tap live GPS broadcasting and student bus boarding checklist.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./driver/" class="btn-launch" style="background: var(--driver-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./driver/', 'VortiQen Driver')">📱 Phone View</button>
+        </div>
+      </div>
+
+      <!-- 6. Director App -->
+      <div class="app-card" style="border-top: 4px solid var(--director-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(212, 175, 55, 0.1); color: var(--director-color);">👑</div>
+            <div class="app-info">
+              <h3>Director App</h3>
+              <span class="app-badge" style="background: rgba(212, 175, 55, 0.1); color: var(--director-color);">Executive Board</span>
+            </div>
+          </div>
+          <p class="app-desc">Institutional oversight, annual revenue ticker, staff performance dials and board presentation exports.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./director/" class="btn-launch" style="background: var(--director-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./director/', 'VortiQen Director')">📱 Phone View</button>
+        </div>
+      </div>
+
+      <!-- 7. SuperAdmin App -->
+      <div class="app-card" style="border-top: 4px solid var(--superadmin-color);">
+        <div>
+          <div class="card-top">
+            <div class="app-icon-box" style="background: rgba(232, 67, 147, 0.1); color: var(--superadmin-color);">🛡️</div>
+            <div class="app-info">
+              <h3>SuperAdmin App</h3>
+              <span class="app-badge" style="background: rgba(232, 67, 147, 0.1); color: var(--superadmin-color);">Control Tower</span>
+            </div>
+          </div>
+          <p class="app-desc">Platform-wide multi-tenant fleet manager, global MRR analytics and school activation approval queue.</p>
+        </div>
+        <div class="card-actions">
+          <a href="./superadmin/" class="btn-launch" style="background: var(--superadmin-color);">Launch Web</a>
+          <button class="btn-preview" onclick="openSimulator('./superadmin/', 'VortiQen SuperAdmin')">📱 Phone View</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Mobile Simulator Modal -->
+  <div class="simulator-overlay" id="simOverlay">
+    <div class="phone-container">
+      <button class="close-sim" onclick="closeSimulator()">✕</button>
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <iframe id="simFrame" src=""></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>VortiQen ERP Ecosystem • Built for high-performance scale • Ready for Vercel Deployment</p>
+  </footer>
+
+  <script>
+    function openSimulator(url, title) {
+      document.getElementById('simFrame').src = url;
+      document.getElementById('simOverlay').style.display = 'flex';
+    }
+
+    function closeSimulator() {
+      document.getElementById('simOverlay').style.display = 'none';
+      document.getElementById('simFrame').src = '';
+    }
+
+    document.getElementById('simOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeSimulator();
+    });
+  </script>
+</body>
+</html>

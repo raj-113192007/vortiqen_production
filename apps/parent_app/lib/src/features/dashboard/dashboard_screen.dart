@@ -72,14 +72,9 @@ class DashboardScreen extends ConsumerWidget {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Class: ${child.academicClass?.name ?? 'N/A'} - ${child.section?.name ?? ''}',
-                                style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[400]),
+                                'Roll No: ${child.rollNo} • Class 10-A',
+                                style: TextStyle(color: Colors.grey[600], fontSize: 13),
                               ),
-                              if (child.rollNo != null)
-                                Text(
-                                  'Roll No: ${child.rollNo}',
-                                  style: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey[400]),
-                                ),
                             ],
                           ),
                         ),

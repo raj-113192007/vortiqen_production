@@ -1,0 +1,17 @@
+{
+  "name": "vortiqen-production-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build_web.js",
+    "build:admin": "node build_web.js admin_app",
+    "build:teacher": "node build_web.js teacher_app",
+    "build:student": "node build_web.js student_app",
+    "build:parent": "node build_web.js parent_app",
+    "build:driver": "node build_web.js driver_app",
+    "build:director": "node build_web.js director_app",
+    "build:superadmin": "node build_web.js superadmin_app",
+    "preview": "npx serve dist"
+  }
+}
