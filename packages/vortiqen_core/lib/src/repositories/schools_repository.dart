@@ -1,28 +1,41 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/school.dart';
-import '../api/api_client.dart';
 
 class SchoolsRepository {
-  final Dio _client;
-
-  SchoolsRepository(this._client);
+  SchoolsRepository();
 
   Future<List<School>> getSchools() async {
-    final response = await _client.get('/api/v1/schools');
-    final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => School.fromJson(e as Map<String, dynamic>)).toList();
+    await Future.delayed(const Duration(milliseconds: 50));
+    return [
+      School(
+        id: 'sch_01',
+        name: 'Delhi Public International School',
+        code: 'DPIS01',
+        address: 'Sector 14, Mathura Road',
+        city: 'New Delhi',
+        state: 'Delhi',
+        status: 'ACTIVE',
+        createdAt: DateTime.now().subtract(const Duration(days: 90)),
+        updatedAt: DateTime.now(),
+      ),
+    ];
   }
 
   Future<School> createSchool(Map<String, dynamic> schoolData) async {
-    final response = await _client.post('/api/v1/schools', data: schoolData);
-    return School.fromJson(response.data['data'] as Map<String, dynamic>);
+    return School(
+      id: 'sch_new',
+      name: schoolData['name'] ?? 'New School',
+      code: schoolData['code'] ?? 'SCH01',
+      city: schoolData['city'] ?? 'City',
+      status: 'ACTIVE',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
   }
 }
 
 final schoolsRepositoryProvider = Provider<SchoolsRepository>((ref) {
-  final client = ref.watch(apiClientProvider);
-  return SchoolsRepository(client.dio);
+  return SchoolsRepository();
 });
 
 final schoolsProvider = FutureProvider<List<School>>((ref) {

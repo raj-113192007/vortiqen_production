@@ -1,24 +1,44 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import '../models/assignment.dart';
-import '../api/api_client.dart';
 
 class AssignmentsRepository {
-  final Dio _client;
-
-  AssignmentsRepository(this._client);
+  AssignmentsRepository();
 
   Future<List<Assignment>> getAssignmentsForSection(String sectionId) async {
-    final response = await _client.get('/api/v1/assignments/section/$sectionId');
-    final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => Assignment.fromJson(e as Map<String, dynamic>)).toList();
+    await Future.delayed(const Duration(milliseconds: 50));
+    return [
+      Assignment(
+        id: 'asg_01',
+        schoolId: 'sch_01',
+        sectionId: sectionId,
+        subjectId: 'sub_01',
+        teacherId: 'u_t1',
+        title: 'Trigonometry & Calculus Problem Set 4',
+        description: 'Complete questions 1 to 25 from Chapter 7 textbook and upload clear handwritten scans.',
+        dueDate: DateTime.now().add(const Duration(days: 3)),
+        createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        subjectName: 'Advanced Mathematics',
+        teacherName: 'Dr. Priya Verma',
+      ),
+      Assignment(
+        id: 'asg_02',
+        schoolId: 'sch_01',
+        sectionId: sectionId,
+        subjectId: 'sub_02',
+        teacherId: 'u_t2',
+        title: 'Optics & Ray Diagram Lab Worksheet',
+        description: 'Draw concave and convex mirror diagrams with experimental focal length calculations.',
+        dueDate: DateTime.now().add(const Duration(days: 5)),
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        subjectName: 'Physics & Dynamics',
+        teacherName: 'Prof. Alok Mukherjee',
+      ),
+    ];
   }
 
   Future<List<Assignment>> getAssignmentsForTeacher() async {
-    final response = await _client.get('/api/v1/assignments/teacher');
-    final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => Assignment.fromJson(e as Map<String, dynamic>)).toList();
+    return getAssignmentsForSection('sec_10a');
   }
 
   Future<Assignment> createAssignment({
@@ -29,28 +49,19 @@ class AssignmentsRepository {
     String? description,
     PlatformFile? file,
   }) async {
-    FormData formData = FormData.fromMap({
-      'sectionId': sectionId,
-      'subjectId': subjectId,
-      'title': title,
-      'dueDate': dueDate,
-      if (description != null) 'description': description,
-    });
-
-    if (file != null && file.path != null) {
-      formData.files.add(MapEntry(
-        'file',
-        await MultipartFile.fromFile(file.path!, filename: file.name),
-      ));
-    } else if (file != null && file.bytes != null) {
-      formData.files.add(MapEntry(
-        'file',
-        MultipartFile.fromBytes(file.bytes!, filename: file.name),
-      ));
-    }
-
-    final response = await _client.post('/api/v1/assignments', data: formData);
-    return Assignment.fromJson(response.data['data'] as Map<String, dynamic>);
+    return Assignment(
+      id: 'asg_new',
+      schoolId: 'sch_01',
+      sectionId: sectionId,
+      subjectId: subjectId,
+      teacherId: 'u_t1',
+      title: title,
+      description: description,
+      dueDate: DateTime.parse(dueDate),
+      createdAt: DateTime.now(),
+      subjectName: 'Subject',
+      teacherName: 'Dr. Priya Verma',
+    );
   }
 
   Future<AssignmentSubmission> submitAssignment({
@@ -59,51 +70,55 @@ class AssignmentsRepository {
     String? content,
     PlatformFile? file,
   }) async {
-    FormData formData = FormData.fromMap({
-      'studentId': studentId,
-      if (content != null) 'content': content,
-    });
-
-    if (file != null && file.path != null) {
-      formData.files.add(MapEntry(
-        'file',
-        await MultipartFile.fromFile(file.path!, filename: file.name),
-      ));
-    } else if (file != null && file.bytes != null) {
-      formData.files.add(MapEntry(
-        'file',
-        MultipartFile.fromBytes(file.bytes!, filename: file.name),
-      ));
-    }
-
-    final response = await _client.post('/api/v1/assignments/$assignmentId/submit', data: formData);
-    return AssignmentSubmission.fromJson(response.data['data'] as Map<String, dynamic>);
+    return AssignmentSubmission(
+      id: 'sub_new',
+      assignmentId: assignmentId,
+      studentId: studentId,
+      content: content,
+      status: 'SUBMITTED',
+      createdAt: DateTime.now(),
+      studentName: 'Aarav Sharma',
+      studentRollNo: '101',
+    );
   }
 
   Future<List<AssignmentSubmission>> getSubmissions(String assignmentId) async {
-    final response = await _client.get('/api/v1/assignments/$assignmentId/submissions');
-    final data = response.data['data'] as List<dynamic>;
-    return data.map((e) => AssignmentSubmission.fromJson(e as Map<String, dynamic>)).toList();
+    await Future.delayed(const Duration(milliseconds: 50));
+    return [
+      AssignmentSubmission(
+        id: 'sub_01',
+        assignmentId: assignmentId,
+        studentId: 'stu_01',
+        content: 'Completed all 25 questions with proofs attached.',
+        status: 'GRADED',
+        grade: 'A+',
+        teacherNotes: 'Excellent working and clear steps!',
+        createdAt: DateTime.now().subtract(const Duration(hours: 4)),
+        studentName: 'Aarav Sharma',
+        studentRollNo: '101',
+      ),
+      AssignmentSubmission(
+        id: 'sub_02',
+        assignmentId: assignmentId,
+        studentId: 'stu_02',
+        content: 'Attached PDF worksheet.',
+        status: 'SUBMITTED',
+        createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+        studentName: 'Ananya Iyer',
+        studentRollNo: '102',
+      ),
+    ];
   }
 
   Future<void> gradeSubmission({
     required String submissionId,
     required String grade,
     String? teacherNotes,
-  }) async {
-    await _client.patch(
-      '/api/v1/assignments/submissions/$submissionId/grade',
-      data: {
-        'grade': grade,
-        if (teacherNotes != null) 'teacherNotes': teacherNotes,
-      },
-    );
-  }
+  }) async {}
 }
 
 final assignmentsRepositoryProvider = Provider<AssignmentsRepository>((ref) {
-  final client = ref.watch(apiClientProvider);
-  return AssignmentsRepository(client.dio);
+  return AssignmentsRepository();
 });
 
 final sectionAssignmentsProvider = FutureProvider.family<List<Assignment>, String>((ref, sectionId) {

@@ -7,3 +7,4 @@ export 'src/theme/app_theme.dart';
 export 'src/widgets/animated_button.dart';
 export 'src/widgets/animated_card.dart';
 export 'src/widgets/vibrant_header.dart';
+export 'src/widgets/adaptive_scaffold.dart';

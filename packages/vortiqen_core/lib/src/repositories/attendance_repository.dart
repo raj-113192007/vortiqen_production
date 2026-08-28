@@ -1,18 +1,16 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/attendance.dart';
-import '../api/api_client.dart';
 
 final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
-  return AttendanceRepository(ref.read(apiClientProvider));
+  return AttendanceRepository();
 });
 
 final classAttendanceProvider = FutureProvider.family<List<Attendance>, Map<String, dynamic>>((ref, params) async {
   final repo = ref.read(attendanceRepositoryProvider);
   return repo.getAttendanceByClass(
-    params['classId'],
-    params['sectionId'] ?? '',
-    params['date'],
+    params['classId'] ?? 'cls_10',
+    params['sectionId'] ?? 'sec_10a',
+    params['date'] ?? '2026-08-27',
   );
 });
 
@@ -22,52 +20,91 @@ final studentAttendanceProvider = FutureProvider.family<List<Attendance>, String
 });
 
 class AttendanceRepository {
-  final ApiClient _apiClient;
-
-  AttendanceRepository(this._apiClient);
+  AttendanceRepository();
 
   Future<List<Attendance>> getAttendanceByClass(String classId, String sectionId, String date) async {
-    try {
-      final response = await _apiClient.dio.get(
-        '/api/v1/attendance/class',
-        queryParameters: {
-          'classId': classId,
-          'sectionId': sectionId,
-          'date': date,
-        },
-      );
-      return (response.data as List).map((x) => Attendance.fromJson(x)).toList();
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to fetch attendance');
-    }
+    await Future.delayed(const Duration(milliseconds: 50));
+    return [
+      Attendance(
+        id: 'att_01',
+        schoolId: 'sch_01',
+        studentId: 'stu_01',
+        date: DateTime.now(),
+        status: 'PRESENT',
+        remarks: 'On time',
+      ),
+      Attendance(
+        id: 'att_02',
+        schoolId: 'sch_01',
+        studentId: 'stu_02',
+        date: DateTime.now(),
+        status: 'PRESENT',
+        remarks: 'On time',
+      ),
+      Attendance(
+        id: 'att_03',
+        schoolId: 'sch_01',
+        studentId: 'stu_03',
+        date: DateTime.now(),
+        status: 'ABSENT',
+        remarks: 'Sick leave informed',
+      ),
+      Attendance(
+        id: 'att_04',
+        schoolId: 'sch_01',
+        studentId: 'stu_04',
+        date: DateTime.now(),
+        status: 'PRESENT',
+        remarks: 'On time',
+      ),
+      Attendance(
+        id: 'att_05',
+        schoolId: 'sch_01',
+        studentId: 'stu_05',
+        date: DateTime.now(),
+        status: 'PRESENT',
+        remarks: 'On time',
+      ),
+    ];
   }
 
   Future<List<Attendance>> getAttendanceByStudent(String studentId) async {
-    try {
-      final response = await _apiClient.dio.get(
-        '/api/v1/attendance/student',
-        queryParameters: {
-          'studentId': studentId,
-        },
-      );
-      return (response.data as List).map((x) => Attendance.fromJson(x)).toList();
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to fetch student attendance');
-    }
+    await Future.delayed(const Duration(milliseconds: 50));
+    return [
+      Attendance(
+        id: 'att_01',
+        schoolId: 'sch_01',
+        studentId: studentId,
+        date: DateTime.now(),
+        status: 'PRESENT',
+        remarks: 'Present - Regular Class',
+      ),
+      Attendance(
+        id: 'att_02',
+        schoolId: 'sch_01',
+        studentId: studentId,
+        date: DateTime.now().subtract(const Duration(days: 1)),
+        status: 'PRESENT',
+        remarks: 'Present - Science Lab',
+      ),
+      Attendance(
+        id: 'att_03',
+        schoolId: 'sch_01',
+        studentId: studentId,
+        date: DateTime.now().subtract(const Duration(days: 2)),
+        status: 'PRESENT',
+        remarks: 'Present - Sports Period',
+      ),
+      Attendance(
+        id: 'att_04',
+        schoolId: 'sch_01',
+        studentId: studentId,
+        date: DateTime.now().subtract(const Duration(days: 3)),
+        status: 'ABSENT',
+        remarks: 'Medical Leave',
+      ),
+    ];
   }
 
-  Future<void> markAttendance(String date, List<Map<String, dynamic>> studentStatuses, String markedById) async {
-    try {
-      await _apiClient.dio.post(
-        '/api/v1/attendance',
-        data: {
-          'date': date,
-          'studentStatuses': studentStatuses,
-          'markedById': markedById,
-        },
-      );
-    } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'Failed to mark attendance');
-    }
-  }
+  Future<void> markAttendance(String date, List<Map<String, dynamic>> studentStatuses, String markedById) async {}
 }

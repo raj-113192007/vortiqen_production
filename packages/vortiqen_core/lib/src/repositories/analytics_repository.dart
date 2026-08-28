@@ -1,32 +1,51 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/analytics.dart';
-import '../api/api_client.dart';
 
 class AnalyticsRepository {
-  final Dio _dio;
-
-  AnalyticsRepository(this._dio);
+  AnalyticsRepository();
 
   Future<DashboardMetrics> getDashboardMetrics() async {
-    final response = await _dio.get('/analytics/dashboard');
-    return DashboardMetrics.fromJson(response.data);
+    await Future.delayed(const Duration(milliseconds: 50));
+    return const DashboardMetrics(
+      totalStudents: 1420,
+      totalTeachers: 84,
+      totalRevenue: 48200000,
+      pendingEnquiries: 28,
+      totalAssets: 350,
+      assignedAssets: 290,
+    );
   }
 
   Future<List<SavedReport>> getReports() async {
-    final response = await _dio.get('/analytics/reports');
-    return (response.data as List).map((json) => SavedReport.fromJson(json)).toList();
+    await Future.delayed(const Duration(milliseconds: 50));
+    return [
+      SavedReport(
+        id: 'rep_01',
+        schoolId: 'sch_01',
+        type: 'FINANCIAL_ACADEMIC_AUDIT',
+        month: DateTime.now(),
+        summary: 'Q2 Comprehensive Operations & Fee Realisation Report',
+        data: '{"collected": "94%", "attendance": "96.4%"}',
+        createdAt: DateTime.now(),
+      ),
+    ];
   }
 
   Future<SavedReport> generateReportNow() async {
-    final response = await _dio.post('/analytics/reports/generate');
-    return SavedReport.fromJson(response.data);
+    return SavedReport(
+      id: 'rep_new',
+      schoolId: 'sch_01',
+      type: 'REALTIME_PULSE',
+      month: DateTime.now(),
+      summary: 'Executive Pulse Generated',
+      data: '{}',
+      createdAt: DateTime.now(),
+    );
   }
 }
 
 final analyticsRepositoryProvider = Provider<AnalyticsRepository>((ref) {
-  final dio = ref.watch(dioProvider);
-  return AnalyticsRepository(dio);
+  return AnalyticsRepository();
 });
 
 final dashboardMetricsProvider = FutureProvider<DashboardMetrics>((ref) {
