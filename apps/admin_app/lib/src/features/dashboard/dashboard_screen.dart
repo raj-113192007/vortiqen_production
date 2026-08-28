@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:go_router/go_router.dart';
 import 'dashboard_layout.dart';
-import '../schools/onboard_school_modal.dart';
 import '../academics/academics_screen.dart';
 import '../staff/staff_screen.dart';
 import '../students/students_screen.dart';
@@ -29,6 +27,8 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _selectedIndex = 0;
+  bool _action1Resolved = false;
+  bool _action2Resolved = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,55 +37,50 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       case 0:
         content = _buildOverview(context);
         break;
-      case 2:
-        content = const StaffScreen();
-        break;
-      case 3:
-        content = const AcademicsScreen();
-        break;
-      case 4:
-        content = const StudentsScreen();
-        break;
-      case 5:
-        content = const TransportScreen();
-        break;
-      case 6:
-        content = const AttendanceScreen();
-        break;
-      case 7:
-        content = const FeesScreen();
-        break;
-      case 8:
-        content = const AdmissionsListScreen();
-        break;
-      case 9:
-        content = const InventoryListScreen();
-        break;
-      case 10:
-        content = const ExamsListScreen();
-        break;
-      case 11:
-        content = const HrDashboardScreen();
-        break;
-      case 12:
-        content = const ChatListScreen();
-        break;
-      case 13:
-        content = const AnalyticsDashboardScreen();
-        break;
-      case 14:
-        content = const CctvListScreen();
-        break;
-      case 15:
+      case 1:
         content = const DataOnboardingHubScreen();
         break;
+      case 2:
+        content = const StudentsScreen();
+        break;
+      case 3:
+        content = const AttendanceScreen();
+        break;
+      case 4:
+        content = const FeesScreen();
+        break;
+      case 5:
+        content = const ExamsListScreen();
+        break;
+      case 6:
+        content = const HrDashboardScreen();
+        break;
+      case 7:
+        content = const CctvListScreen();
+        break;
+      case 8:
+        content = const StaffScreen();
+        break;
+      case 9:
+        content = const AcademicsScreen();
+        break;
+      case 10:
+        content = const TransportScreen();
+        break;
+      case 11:
+        content = const AdmissionsListScreen();
+        break;
+      case 12:
+        content = const InventoryListScreen();
+        break;
+      case 13:
+        content = const ChatListScreen();
+        break;
+      case 14:
+        content = const AnalyticsDashboardScreen();
+        break;
       default:
-        content = Center(
-          child: Text(
-            'Coming Soon',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white54),
-          ),
-        );
+        content = _buildOverview(context);
     }
 
     return DashboardLayout(
@@ -100,377 +95,784 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildOverview(BuildContext context) {
+    final theme = Theme.of(context);
+    final width = MediaQuery.of(context).size.width;
+    final isDesktop = width >= 1024;
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with Logout
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Overview',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  ref.read(authProvider.notifier).logout();
-                  context.go('/login');
-                },
-                icon: const Icon(Icons.logout, size: 18),
-                label: const Text('Logout'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.errorContainer,
-                  foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 32),
-
-          // Stat Cards Row
-          Row(
-            children: [
-              Expanded(
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    final schoolsAsync = ref.watch(schoolsProvider);
-                    return schoolsAsync.when(
-                      data: (schools) => _buildStatCard(
-                        context,
-                        title: 'Total Schools',
-                        value: '${schools.length}',
-                        icon: Icons.apartment,
-                        trend: '+1',
-                        isPositive: true,
-                      ),
-                      loading: () => _buildStatCard(
-                        context,
-                        title: 'Total Schools',
-                        value: '...',
-                        icon: Icons.apartment,
-                        trend: '',
-                        isPositive: true,
-                      ),
-                      error: (err, stack) => _buildStatCard(
-                        context,
-                        title: 'Total Schools',
-                        value: 'Error',
-                        icon: Icons.error,
-                        trend: '',
-                        isPositive: false,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: _buildStatCard(
-                  context,
-                  title: 'Active Users',
-                  value: '24.5k',
-                  icon: Icons.group,
-                  trend: '+5.4%',
-                  isPositive: true,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: _buildStatCard(
-                  context,
-                  title: 'Monthly Revenue',
-                  value: '\$124.5k',
-                  icon: Icons.account_balance_wallet,
-                  trend: '+18.2%',
-                  isPositive: true,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 32),
-
-          // Charts and Quick Actions Row
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Revenue Chart
-              Expanded(
-                flex: 2,
-                child: GlassCard(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Revenue Overview',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        height: 300,
-                        child: LineChart(
-                          LineChartData(
-                            gridData: FlGridData(show: false),
-                            titlesData: FlTitlesData(
-                              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                              leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-                              bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
-                            ),
-                            borderData: FlBorderData(show: false),
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: const [
-                                  FlSpot(0, 3),
-                                  FlSpot(1, 4),
-                                  FlSpot(2, 3.5),
-                                  FlSpot(3, 5),
-                                  FlSpot(4, 4.5),
-                                  FlSpot(5, 6),
-                                  FlSpot(6, 7),
-                                ],
-                                isCurved: true,
-                                color: Theme.of(context).colorScheme.primary,
-                                barWidth: 4,
-                                isStrokeCapRound: true,
-                                belowBarData: BarAreaData(
-                                  show: true,
-                                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 24),
-              
-              // Quick Actions
-              Expanded(
-                flex: 1,
-                child: GlassCard(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Quick Actions',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      _buildQuickActionBtn(
-                        context, 
-                        icon: Icons.add_circle_outline, 
-                        label: 'Onboard New School',
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => const OnboardSchoolModal(),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      _buildQuickActionBtn(
-                        context, 
-                        icon: Icons.campaign, 
-                        label: 'Send Announcement',
-                      ),
-                      const SizedBox(height: 16),
-                      _buildQuickActionBtn(
-                        context, 
-                        icon: Icons.table_chart, 
-                        label: 'Export Monthly Report',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      padding: EdgeInsets.symmetric(
+        horizontal: isDesktop ? 32 : 16,
+        vertical: 24,
       ),
-    );
-  }
-
-  Widget _buildStatCard(
-    BuildContext context, {
-    required String title,
-    required String value,
-    required IconData icon,
-    required String trend,
-    required bool isPositive,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return HoverableGlassCard(
-      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: colorScheme.primary),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: isPositive ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      isPositive ? Icons.trending_up : Icons.trending_down,
-                      color: isPositive ? Colors.green : Colors.red,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      trend,
-                      style: TextStyle(
-                        color: isPositive ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          // 1. Executive Welcome Header
+          _buildExecutiveHeader(context),
           const SizedBox(height: 24),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: TextStyle(
-              color: colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
+
+          // 2. Primary 4 KPI Pulse Cards
+          _buildKpiGrid(context, isDesktop),
+          const SizedBox(height: 24),
+
+          // 3. Dual Charts Row: Weekly Attendance Curve & Fee Realisation
+          if (isDesktop)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 7, child: _buildAttendanceChartCard(context)),
+                const SizedBox(width: 24),
+                Expanded(flex: 5, child: _buildFeeRealisationCard(context)),
+              ],
+            )
+          else ...[
+            _buildAttendanceChartCard(context),
+            const SizedBox(height: 20),
+            _buildFeeRealisationCard(context),
+          ],
+          const SizedBox(height: 24),
+
+          // 4. Principal's Urgent Action Queue
+          _buildActionQueue(context),
+          const SizedBox(height: 24),
+
+          // 5. Bottom Dual Row: Live Bus & Safety Pulse + Today's Schedule
+          if (isDesktop)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 6, child: _buildTransportSafetyCard(context)),
+                const SizedBox(width: 24),
+                Expanded(flex: 6, child: _buildTodayScheduleCard(context)),
+              ],
+            )
+          else ...[
+            _buildTransportSafetyCard(context),
+            const SizedBox(height: 20),
+            _buildTodayScheduleCard(context),
+          ],
+          const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildQuickActionBtn(BuildContext context, {required IconData icon, required String label, VoidCallback? onTap}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-            const Icon(Icons.chevron_right, size: 20),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// GlassCard Widget
-class GlassCard extends StatelessWidget {
-  final Widget child;
-  final EdgeInsets padding;
-
-  const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(16)});
-
-  @override
-  Widget build(BuildContext context) {
+  // --- 1. Executive Welcome Header ---
+  Widget _buildExecutiveHeader(BuildContext context) {
     return Container(
-      padding: padding,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: child,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 16,
+        runSpacing: 16,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Good Morning, Principal Sharma',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF1E293B),
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text('☀️', style: TextStyle(fontSize: 20)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6C5CE7).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      'Academic Year 2026-27 • Term 2 (Day 84 of 180)',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF6C5CE7),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Delhi Public International School',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          // Quick Action Buttons
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () => setState(() => _selectedIndex = 1),
+                icon: const Icon(Icons.cloud_upload_rounded, size: 16),
+                label: const Text('Data Onboarding'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6C5CE7),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+              ),
+              OutlinedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('📢 Notice Broadcast Dialog: Draft sent to all parents & teachers')),
+                  );
+                },
+                icon: const Icon(Icons.campaign_outlined, size: 16, color: Color(0xFF334155)),
+                label: const Text('Broadcast Notice', style: TextStyle(color: Color(0xFF334155), fontWeight: FontWeight.w600)),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Color(0xFFE2E8F0)),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
-}
 
-// Custom Hoverable widget for GlassCard
-class HoverableGlassCard extends StatefulWidget {
-  final Widget child;
-  final EdgeInsets padding;
+  // --- 2. Primary 4 KPI Pulse Cards ---
+  Widget _buildKpiGrid(BuildContext context, bool isDesktop) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final crossAxisCount = constraints.maxWidth > 1100 ? 4 : (constraints.maxWidth > 650 ? 2 : 1);
 
-  const HoverableGlassCard({super.key, required this.child, required this.padding});
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 18,
+          mainAxisSpacing: 18,
+          childAspectRatio: crossAxisCount == 4 ? 1.6 : 2.2,
+          children: [
+            _buildKpiCard(
+              title: 'Total Students',
+              value: '1,420',
+              badgeText: '96.8% Present Today',
+              badgeColor: const Color(0xFF00B894),
+              icon: Icons.people_alt_rounded,
+              color: const Color(0xFF6C5CE7),
+              subtext: '46 Absent • 12 On Leave',
+              onTap: () => setState(() => _selectedIndex = 2),
+            ),
+            _buildKpiCard(
+              title: 'Fee Collection (MTD)',
+              value: '₹ 42.8 L',
+              badgeText: '88.7% Realised',
+              badgeColor: const Color(0xFF0984E3),
+              icon: Icons.account_balance_wallet_rounded,
+              color: const Color(0xFF00B894),
+              subtext: '₹ 5.4 L Pending Dues',
+              onTap: () => setState(() => _selectedIndex = 4),
+            ),
+            _buildKpiCard(
+              title: 'Staff & Faculty Duty',
+              value: '81 / 84',
+              badgeText: '3 Approved Leaves',
+              badgeColor: const Color(0xFFF39C12),
+              icon: Icons.badge_rounded,
+              color: const Color(0xFFE84393),
+              subtext: 'All Periods Covered',
+              onTap: () => setState(() => _selectedIndex = 6),
+            ),
+            _buildKpiCard(
+              title: 'Smart Bus Fleet',
+              value: '8 / 8 Active',
+              badgeText: 'All GPS Live',
+              badgeColor: const Color(0xFF00B894),
+              icon: Icons.directions_bus_rounded,
+              color: const Color(0xFFF39C12),
+              subtext: '0 Delays • 412 Commuters',
+              onTap: () => setState(() => _selectedIndex = 7),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  @override
-  State<HoverableGlassCard> createState() => _HoverableGlassCardState();
-}
-
-class _HoverableGlassCardState extends State<HoverableGlassCard> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        transform: Matrix4.translationValues(0, _isHovered ? -5 : 0, 0),
+  Widget _buildKpiCard({
+    required String title,
+    required String value,
+    required String badgeText,
+    required Color badgeColor,
+    required IconData icon,
+    required Color color,
+    required String subtext,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          boxShadow: _isHovered
-              ? [
-                  BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                    blurRadius: 15,
-                    offset: const Offset(0, 10),
-                  )
-                ]
-              : [],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: GlassCard(
-          padding: widget.padding,
-          child: widget.child,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFF1E293B),
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: badgeColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    badgeText,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: badgeColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              subtext,
+              style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500),
+            ),
+          ],
         ),
       ),
     );
   }
-}
 
+  // --- 3. Weekly Attendance Curve & Fee Realisation ---
+  Widget _buildAttendanceChartCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Weekly Attendance Pulse',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1E293B)),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Campus-wide Student & Faculty Presence Rate',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: const Text(
+                  'This Week • Mon - Fri',
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF475569)),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 200,
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) => FlLine(color: const Color(0xFFF1F5F9), strokeWidth: 1),
+                ),
+                titlesData: FlTitlesData(
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 36,
+                      getTitlesWidget: (val, meta) => Text('${val.toInt()}%', style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 10)),
+                    ),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (val, meta) {
+                        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+                        if (val.toInt() >= 0 && val.toInt() < days.length) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(days[val.toInt()], style: const TextStyle(color: Color(0xFF64748B), fontSize: 11, fontWeight: FontWeight.w600)),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                  ),
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                borderData: FlBorderData(show: false),
+                minY: 85,
+                maxY: 100,
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: const [
+                      FlSpot(0, 94.5),
+                      FlSpot(1, 96.2),
+                      FlSpot(2, 95.8),
+                      FlSpot(3, 97.4),
+                      FlSpot(4, 96.8),
+                    ],
+                    isCurved: true,
+                    curveSmoothness: 0.35,
+                    color: const Color(0xFF6C5CE7),
+                    barWidth: 3.5,
+                    isStrokeCapRound: true,
+                    dotData: const FlDotData(show: true),
+                    belowBarData: BarAreaData(
+                      show: true,
+                      color: const Color(0xFF6C5CE7).withOpacity(0.08),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeeRealisationCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Fee Realisation Matrix',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1E293B)),
+          ),
+          const SizedBox(height: 2),
+          const Text(
+            'Term 2 Target: ₹ 48.2 Lakhs',
+            style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+          ),
+          const SizedBox(height: 20),
+
+          // Custom Progress Bar
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: SizedBox(
+              height: 14,
+              child: Row(
+                children: [
+                  Expanded(flex: 88, child: Container(color: const Color(0xFF00B894))),
+                  Expanded(flex: 12, child: Container(color: const Color(0xFFFF7675))),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          _buildFeeBreakdownRow('Collected (Paid Online/Bank)', '₹ 42,80,000', '88.7%', const Color(0xFF00B894)),
+          const Divider(height: 18, color: Color(0xFFF1F5F9)),
+          _buildFeeBreakdownRow('Pending Dues (< 15 Days)', '₹ 3,90,000', '8.1%', const Color(0xFFF39C12)),
+          const Divider(height: 18, color: Color(0xFFF1F5F9)),
+          _buildFeeBreakdownRow('Overdue Critical (> 30 Days)', '₹ 1,50,000', '3.2%', const Color(0xFFFF7675)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeeBreakdownRow(String label, String amount, String pct, Color dotColor) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF475569), fontWeight: FontWeight.w500),
+          ),
+        ),
+        Text(
+          amount,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '($pct)',
+          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: dotColor),
+        ),
+      ],
+    );
+  }
+
+  // --- 4. Principal's Urgent Action Queue ---
+  Widget _buildActionQueue(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAF5FF), // Soft violet background
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE9D5FF)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(color: const Color(0xFF6C5CE7), borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 16),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Urgent Action Queue (Needs Your Attention Today)',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF581C87)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Action 1: Leave Request
+          if (!_action1Resolved)
+            _buildActionCard(
+              icon: Icons.person_off_rounded,
+              iconColor: const Color(0xFFF39C12),
+              title: 'Faculty Leave Application: Prof. Alok Mukherjee',
+              subtitle: 'Requested 2 Days Medical Leave (28 Aug - 29 Aug). Substitute arrangement confirmed with Mrs. Emily Davis.',
+              actionText: '1-Tap Approve',
+              onAction: () {
+                setState(() => _action1Resolved = true);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('✅ Leave approved and substitute timetable notified!')),
+                );
+              },
+            ),
+
+          if (!_action1Resolved) const SizedBox(height: 12),
+
+          // Action 2: Overdue Fees WhatsApp
+          if (!_action2Resolved)
+            _buildActionCard(
+              icon: Icons.notifications_active_rounded,
+              iconColor: const Color(0xFFE84393),
+              title: '18 Students in Grade 10 have Tuition Fees Overdue > 30 Days',
+              subtitle: 'Send automated polite WhatsApp fee payment link directly to registered parent contacts.',
+              actionText: 'Send WhatsApp Ping',
+              onAction: () {
+                setState(() => _action2Resolved = true);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('💬 WhatsApp Payment Reminders dispatched to 18 parents!')),
+                );
+              },
+            ),
+
+          if (_action1Resolved && _action2Resolved)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: Center(
+                child: Text('🎉 All urgent tasks for today are resolved!', style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF00B894))),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionCard({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required String actionText,
+    required VoidCallback onAction,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: iconColor.withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: iconColor, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF1E293B))),
+                const SizedBox(height: 2),
+                Text(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          ElevatedButton(
+            onPressed: onAction,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C5CE7),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+            ),
+            child: Text(actionText, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // --- 5. Bottom Dual Cards: Bus & Safety Pulse + Today's Schedule ---
+  Widget _buildTransportSafetyCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Campus Safety & Transport Pulse',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1E293B)),
+              ),
+              InkWell(
+                onTap: () => setState(() => _selectedIndex = 7),
+                child: const Text('View All Feeds ➔', style: TextStyle(color: Color(0xFF6C5CE7), fontSize: 12, fontWeight: FontWeight.w700)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildPulseItem(
+            Icons.directions_bus_rounded,
+            const Color(0xFFF39C12),
+            'Route 04: Sector 14 Express (DL 01 PB 4488)',
+            'Driver: Ramesh Kumar • 34 Students Boarded • ETA: 8 Mins to Main Gate',
+            'LIVE GPS',
+            const Color(0xFF00B894),
+          ),
+          const Divider(height: 20, color: Color(0xFFF1F5F9)),
+          _buildPulseItem(
+            Icons.videocam_rounded,
+            const Color(0xFF0984E3),
+            'Security CCTV Infrastructure',
+            '12 / 12 High-Definition Cameras Streaming • North Gate, Science Wing & Sports Field',
+            '100% ONLINE',
+            const Color(0xFF00B894),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPulseItem(IconData icon, Color iconColor, String title, String sub, String badge, Color badgeColor) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13))),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(color: badgeColor.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
+                    child: Text(badge, style: TextStyle(color: badgeColor, fontSize: 9, fontWeight: FontWeight.w800)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(sub, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTodayScheduleCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Today\'s Key Academic Events',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1E293B)),
+              ),
+              Text('28 Aug 2026', style: TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildScheduleRow('10:30 AM', 'Grade 10 Science Practical Exam', 'Lab 2 (Prof. Alok Substitute)', const Color(0xFF6C5CE7)),
+          const Divider(height: 20, color: Color(0xFFF1F5F9)),
+          _buildScheduleRow('02:00 PM', 'Parent-Teacher Council Review (PTM)', 'Auditorium Block B', const Color(0xFF00B894)),
+          const Divider(height: 20, color: Color(0xFFF1F5F9)),
+          _buildScheduleRow('04:30 PM', 'Inter-School Athletics Training', 'West Ground Pavilion', const Color(0xFFF39C12)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScheduleRow(String time, String title, String venue, Color dotColor) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(6)),
+          child: Text(time, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF334155))),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF1E293B))),
+              const SizedBox(height: 2),
+              Text(venue, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
