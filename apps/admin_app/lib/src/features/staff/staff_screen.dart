@@ -413,22 +413,50 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: TextField(
-            onChanged: (val) => setState(() => _searchQuery = val),
-            decoration: const InputDecoration(
-              icon: Icon(Icons.search_rounded, color: Color(0xFF94A3B8)),
-              hintText: 'Search teacher by Name, Degree, Subject, or Class Teacher of (e.g. Class 10-A, Ph.D, Physics)...',
-              hintStyle: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-              border: InputBorder.none,
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextField(
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.search_rounded, color: Color(0xFF94A3B8), size: 20),
+                    hintText: 'Search teacher by Name, Degree, Subject, or Class Teacher of (e.g. Class 10-A, Ph.D, Physics)...',
+                    hintStyle: TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 12),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.table_rows_rounded, color: !_isGridView ? const Color(0xFF6C5CE7) : const Color(0xFF94A3B8), size: 20),
+                    onPressed: () => setState(() => _isGridView = false),
+                    tooltip: 'Table View',
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.grid_view_rounded, color: _isGridView ? const Color(0xFF6C5CE7) : const Color(0xFF94A3B8), size: 20),
+                    onPressed: () => setState(() => _isGridView = true),
+                    tooltip: 'Cards View',
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 14),
 
@@ -463,6 +491,8 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
     );
   }
 
+  bool _isGridView = false;
+
   Widget _buildTeacherGrid(BuildContext context, List<TeacherFullProfile> teachers, bool isDesktop) {
     if (teachers.isEmpty) {
       return Container(
@@ -473,6 +503,143 @@ class _StaffScreenState extends ConsumerState<StaffScreen> {
             Icon(Icons.search_off_rounded, size: 48, color: Color(0xFF94A3B8)),
             SizedBox(height: 12),
             Text('No faculty found matching your search.', style: TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
+          ],
+        ),
+      );
+    }
+
+    if (!_isGridView) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: const BoxDecoration(
+                color: Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
+              ),
+              child: const Row(
+                children: [
+                  Expanded(flex: 4, child: Text('FACULTY MEMBER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF64748B)))),
+                  Expanded(flex: 4, child: Text('DEPARTMENT & QUALIFICATION', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF64748B)))),
+                  Expanded(flex: 3, child: Text('CLASS IN-CHARGE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF64748B)))),
+                  Expanded(flex: 3, child: Text('NET SALARY', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF64748B)))),
+                  Expanded(flex: 3, child: Text('TODAY STATUS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF64748B)))),
+                  Expanded(flex: 2, child: Text('ACTION', textAlign: TextAlign.end, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF64748B)))),
+                ],
+              ),
+            ),
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: teachers.length,
+              separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFFF1F5F9)),
+              itemBuilder: (context, index) {
+                final t = teachers[index];
+                final isOnLeave = t.todayStatus.contains('LEAVE');
+                final statusColor = isOnLeave ? const Color(0xFFF39C12) : const Color(0xFF00B894);
+
+                return InkWell(
+                  onTap: () => _openTeacher360Dossier(context, t),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 4,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 18,
+                                backgroundColor: const Color(0xFF6C5CE7).withOpacity(0.12),
+                                child: Text(t.name.split(' ').last[0], style: const TextStyle(color: Color(0xFF6C5CE7), fontWeight: FontWeight.w800, fontSize: 13)),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(t.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Color(0xFF1E293B))),
+                                    Text('${t.empId} • ${t.designation}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(t.department, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF334155))),
+                              Text('🎓 ${t.qualifications.split(',').first}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(6)),
+                            child: Text(t.classTeacherOf, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11, color: Color(0xFF334155)), overflow: TextOverflow.ellipsis),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('₹ ${t.netSalary.toInt()} / mo', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF1E293B))),
+                              Text(t.payrollStatus.split('(').first.trim(), style: const TextStyle(fontSize: 10, color: Color(0xFF00B894), fontWeight: FontWeight.w700)),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Row(
+                            children: [
+                              Container(width: 8, height: 8, decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle)),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  isOnLeave ? 'On Leave' : 'In School',
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: statusColor),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF6C5CE7).withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Text('View 360° ➔', style: TextStyle(color: Color(0xFF6C5CE7), fontWeight: FontWeight.w800, fontSize: 11)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
         ),
       );
