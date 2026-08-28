@@ -28,6 +28,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
     AdaptiveNavItem(label: 'Fees Ledger', icon: Icons.receipt_long_outlined, selectedIcon: Icons.receipt_long_rounded),
     AdaptiveNavItem(label: 'Exams & Marks', icon: Icons.assignment_outlined, selectedIcon: Icons.assignment_rounded),
     AdaptiveNavItem(label: 'HR & Staff', icon: Icons.badge_outlined, selectedIcon: Icons.badge_rounded),
+    AdaptiveNavItem(label: 'Transport & Fleet', icon: Icons.directions_bus_outlined, selectedIcon: Icons.directions_bus_rounded),
     AdaptiveNavItem(label: 'CCTV Live', icon: Icons.videocam_outlined, selectedIcon: Icons.videocam_rounded),
   ];
 
