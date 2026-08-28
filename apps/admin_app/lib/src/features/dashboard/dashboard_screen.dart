@@ -53,7 +53,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         content = const ExamsListScreen();
         break;
       case 6:
-        content = const HrDashboardScreen();
+        content = const StaffScreen();
         break;
       case 7:
         content = const CctvListScreen();
