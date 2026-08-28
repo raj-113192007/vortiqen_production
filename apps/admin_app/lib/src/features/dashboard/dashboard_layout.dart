@@ -24,7 +24,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
     AdaptiveNavItem(label: 'Overview', icon: Icons.dashboard_outlined, selectedIcon: Icons.dashboard_rounded),
     AdaptiveNavItem(label: 'Onboarding', icon: Icons.cloud_upload_outlined, selectedIcon: Icons.cloud_upload_rounded, badge: '5-in-1'),
     AdaptiveNavItem(label: 'Students', icon: Icons.people_outline, selectedIcon: Icons.people_rounded),
-    AdaptiveNavItem(label: 'Attendance', icon: Icons.fact_check_outlined, selectedIcon: Icons.fact_check_rounded),
+    AdaptiveNavItem(label: 'Classrooms & Live', icon: Icons.school_outlined, selectedIcon: Icons.school_rounded),
     AdaptiveNavItem(label: 'Fees Ledger', icon: Icons.receipt_long_outlined, selectedIcon: Icons.receipt_long_rounded),
     AdaptiveNavItem(label: 'Exams & Marks', icon: Icons.assignment_outlined, selectedIcon: Icons.assignment_rounded),
     AdaptiveNavItem(label: 'HR & Staff', icon: Icons.badge_outlined, selectedIcon: Icons.badge_rounded),

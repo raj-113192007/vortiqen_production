@@ -94,7 +94,7 @@ class _AddExamSubjectModalState extends ConsumerState<AddExamSubjectModal> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectsAsync = ref.watch(adminSubjectsProvider);
+    final subjectsAsync = ref.watch(subjectsProvider('1'));
 
     return Dialog(
       backgroundColor: const Color(0xFF1E1E2C),
