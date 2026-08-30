@@ -69,7 +69,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
       totalStudents: 126,
       paperSetter: 'Dr. Priya Verma (HOD Science)',
       setterPhone: '+91 98111 22334',
-      moderationStatus: 'APPROVED & SEALED 🔒',
+      moderationStatus: 'APPROVED & SEALED',
       printStatus: '135 Copies Printed & Stored in Locker A',
       maxTheoryMarks: 80,
       maxInternalMarks: 20,
@@ -90,7 +90,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
       totalStudents: 126,
       paperSetter: 'Dr. Priya Verma & Mr. Vikramaditya',
       setterPhone: '+91 98111 22334',
-      moderationStatus: 'APPROVED & SEALED 🔒',
+      moderationStatus: 'APPROVED & SEALED',
       printStatus: '135 Copies Ready',
       maxTheoryMarks: 80,
       maxInternalMarks: 20,
@@ -132,7 +132,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
       totalStudents: 340,
       paperSetter: 'Mrs. Sunita Rao (HOD Languages)',
       setterPhone: '+91 98333 44556',
-      moderationStatus: 'APPROVED & SEALED 🔒',
+      moderationStatus: 'APPROVED & SEALED',
       printStatus: '360 Copies Printed',
       maxTheoryMarks: 80,
       maxInternalMarks: 20,
@@ -153,7 +153,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
       totalStudents: 42,
       paperSetter: 'Mr. Rajesh Nambiar (CFA, M.Com)',
       setterPhone: '+91 98444 55667',
-      moderationStatus: 'APPROVED & SEALED 🔒',
+      moderationStatus: 'APPROVED & SEALED',
       printStatus: '50 Copies Printed',
       maxTheoryMarks: 80,
       maxInternalMarks: 20,
@@ -174,7 +174,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
       totalStudents: 82,
       paperSetter: 'Ms. Ananya Sengupta (M.Tech AI)',
       setterPhone: '+91 98555 66778',
-      moderationStatus: 'APPROVED & SEALED 🔒',
+      moderationStatus: 'APPROVED & SEALED',
       printStatus: 'Lab Setup & Code Tests Configured',
       maxTheoryMarks: 50,
       maxInternalMarks: 50,
@@ -353,7 +353,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
                   _buildMetricTile('14 Subject Papers', 'Datesheet Finalized', Icons.assignment_rounded, const Color(0xFF6C5CE7)),
                   _buildMetricTile('8 Paper Setters', 'Faculty In-Charge', Icons.person_pin_rounded, const Color(0xFF00B894)),
                   _buildMetricTile('420 Allotted Desks', 'Across 3 Halls', Icons.chair_rounded, const Color(0xFF0984E3)),
-                  _buildMetricTile('100% Sealed & Printed', 'Locker Vault Secured 🔒', Icons.lock_clock_rounded, const Color(0xFFE84393)),
+                  _buildMetricTile('100% Sealed & Printed', 'Locker Vault Secured', Icons.lock_clock_rounded, const Color(0xFFE84393)),
                 ],
               );
             },
@@ -608,9 +608,21 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
           const SizedBox(height: 8),
           Text('Allotted Students: $classes', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF334155))),
           const SizedBox(height: 4),
-          Text('👨‍🏫 $staff', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+          Row(
+            children: [
+              const Icon(Icons.person_outline_rounded, size: 14, color: Color(0xFF64748B)),
+              const SizedBox(width: 4),
+              Text(staff, style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+            ],
+          ),
           const SizedBox(height: 4),
-          Text('📍 $grid', style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8), fontWeight: FontWeight.w600)),
+          Row(
+            children: [
+              const Icon(Icons.pin_drop_outlined, size: 13, color: Color(0xFF94A3B8)),
+              const SizedBox(width: 4),
+              Text(grid, style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8), fontWeight: FontWeight.w600)),
+            ],
+          ),
         ],
       ),
     );
@@ -619,10 +631,10 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
   // --- TAB 3: INVIGILATION DUTY ROSTER ---
   Widget _buildInvigilationRosterTab(BuildContext context) {
     const roster = [
-      {'date': '15 Sep (Mon)', 'subject': 'Physics (Class 10)', 'hall': 'Auditorium Hall A', 'lead': 'Prof. Alok Mukherjee', 'asst': 'Mrs. Sunita Rao', 'time': '08:15 AM Reporting', 'status': 'CONFIRMED 🟢'},
-      {'date': '17 Sep (Wed)', 'subject': 'Mathematics (Class 10)', 'hall': 'Auditorium Hall A', 'lead': 'Mrs. Sunita Rao', 'asst': 'Mr. Rajesh Nambiar', 'time': '08:15 AM Reporting', 'status': 'CONFIRMED 🟢'},
-      {'date': '18 Sep (Thu)', 'subject': 'Chemistry (Class 11)', 'hall': 'Room 204 & 205', 'lead': 'Mr. Rajesh Nambiar', 'asst': 'Ms. Ananya Sengupta', 'time': '08:15 AM Reporting', 'status': 'CONFIRMED 🟢'},
-      {'date': '21 Sep (Mon)', 'subject': 'English Core (All Classes)', 'hall': 'Hall A + Hall B', 'lead': 'Dr. Priya Verma', 'asst': 'Prof. Alok + 4 Staff', 'time': '08:00 AM Reporting', 'status': 'CONFIRMED 🟢'},
+      {'date': '15 Sep (Mon)', 'subject': 'Physics (Class 10)', 'hall': 'Auditorium Hall A', 'lead': 'Prof. Alok Mukherjee', 'asst': 'Mrs. Sunita Rao', 'time': '08:15 AM Reporting', 'status': 'CONFIRMED'},
+      {'date': '17 Sep (Wed)', 'subject': 'Mathematics (Class 10)', 'hall': 'Auditorium Hall A', 'lead': 'Mrs. Sunita Rao', 'asst': 'Mr. Rajesh Nambiar', 'time': '08:15 AM Reporting', 'status': 'CONFIRMED'},
+      {'date': '18 Sep (Thu)', 'subject': 'Chemistry (Class 11)', 'hall': 'Room 204 & 205', 'lead': 'Mr. Rajesh Nambiar', 'asst': 'Ms. Ananya Sengupta', 'time': '08:15 AM Reporting', 'status': 'CONFIRMED'},
+      {'date': '21 Sep (Mon)', 'subject': 'English Core (All Classes)', 'hall': 'Hall A + Hall B', 'lead': 'Dr. Priya Verma', 'asst': 'Prof. Alok + 4 Staff', 'time': '08:00 AM Reporting', 'status': 'CONFIRMED'},
     ];
 
     return ListView.builder(
@@ -731,7 +743,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
             children: [
               OutlinedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('🖨️ Generating 340 Student Admit Cards & Hall Tickets PDF...')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Generating 340 Student Admit Cards & Hall Tickets PDF...')));
                 },
                 icon: const Icon(Icons.print_rounded, size: 18, color: Color(0xFF0984E3)),
                 label: const Text('Print Student Hall Tickets', style: TextStyle(color: Color(0xFF334155), fontWeight: FontWeight.w700)),
@@ -744,7 +756,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
               const SizedBox(width: 10),
               OutlinedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('📥 Exporting CBSE Tabulation Register Master Excel...')));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Exporting CBSE Tabulation Register Master Excel...')));
                 },
                 icon: const Icon(Icons.file_download_rounded, size: 18, color: Color(0xFF00B894)),
                 label: const Text('Export CBSE Tabulation Excel', style: TextStyle(color: Color(0xFF334155), fontWeight: FontWeight.w700)),
@@ -758,7 +770,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
           ),
           ElevatedButton.icon(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('📢 Broadcasted Full Datesheet & Rules on WhatsApp to 340 Parents!')));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Broadcasted Full Datesheet & Rules on WhatsApp to 340 Parents!')));
             },
             icon: const Icon(Icons.campaign_rounded, size: 18),
             label: const Text('Broadcast Datesheet on WhatsApp'),
@@ -814,7 +826,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
                     ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('✨ Exam Paper Scheduled & Assigned to Faculty!')));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Exam Paper Scheduled & Assigned to Faculty!')));
                       },
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF6C5CE7), foregroundColor: Colors.white),
                       child: const Text('Save & Schedule Paper'),

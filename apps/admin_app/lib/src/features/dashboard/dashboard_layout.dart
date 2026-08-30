@@ -403,7 +403,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('🔔 3 Urgent Action Items: 2 Student Leaves pending, 1 Bus Inspection due')),
+                    const SnackBar(content: Text('3 Urgent Action Items: 2 Student Leaves pending, 1 Bus Inspection due')),
                   );
                 },
               ),
@@ -425,12 +425,18 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                       child: Text('P', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                     ),
                     const SizedBox(width: 8),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Dr. A. Sharma', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF1E293B))),
-                        Text('Principal 🟢', style: TextStyle(fontSize: 9, color: Color(0xFF00B894), fontWeight: FontWeight.w700)),
+                        const Text('Dr. A. Sharma', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF1E293B))),
+                        Row(
+                          children: [
+                            const Text('Principal', style: TextStyle(fontSize: 9, color: Color(0xFF00B894), fontWeight: FontWeight.w700)),
+                            const SizedBox(width: 4),
+                            Container(width: 5, height: 5, decoration: const BoxDecoration(color: Color(0xFF00B894), shape: BoxShape.circle)),
+                          ],
+                        ),
                       ],
                     ),
                   ],
@@ -616,7 +622,7 @@ class _DashboardLayoutState extends State<DashboardLayout> {
                       title: 'Broadcast Alert',
                       onTap: () {
                         Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('📢 Draft SMS/WhatsApp Notice Modal Opened')));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Draft SMS/WhatsApp Notice Modal Opened')));
                       },
                     ),
                   ),

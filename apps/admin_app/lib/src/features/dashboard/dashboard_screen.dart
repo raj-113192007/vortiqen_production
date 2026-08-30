@@ -194,7 +194,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text('☀️', style: TextStyle(fontSize: 20)),
+                  const Icon(Icons.wb_sunny_outlined, size: 22, color: Color(0xFFF59E0B)),
                 ],
               ),
               const SizedBox(height: 6),
@@ -245,7 +245,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               OutlinedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('📢 Notice Broadcast Dialog: Draft sent to all parents & teachers')),
+                    const SnackBar(content: Text('Notice Broadcast Dialog: Draft sent to all parents & teachers')),
                   );
                 },
                 icon: const Icon(Icons.campaign_outlined, size: 16, color: Color(0xFF334155)),
@@ -647,7 +647,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               onAction: () {
                 setState(() => _action1Resolved = true);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('✅ Leave approved and substitute timetable notified!')),
+                  const SnackBar(content: Text('Leave approved and substitute timetable notified!')),
                 );
               },
             ),
@@ -665,7 +665,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               onAction: () {
                 setState(() => _action2Resolved = true);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('💬 WhatsApp Payment Reminders dispatched to 18 parents!')),
+                  const SnackBar(content: Text('WhatsApp Payment Reminders dispatched to 18 parents!')),
                 );
               },
             ),
@@ -674,7 +674,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8),
               child: Center(
-                child: Text('🎉 All urgent tasks for today are resolved!', style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF00B894))),
+                child: Text('All urgent tasks for today are resolved!', style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF00B894))),
               ),
             ),
         ],
@@ -757,7 +757,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               InkWell(
                 onTap: () => setState(() => _selectedIndex = 7),
-                child: const Text('View All Feeds ➔', style: TextStyle(color: Color(0xFF6C5CE7), fontSize: 12, fontWeight: FontWeight.w700)),
+                child: const Text('View All Feeds', style: TextStyle(color: Color(0xFF6C5CE7), fontSize: 12, fontWeight: FontWeight.w700)),
               ),
             ],
           ),

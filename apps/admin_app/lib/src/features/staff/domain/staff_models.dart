@@ -42,6 +42,7 @@ class TeacherProfile {
   final String id;
   final String empId;
   final String name;
+  final String? avatarUrl;
   final String designation;
   final String department;
   final String email;
@@ -85,6 +86,7 @@ class TeacherProfile {
     required this.id,
     required this.empId,
     required this.name,
+    this.avatarUrl,
     required this.designation,
     required this.department,
     required this.email,
@@ -127,6 +129,7 @@ class StaffMockData {
         id: 'tch_01',
         empId: 'EMP-2021-084',
         name: 'Dr. Priya Verma',
+        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
         designation: 'Senior Faculty & HOD Science',
         department: 'Science & Math',
         email: 'priya.verma@school.edu',
@@ -172,6 +175,7 @@ class StaffMockData {
         id: 'tch_02',
         empId: 'EMP-2022-098',
         name: 'Prof. Alok Mukherjee',
+        avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80',
         designation: 'HOD Mathematics',
         department: 'Science & Math',
         email: 'alok.mukherjee@school.edu',
@@ -214,6 +218,7 @@ class StaffMockData {
         id: 'tch_03',
         empId: 'EMP-2023-112',
         name: 'Ms. Sunita Roy',
+        avatarUrl: 'https://images.unsplash.com/photo-1580894732488-c70a290fa8f2?w=150&auto=format&fit=crop&q=80',
         designation: 'Senior Faculty English Literature',
         department: 'Humanities & Languages',
         email: 'sunita.roy@school.edu',
@@ -253,6 +258,7 @@ class StaffMockData {
         id: 'tch_04',
         empId: 'EMP-2024-142',
         name: 'Mr. Rajeshwar Rao',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
         designation: 'Faculty Computer Science & AI',
         department: 'IT & Computer Science',
         email: 'rajeshwar.rao@school.edu',

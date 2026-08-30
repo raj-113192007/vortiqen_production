@@ -75,7 +75,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
       feeCollectionPct: 88.4,
       currentPeriod: 'Period 4 (10:30 AM - 11:15 AM)',
       currentSubject: 'Physics & Dynamics',
-      currentTeacherTeaching: 'Prof. Alok Mukherjee (In-Class 🟢)',
+      currentTeacherTeaching: 'Prof. Alok Mukherjee (In-Class Active)',
       currentTopic: 'Newtonian Motion & Friction Mechanics (Lab Practicals)',
       nextPeriod: 'Period 5 (11:15 AM) • Advanced Mathematics with Dr. Priya Verma',
       students: [
@@ -112,7 +112,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
       feeCollectionPct: 85.0,
       currentPeriod: 'Period 4 (10:30 AM - 11:15 AM)',
       currentSubject: 'Advanced Mathematics',
-      currentTeacherTeaching: 'Dr. Priya Verma (In-Class 🟢)',
+      currentTeacherTeaching: 'Dr. Priya Verma (In-Class Active)',
       currentTopic: 'Quadratic Equations & Trigonometric Identities',
       nextPeriod: 'Period 5 (11:15 AM) • Chemistry with Prof. Alok',
       students: [
@@ -142,7 +142,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
       feeCollectionPct: 91.2,
       currentPeriod: 'Period 4 (10:30 AM - 11:15 AM)',
       currentSubject: 'English Literature & Drama',
-      currentTeacherTeaching: 'Mrs. Sunita Rao (In-Class 🟢)',
+      currentTeacherTeaching: 'Mrs. Sunita Rao (In-Class Active)',
       currentTopic: 'Shakespeare\'s Julius Caesar (Act 3 Scene 2)',
       nextPeriod: 'Period 5 (11:15 AM) • Social Studies with Mr. Rajesh',
       students: [
@@ -166,7 +166,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
       feeCollectionPct: 94.0,
       currentPeriod: 'Period 4 (10:30 AM - 11:15 AM)',
       currentSubject: 'Organic Chemistry Lab',
-      currentTeacherTeaching: 'Prof. Alok Mukherjee (In-Class 🟢)',
+      currentTeacherTeaching: 'Prof. Alok Mukherjee (In-Class Active)',
       currentTopic: 'Hydrocarbons & Isomerism Titration',
       nextPeriod: 'Period 5 (11:15 AM) • Calculus with Dr. Priya',
       students: [
@@ -190,7 +190,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
       feeCollectionPct: 90.0,
       currentPeriod: 'Period 4 (10:30 AM - 11:15 AM)',
       currentSubject: 'Macro Economics & Banking',
-      currentTeacherTeaching: 'Mr. Rajesh Nambiar (In-Class 🟢)',
+      currentTeacherTeaching: 'Mr. Rajesh Nambiar (In-Class Active)',
       currentTopic: 'Fiscal Policy & Reserve Bank Operations',
       nextPeriod: 'Period 5 (11:15 AM) • Accountancy',
       students: [
@@ -460,8 +460,20 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(c.currentSubject, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Color(0xFF14532D))),
-                  const SizedBox(height: 2),
-                  Text('👨‍🏫 ${c.currentTeacherTeaching}', style: const TextStyle(fontSize: 11, color: Color(0xFF166534), fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      const Icon(Icons.person_outline_rounded, size: 14, color: Color(0xFF166534)),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          c.currentTeacherTeaching,
+                          style: const TextStyle(fontSize: 11, color: Color(0xFF166534), fontWeight: FontWeight.w600),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -486,7 +498,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
                       ),
                   ],
                 ),
-                Text('Open 360° Cockpit ➔', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF6C5CE7))),
+                const Text('Open 360° Cockpit', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: Color(0xFF6C5CE7))),
               ],
             ),
           ],
@@ -650,7 +662,9 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Text('👩‍🏫 Class Teacher: ${c.classTeacher} (${c.teacherPhone})', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
+                    const Icon(Icons.badge_outlined, size: 15, color: Color(0xFF64748B)),
+                    const SizedBox(width: 4),
+                    Text('Class Teacher: ${c.classTeacher} (${c.teacherPhone})', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600)),
                     const SizedBox(width: 12),
                     Text('•  Total Enrolled: ${c.totalStrength} Scholars', style: const TextStyle(fontSize: 12, color: Color(0xFF64748B))),
                   ],
@@ -813,7 +827,7 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
                   ElevatedButton(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('📢 Automated WhatsApp Absence Alert sent to Rohan Mehta & Kabir Kapoor\'s parents!')),
+                        const SnackBar(content: Text('Automated WhatsApp Absence Alert sent to Rohan Mehta & Kabir Kapoor\'s parents!')),
                       );
                     },
                     style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD97706), foregroundColor: Colors.white, elevation: 0),
@@ -959,7 +973,7 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
               IconButton(
                 icon: const Icon(Icons.chat_bubble_outline_rounded, size: 16, color: Color(0xFF00B894)),
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('💬 WhatsApp Ping to ${s['name']}\'s Parent')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('WhatsApp notification dispatched to ${s['name']}\'s Parent')));
                 },
               ),
             ],
@@ -1038,7 +1052,7 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
             children: [
               OutlinedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('📹 Connecting to Live CCTV Stream in ${c.roomNumber}...')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Connecting to Live CCTV Stream in ${c.roomNumber}...')));
                 },
                 icon: const Icon(Icons.videocam_rounded, color: Color(0xFF0984E3), size: 18),
                 label: const Text('View Classroom CCTV', style: TextStyle(color: Color(0xFF334155), fontWeight: FontWeight.w700)),
@@ -1051,7 +1065,7 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
               const SizedBox(width: 10),
               OutlinedButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('📞 Calling Class Teacher ${c.classTeacher}...')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Calling Class Teacher ${c.classTeacher}...')));
                 },
                 icon: const Icon(Icons.phone_rounded, color: Color(0xFF00B894), size: 18),
                 label: const Text('Call Teacher', style: TextStyle(color: Color(0xFF334155), fontWeight: FontWeight.w700)),
@@ -1065,7 +1079,7 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
           ),
           ElevatedButton.icon(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('📢 Broadcast Message drafted to all parents of ${c.grade}-${c.section}!')));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Broadcast Notice drafted to all parents of ${c.grade}-${c.section}!')));
             },
             icon: const Icon(Icons.campaign_rounded, size: 18),
             label: const Text('Broadcast Notice to Class'),

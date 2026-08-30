@@ -139,16 +139,22 @@ class _Student360ModalState extends State<Student360Modal> with SingleTickerProv
       padding: const EdgeInsets.all(20),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 24,
-            backgroundColor: const Color(0xFF4F46E5).withValues(alpha: 0.1),
-            child: Text(
-              s.name[0],
-              style: const TextStyle(
-                color: Color(0xFF4F46E5),
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(26),
+            child: Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: const Color(0xFF4F46E5).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(26),
               ),
+              child: s.avatarUrl != null && s.avatarUrl!.isNotEmpty
+                  ? Image.network(
+                      s.avatarUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => _buildFallbackInitial(s),
+                    )
+                  : _buildFallbackInitial(s),
             ),
           ),
           const SizedBox(width: 14),
@@ -213,6 +219,19 @@ class _Student360ModalState extends State<Student360Modal> with SingleTickerProv
             icon: const Icon(Icons.close_rounded, color: Color(0xFF94A3B8)),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFallbackInitial(StudentFullProfile s) {
+    return Center(
+      child: Text(
+        s.name[0],
+        style: const TextStyle(
+          color: Color(0xFF4F46E5),
+          fontWeight: FontWeight.w900,
+          fontSize: 18,
+        ),
       ),
     );
   }

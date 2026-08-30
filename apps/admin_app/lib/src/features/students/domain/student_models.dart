@@ -35,6 +35,7 @@ class StudentFullProfile {
   final String grNo;
   final String rollNo;
   final String name;
+  final String? avatarUrl;
   final String className;
   final String section;
   final String gender;
@@ -87,6 +88,7 @@ class StudentFullProfile {
     required this.grNo,
     required this.rollNo,
     required this.name,
+    this.avatarUrl,
     required this.className,
     required this.section,
     required this.gender,
@@ -136,6 +138,7 @@ class StudentsMockData {
         grNo: 'GR-2024-101',
         rollNo: '101',
         name: 'Aarav Sharma',
+        avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
         className: 'Class 10',
         section: 'A',
         gender: 'Male',
@@ -187,6 +190,7 @@ class StudentsMockData {
         grNo: 'GR-2024-102',
         rollNo: '102',
         name: 'Ananya Iyer',
+        avatarUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
         className: 'Class 10',
         section: 'A',
         gender: 'Female',
@@ -238,6 +242,7 @@ class StudentsMockData {
         grNo: 'GR-2024-103',
         rollNo: '103',
         name: 'Rohan Mehta',
+        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
         className: 'Class 10',
         section: 'B',
         gender: 'Male',
@@ -285,6 +290,7 @@ class StudentsMockData {
         grNo: 'GR-2024-104',
         rollNo: '104',
         name: 'Diya Patel',
+        avatarUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&auto=format&fit=crop&q=80',
         className: 'Class 9',
         section: 'A',
         gender: 'Female',
@@ -331,6 +337,7 @@ class StudentsMockData {
         grNo: 'GR-2024-105',
         rollNo: '105',
         name: 'Kabir Kapoor',
+        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
         className: 'Class 11',
         section: 'Science',
         gender: 'Male',

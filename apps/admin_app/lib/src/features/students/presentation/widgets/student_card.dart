@@ -36,16 +36,22 @@ class StudentCard extends StatelessWidget {
           // Header: Avatar, Name, GR, Class badge
           Row(
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: const Color(0xFF4F46E5).withValues(alpha: 0.1),
-                child: Text(
-                  student.name[0],
-                  style: const TextStyle(
-                    color: Color(0xFF4F46E5),
-                    fontWeight: FontWeight.w800,
-                    fontSize: 14,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4F46E5).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(18),
                   ),
+                  child: student.avatarUrl != null && student.avatarUrl!.isNotEmpty
+                      ? Image.network(
+                          student.avatarUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => _buildFallbackInitial(),
+                        )
+                      : _buildFallbackInitial(),
                 ),
               ),
               const SizedBox(width: 10),
@@ -148,6 +154,19 @@ class StudentCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFallbackInitial() {
+    return Center(
+      child: Text(
+        student.name[0],
+        style: const TextStyle(
+          color: Color(0xFF4F46E5),
+          fontWeight: FontWeight.w800,
+          fontSize: 14,
+        ),
       ),
     );
   }

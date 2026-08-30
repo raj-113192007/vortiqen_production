@@ -29,18 +29,22 @@ class Teacher360Modal extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: const Color(0xFF4F46E5).withValues(alpha: 0.1),
-                        child: Text(
-                          teacher.name.split(' ').length > 1
-                              ? '${teacher.name.split(' ')[0][0]}${teacher.name.split(' ')[1][0]}'
-                              : teacher.name[0],
-                          style: const TextStyle(
-                            color: Color(0xFF4F46E5),
-                            fontWeight: FontWeight.w900,
-                            fontSize: 16,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(26),
+                        child: Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4F46E5).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(26),
                           ),
+                          child: teacher.avatarUrl != null && teacher.avatarUrl!.isNotEmpty
+                              ? Image.network(
+                                  teacher.avatarUrl!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) => _buildFallbackAvatar(),
+                                )
+                              : _buildFallbackAvatar(),
                         ),
                       ),
                       const SizedBox(width: 14),
@@ -207,6 +211,21 @@ class Teacher360Modal extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackAvatar() {
+    return Center(
+      child: Text(
+        teacher.name.split(' ').length > 1
+            ? '${teacher.name.split(' ')[0][0]}${teacher.name.split(' ')[1][0]}'
+            : teacher.name[0],
+        style: const TextStyle(
+          color: Color(0xFF4F46E5),
+          fontWeight: FontWeight.w900,
+          fontSize: 16,
         ),
       ),
     );

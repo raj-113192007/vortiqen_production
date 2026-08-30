@@ -247,7 +247,7 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
           ElevatedButton.icon(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('✨ Master rule saved & live student ledgers recalculated!')),
+                const SnackBar(content: Text('Master rule saved & live student ledgers recalculated!')),
               );
             },
             icon: const Icon(Icons.save_rounded, size: 16),
@@ -340,7 +340,7 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
                           child: IconButton(
                             icon: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF6C5CE7)),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✏️ Editing Fee Rule for ${r.grade}')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Editing Fee Rule for ${r.grade}')));
                             },
                           ),
                         ),
@@ -455,7 +455,7 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
                           child: IconButton(
                             icon: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF6C5CE7)),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✏️ Editing Route Rate for ${b.routeName}')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Editing Route Rate for ${b.routeName}')));
                             },
                           ),
                         ),
@@ -556,7 +556,7 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
                           child: IconButton(
                             icon: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF6C5CE7)),
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('✏️ Editing Capacity for ${c.className}-${c.section}')));
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Editing Capacity for ${c.className}-${c.section}')));
                             },
                           ),
                         ),

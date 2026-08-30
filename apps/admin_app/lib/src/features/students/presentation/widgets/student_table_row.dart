@@ -26,16 +26,22 @@ class StudentTableRow extends StatelessWidget {
               flex: 4,
               child: Row(
                 children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor: const Color(0xFF4F46E5).withValues(alpha: 0.1),
-                    child: Text(
-                      student.name[0],
-                      style: const TextStyle(
-                        color: Color(0xFF4F46E5),
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4F46E5).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
                       ),
+                      child: student.avatarUrl != null && student.avatarUrl!.isNotEmpty
+                          ? Image.network(
+                              student.avatarUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => _buildFallbackInitial(),
+                            )
+                          : _buildFallbackInitial(),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -216,6 +222,19 @@ class StudentTableRow extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackInitial() {
+    return Center(
+      child: Text(
+        student.name[0],
+        style: const TextStyle(
+          color: Color(0xFF4F46E5),
+          fontWeight: FontWeight.w800,
+          fontSize: 13,
         ),
       ),
     );

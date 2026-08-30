@@ -169,7 +169,7 @@ class Bus360DossierModal extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('📄 Exporting vehicle dossier report for ${vehicle.busNumber}...')),
+                        SnackBar(content: Text('Exporting vehicle dossier report for ${vehicle.busNumber}...')),
                       );
                     },
                     icon: const Icon(Icons.download_rounded, size: 16),
