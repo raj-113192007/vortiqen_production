@@ -45,7 +45,7 @@ class MaintenanceTab extends StatelessWidget {
                     builder: (ctx) => LogServiceModal(
                       onSave: (val) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('🔧 Maintenance log saved for ${val['busNumber']}!')),
+                          SnackBar(content: Text('Maintenance log saved for ${val['busNumber']}.')),
                         );
                       },
                     ),
@@ -74,7 +74,7 @@ class MaintenanceTab extends StatelessWidget {
           itemCount: fleet.length,
           itemBuilder: (context, index) {
             final v = fleet[index];
-            final hasAlert = v.insuranceExpiry.contains('Expires Soon') || v.nextServiceDate.contains('⚠️');
+            final hasAlert = v.insuranceExpiry.toLowerCase().contains('due') || v.nextServiceDate.toLowerCase().contains('soon');
 
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
@@ -83,7 +83,7 @@ class MaintenanceTab extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: hasAlert ? const Color(0xFFFDCB6E) : const Color(0xFFE2E8F0),
+                  color: hasAlert ? const Color(0xFFF59E0B) : const Color(0xFFE2E8F0),
                   width: hasAlert ? 1.5 : 1.0,
                 ),
                 boxShadow: [
@@ -136,8 +136,8 @@ class MaintenanceTab extends StatelessWidget {
                           'Next Due Date',
                           v.nextServiceDate,
                           Icons.event_rounded,
-                          v.nextServiceDate.contains('⚠️') ? const Color(0xFFE17055) : const Color(0xFF6C5CE7),
-                          isAlert: v.nextServiceDate.contains('⚠️'),
+                          hasAlert ? const Color(0xFFF59E0B) : const Color(0xFF6C5CE7),
+                          isAlert: hasAlert,
                         ),
                       ),
                     ],
@@ -152,8 +152,8 @@ class MaintenanceTab extends StatelessWidget {
                           'Insurance Policy',
                           v.insuranceExpiry,
                           Icons.security_rounded,
-                          v.insuranceExpiry.contains('⚠️') ? const Color(0xFFE17055) : const Color(0xFF00B894),
-                          isAlert: v.insuranceExpiry.contains('⚠️'),
+                          hasAlert ? const Color(0xFFF59E0B) : const Color(0xFF00B894),
+                          isAlert: hasAlert,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -173,9 +173,9 @@ class MaintenanceTab extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isAlert ? const Color(0xFFFFF3CD) : const Color(0xFFF8FAFC),
+        color: isAlert ? const Color(0xFFFFFBEB) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isAlert ? const Color(0xFFFFEAA7) : const Color(0xFFE2E8F0)),
+        border: Border.all(color: isAlert ? const Color(0xFFFDE68A) : const Color(0xFFE2E8F0)),
       ),
       child: Row(
         children: [
@@ -192,7 +192,7 @@ class MaintenanceTab extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: isAlert ? const Color(0xFFD63031) : const Color(0xFF1E293B),
+                    color: isAlert ? const Color(0xFFB45309) : const Color(0xFF1E293B),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

@@ -40,7 +40,7 @@ class _FuelLedgerTabState extends State<FuelLedgerTab> {
       );
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('⛽ New Fuel slip successfully logged into ledger!')),
+      const SnackBar(content: Text('New Fuel slip successfully logged into ledger.')),
     );
   }
 

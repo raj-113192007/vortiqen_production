@@ -13,6 +13,8 @@ import '../features/cctv/presentation/cctv_player_screen.dart';
 import '../features/exams/presentation/exams_list_screen.dart';
 import '../features/exams/presentation/exam_details_screen.dart';
 
+import '../features/auth/register_school_page.dart';
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
@@ -24,8 +26,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       final isLoggedIn = authState.value?.token != null;
       final isLoggingIn = state.uri.path == '/login';
-      if (!isLoggedIn && !isLoggingIn) return '/login';
-      if (isLoggedIn && isLoggingIn) return '/dashboard';
+      final isRegistering = state.uri.path == '/register';
+      if (!isLoggedIn && !isLoggingIn && !isRegistering) return '/login';
+      if (isLoggedIn && (isLoggingIn || isRegistering)) return '/dashboard';
       return null;
     },
     routes: [
@@ -36,6 +39,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/register',
+        builder: (context, state) => const RegisterSchoolPage(),
       ),
       GoRoute(
         path: '/dashboard',

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TransportHeader extends StatelessWidget {
-  final VoidCallback onAddVehicle;
+class StaffHeader extends StatelessWidget {
+  final VoidCallback onAddStaff;
 
-  const TransportHeader({
+  const StaffHeader({
     super.key,
-    required this.onAddVehicle,
+    required this.onAddStaff,
   });
 
   @override
@@ -37,7 +37,7 @@ class TransportHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Fleet & Transport Control Hub',
+                    'Faculty & Staff Management Hub',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -47,15 +47,15 @@ class TransportHeader extends StatelessWidget {
                   ),
                   SizedBox(height: 2),
                   Text(
-                    'Real-time GPS Monitoring • Fuel Analytics • RTO Compliance • Student Manifest',
+                    'Faculty Profiles • Period Allocations • Attendance Logs • Monthly Payroll Disbursals',
                     style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
                   ),
                 ],
               ),
               ElevatedButton.icon(
-                onPressed: onAddVehicle,
-                icon: const Icon(Icons.add_rounded, size: 16),
-                label: const Text('Add Fleet Bus'),
+                onPressed: onAddStaff,
+                icon: const Icon(Icons.person_add_alt_1_rounded, size: 16),
+                label: const Text('Add Faculty Member'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF4F46E5),
                   foregroundColor: Colors.white,
@@ -69,7 +69,7 @@ class TransportHeader extends StatelessWidget {
           ),
           const SizedBox(height: 14),
 
-          // 4 Pulse Metrics
+          // 4 Compact Pulse Metrics
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 720;
@@ -81,10 +81,10 @@ class TransportHeader extends StatelessWidget {
                 mainAxisSpacing: 10,
                 childAspectRatio: isNarrow ? 2.5 : 2.8,
                 children: [
-                  _buildMetricTile('12 / 12 GPS Active', 'All Buses Tracked', Icons.gps_fixed_rounded, const Color(0xFF10B981)),
-                  _buildMetricTile('418 Onboard Today', '95% Attendance', Icons.people_alt_outlined, const Color(0xFF4F46E5)),
-                  _buildMetricTile('₹ 1,48,250 MTD Fuel', 'Diesel & CNG Total', Icons.local_gas_station_outlined, const Color(0xFF0284C7)),
-                  _buildMetricTile('100% RTO Fitness', 'Insurance & PUC Valid', Icons.verified_user_outlined, const Color(0xFFD946EF)),
+                  _buildMetricTile('48 Total Faculty', 'All Departments Active', Icons.groups_outlined, const Color(0xFF4F46E5)),
+                  _buildMetricTile('96.8% Attendance', '46 Present • 2 on Leave', Icons.how_to_reg_outlined, const Color(0xFF10B981)),
+                  _buildMetricTile('₹ 28.4L MTD Payroll', 'August Disbursed', Icons.payments_outlined, const Color(0xFF0284C7)),
+                  _buildMetricTile('4.8 / 5.0 Rating', 'Top Academic Score', Icons.star_outline_rounded, const Color(0xFFD946EF)),
                 ],
               );
             },

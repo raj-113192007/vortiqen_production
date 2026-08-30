@@ -53,10 +53,10 @@ class _TransportScreenState extends ConsumerState<TransportScreen> with SingleTi
           absentToday: 0,
           driverName: data['driverName'] ?? 'Assigned Driver',
           driverPhone: data['driverPhone'] ?? '+91 98000 00000',
-          driverLicense: 'Verified Commercial HMV 🟢',
+          driverLicense: 'Commercial HMV • Verified',
           attendantName: 'Assigned Attendant',
           attendantPhone: '+91 98000 11111',
-          liveStatus: 'PARKED IN DEPOT 🅿️',
+          liveStatus: 'Parked in Depot',
           currentSpeed: '0 km/h',
           currentLocation: 'School Depot Bay',
           etaToSchool: 'At Campus',
@@ -77,7 +77,7 @@ class _TransportScreenState extends ConsumerState<TransportScreen> with SingleTi
       );
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('✨ New Fleet Vehicle registered successfully!')),
+      const SnackBar(content: Text('New Fleet Vehicle registered successfully!')),
     );
   }
 
@@ -131,13 +131,13 @@ class _TransportScreenState extends ConsumerState<TransportScreen> with SingleTi
                     controller: _tabController,
                     isScrollable: !isDesktop,
                     indicator: BoxDecoration(
-                      color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                      color: const Color(0xFF4F46E5).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFF6C5CE7).withValues(alpha: 0.3)),
+                      border: Border.all(color: const Color(0xFF4F46E5).withValues(alpha: 0.3)),
                     ),
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
-                    labelColor: const Color(0xFF6C5CE7),
+                    labelColor: const Color(0xFF4F46E5),
                     unselectedLabelColor: const Color(0xFF64748B),
                     labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13),
                     unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
@@ -163,7 +163,7 @@ class _TransportScreenState extends ConsumerState<TransportScreen> with SingleTi
                 ),
                 const Divider(height: 1, color: Color(0xFFE2E8F0)),
 
-                // Tab View Contents (Dynamic & Scrollable without rigid fixed height)
+                // Tab View Contents
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: _buildActiveTabContent(filteredFleet),
@@ -183,7 +183,7 @@ class _TransportScreenState extends ConsumerState<TransportScreen> with SingleTi
           fleet: filteredFleet,
           onBroadcastAlert: () {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('📢 WhatsApp Bus Route Alert triggered for parents & drivers!')),
+              const SnackBar(content: Text('WhatsApp Bus Route Alert triggered for parents & drivers.')),
             );
           },
         );

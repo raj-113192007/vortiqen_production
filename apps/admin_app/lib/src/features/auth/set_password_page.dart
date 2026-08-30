@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'approval_waiting_page.dart';
+import 'package:go_router/go_router.dart';
 
 class SetPasswordPage extends StatefulWidget {
   const SetPasswordPage({super.key});
@@ -37,7 +37,7 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
               child: Container(
                 width: 400,
                 height: 400,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6B8EFF).withOpacity(0.15)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6B8EFF).withValues(alpha: 0.15)),
               ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                .moveY(begin: -20, end: 20, duration: 4.seconds, curve: Curves.easeInOut)
                .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 5.seconds),
@@ -48,35 +48,20 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
               child: Container(
                 width: 500,
                 height: 500,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFC784FF).withOpacity(0.15)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFC784FF).withValues(alpha: 0.15)),
               ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                .moveX(begin: -20, end: 20, duration: 5.seconds, curve: Curves.easeInOut)
                .scale(begin: const Offset(1, 1), end: const Offset(0.9, 0.9), duration: 4.seconds),
             ),
-            
+
             // Main Content
             SingleChildScrollView(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
+                  constraints: const BoxConstraints(maxWidth: 600),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left Column
-                        Expanded(
-                          flex: 5,
-                          child: _buildLeftColumn(),
-                        ),
-                        const SizedBox(width: 60),
-                        // Right Column
-                        Expanded(
-                          flex: 6,
-                          child: _buildRightColumn(),
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+                    child: _buildMainCard(),
                   ),
                 ),
               ),
@@ -87,158 +72,64 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
     );
   }
 
-  Widget _buildLeftColumn() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            if (Navigator.canPop(context))
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Color(0xFF0F52BA)),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F52BA),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Image.asset(
-                'assets/icon.png',
-                width: 24,
-                height: 24,
-                color: Colors.white,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.school, color: Colors.white, size: 24),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Vortiqen', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0F52BA))),
-                Text('ERP Admin Ecosystem', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
-              ],
-            ),
-          ],
-        ).animate().fadeIn(duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        
-        const SizedBox(height: 40),
-        const Text('Final Step\n', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, height: 1.1, color: Color(0xFF1E293B)))
-            .animate().fadeIn(delay: 200.ms, duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        const Text('Set Password', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, height: 0.5, color: Color(0xFF0F52BA)))
-            .animate().fadeIn(delay: 400.ms, duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        const SizedBox(height: 24),
-        Text('Create a strong password to protect your admin\naccount. You will use this to sign in later.',
-             style: TextStyle(fontSize: 16, height: 1.5, color: Colors.grey.shade700))
-            .animate().fadeIn(delay: 600.ms, duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        
-        const SizedBox(height: 48),
-        _buildFeatureCard(
-          icon: Icons.lock_outline,
-          iconColor: const Color(0xFF10B981),
-          title: 'Strong Password',
-          description: 'Use a mix of uppercase, lowercase, numbers,\nand special characters for maximum security.',
-        ).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
-      ],
-    );
-  }
-
-  Widget _buildFeatureCard({required IconData icon, required Color iconColor, required String title, required String description}) {
+  Widget _buildMainCard() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(40),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: iconColor, borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, color: Colors.white, size: 24),
-          ).animate(onPlay: (controller) => controller.repeat(reverse: true)).shimmer(delay: 2.seconds, duration: 1.seconds, color: Colors.white30),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-               crossAxisAlignment: CrossAxisAlignment.start,
-               children: [
-                 Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                 const SizedBox(height: 6),
-                 Text(description, style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.4)),
-               ],
-            ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0346F2).withValues(alpha: 0.08),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRightColumn() {
-    return Container(
-      padding: const EdgeInsets.all(48),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 30, offset: const Offset(0, 15))],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Color(0xFF3B82F6), size: 20),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const SizedBox(width: 8),
-                      const Text('ALMOST DONE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.5, color: Color(0xFF3B82F6))),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('Set Password', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF1E293B))),
-                ],
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Color(0xFF0D1B3E)),
+                onPressed: () => Navigator.pop(context),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('Step 3 of 3', style: TextStyle(fontSize: 12, color: Colors.grey.shade500, fontWeight: FontWeight.w500)),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Container(width: 24, height: 4, decoration: BoxDecoration(color: const Color(0xFF0F52BA), borderRadius: BorderRadius.circular(2))),
-                      const SizedBox(width: 4),
-                      Container(width: 24, height: 4, decoration: BoxDecoration(color: const Color(0xFF0F52BA), borderRadius: BorderRadius.circular(2))),
-                      const SizedBox(width: 4),
-                      Container(width: 24, height: 4, decoration: BoxDecoration(color: const Color(0xFF0F52BA), borderRadius: BorderRadius.circular(2))),
-                    ],
-                  ),
-                ],
+              const SizedBox(width: 8),
+              const Text(
+                'Back',
+                style: TextStyle(
+                  color: Color(0xFF6B7280),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
-          ),
-          const SizedBox(height: 40),
+          ).animate().fadeIn(duration: 400.ms),
+          const SizedBox(height: 16),
           
-          _buildPasswordField('New Password', 'Enter your password', _obscurePassword, (val) {
+          const Text(
+            'Set Your Password',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0D1B3E),
+              letterSpacing: -0.5,
+            ),
+          ).animate().fadeIn(delay: 100.ms, duration: 800.ms).slideY(begin: 0.1, curve: Curves.easeOutQuart),
+          const SizedBox(height: 8),
+          
+          const Text(
+            'Create a strong password to secure your VortiQen school administrative console.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF6B7280),
+              height: 1.5,
+            ),
+          ).animate().fadeIn(delay: 200.ms, duration: 800.ms).slideY(begin: 0.1, curve: Curves.easeOutQuart),
+          const SizedBox(height: 32),
+
+          _buildPasswordField('New Password', 'Enter strong password', _obscurePassword, (val) {
             setState(() {
               _obscurePassword = val;
             });
@@ -246,32 +137,28 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
             setState(() {
               _passwordText = val;
             });
-          }).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
+          }).animate().fadeIn(delay: 300.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
           
           const SizedBox(height: 16),
-          _buildPasswordConditions().animate().fadeIn(delay: 900.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
+          _buildPasswordConditions(),
           const SizedBox(height: 24),
           
           _buildPasswordField('Confirm Password', 'Re-enter your password', _obscureConfirmPassword, (val) {
             setState(() {
               _obscureConfirmPassword = val;
             });
-          }).animate().fadeIn(delay: 1000.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
-          const SizedBox(height: 40),
+          }).animate().fadeIn(delay: 400.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
+          const SizedBox(height: 32),
           
           SizedBox(
             width: double.infinity,
-            height: 56,
+            height: 48,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ApprovalWaitingPage()),
-                  (route) => false,
-                );
+                context.go('/dashboard');
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0346F2),
+                backgroundColor: const Color(0xFF4F46E5),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 0,
@@ -279,86 +166,119 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Complete Registration', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text(
+                    'Complete Setup & Enter Dashboard',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
                   SizedBox(width: 8),
-                  Icon(Icons.check_circle, size: 20),
+                  Icon(Icons.arrow_forward_rounded, size: 18),
                 ],
               ),
             ),
-          ).animate().fadeIn(delay: 1200.ms, duration: 800.ms).scale(delay: 1200.ms, curve: Curves.easeOutBack, duration: 800.ms),
+          ).animate().fadeIn(delay: 500.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
         ],
       ),
-    ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.02, end: 0, curve: Curves.easeOutQuart);
+    );
   }
 
-  Widget _buildPasswordConditions() {
+  Widget _buildPasswordField(String label, String hint, bool obscure, Function(bool) onToggle, {Function(String)? onChanged}) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildConditionRow('At least 8 characters', _passwordText.length >= 8),
-        _buildConditionRow('Contains uppercase letter', _passwordText.contains(RegExp(r'[A-Z]'))),
-        _buildConditionRow('Contains lowercase letter', _passwordText.contains(RegExp(r'[a-z]'))),
-        _buildConditionRow('Contains number', _passwordText.contains(RegExp(r'[0-9]'))),
-        _buildConditionRow('Contains special character', _passwordText.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF0D1B3E),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF9FAFB),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE5E7EB)),
+          ),
+          child: TextField(
+            obscureText: obscure,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              border: InputBorder.none,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  color: const Color(0xFF6B7280),
+                  size: 20,
+                ),
+                onPressed: () => onToggle(!obscure),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildConditionRow(String text, bool isMet) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
+  Widget _buildPasswordConditions() {
+    bool hasMinLength = _passwordText.length >= 8;
+    bool hasUppercase = _passwordText.contains(RegExp(r'[A-Z]'));
+    bool hasNumber = _passwordText.contains(RegExp(r'[0-9]'));
+    bool hasSpecial = _passwordText.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            width: 20,
-            height: 20,
-            decoration: BoxDecoration(
-              color: isMet ? const Color(0xFF10B981) : Colors.transparent,
-              border: Border.all(color: isMet ? const Color(0xFF10B981) : Colors.grey.shade400, width: 2),
-              shape: BoxShape.circle,
-            ),
-            child: isMet ? const Icon(Icons.check, size: 12, color: Colors.white) : null,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            text,
+          const Text(
+            'Password must contain:',
             style: TextStyle(
-              fontSize: 14,
-              color: isMet ? const Color(0xFF1E293B) : Colors.grey.shade500,
-              fontWeight: isMet ? FontWeight.w600 : FontWeight.w400,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF6B7280),
             ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 16,
+            runSpacing: 8,
+            children: [
+              _buildConditionItem('At least 8 characters', hasMinLength),
+              _buildConditionItem('One uppercase letter', hasUppercase),
+              _buildConditionItem('One number', hasNumber),
+              _buildConditionItem('One special character', hasSpecial),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPasswordField(String label, String hint, bool isObscure, ValueChanged<bool> onObscureToggle, {ValueChanged<String>? onChanged}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildConditionItem(String text, bool met) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.transparent),
-          ),
-          child: TextField(
-            obscureText: isObscure,
-            onChanged: onChanged,
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
-              prefixIcon: Icon(Icons.lock_outline, color: Colors.grey.shade400, size: 20),
-              suffixIcon: IconButton(
-                icon: Icon(isObscure ? Icons.visibility_off_outlined : Icons.visibility_outlined, color: Colors.grey.shade400, size: 20),
-                onPressed: () => onObscureToggle(!isObscure),
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            ),
+        Icon(
+          met ? Icons.check_circle : Icons.radio_button_unchecked,
+          size: 14,
+          color: met ? const Color(0xFF10B981) : const Color(0xFF9CA3AF),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            color: met ? const Color(0xFF10B981) : const Color(0xFF6B7280),
+            fontWeight: met ? FontWeight.w600 : FontWeight.normal,
           ),
         ),
       ],

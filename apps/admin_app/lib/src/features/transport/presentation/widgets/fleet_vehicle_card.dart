@@ -17,94 +17,112 @@ class FleetVehicleCard extends StatelessWidget {
     final isMoving = vehicle.isMoving;
     final isArrived = vehicle.isArrived;
 
+    Color statusDotColor;
     Color statusBg;
     Color statusTextColor;
     if (isMoving) {
-      statusBg = const Color(0xFF00B894).withValues(alpha: 0.12);
-      statusTextColor = const Color(0xFF00B894);
+      statusDotColor = const Color(0xFF10B981);
+      statusBg = const Color(0xFF10B981).withValues(alpha: 0.1);
+      statusTextColor = const Color(0xFF047857);
     } else if (isArrived) {
-      statusBg = const Color(0xFF0984E3).withValues(alpha: 0.12);
-      statusTextColor = const Color(0xFF0984E3);
+      statusDotColor = const Color(0xFF3B82F6);
+      statusBg = const Color(0xFF3B82F6).withValues(alpha: 0.1);
+      statusTextColor = const Color(0xFF1D4ED8);
     } else {
-      statusBg = const Color(0xFFE17055).withValues(alpha: 0.12);
-      statusTextColor = const Color(0xFFE17055);
+      statusDotColor = const Color(0xFFF59E0B);
+      statusBg = const Color(0xFFF59E0B).withValues(alpha: 0.1);
+      statusTextColor = const Color(0xFFB45309);
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 18),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: Bus Number, Model, Live Status Badge
+          // Header Row: Bus Plate, Model, Status Badge with dot
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6C5CE7),
-                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xFF4F46E5),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       vehicle.busNumber,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Text(
                     vehicle.model,
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 13,
+                      fontSize: 12,
                       color: Color(0xFF1E293B),
                     ),
                   ),
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: statusBg,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(
-                  vehicle.liveStatus,
-                  style: TextStyle(
-                    color: statusTextColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: statusDotColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      vehicle.liveStatus,
+                      style: TextStyle(
+                        color: statusTextColor,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
           // Route Details & Location info
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.location_on_rounded, size: 18, color: Color(0xFFE17055)),
-              const SizedBox(width: 8),
+              const Icon(Icons.near_me_outlined, size: 16, color: Color(0xFF64748B)),
+              const SizedBox(width: 6),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,22 +130,22 @@ class FleetVehicleCard extends StatelessWidget {
                     Text(
                       vehicle.routeName,
                       style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
                         color: Color(0xFF1E293B),
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Current Location: ${vehicle.currentLocation} • Speed: ${vehicle.currentSpeed}',
-                      style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                      'Location: ${vehicle.currentLocation} • Speed: ${vehicle.currentSpeed}',
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
           // Visual Route Timeline Stepper
           if (vehicle.routeStops.isNotEmpty)
@@ -135,48 +153,40 @@ class FleetVehicleCard extends StatelessWidget {
               stops: vehicle.routeStops,
               eta: vehicle.etaToSchool,
             ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
-          // Footer info: Driver details + Attendance Progress bar + 360 Action
+          // Footer info: Driver details + Attendance Counter + 360 Action
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
               color: const Color(0xFFF8FAFC),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
             child: Wrap(
               alignment: WrapAlignment.spaceBetween,
               crossAxisAlignment: WrapCrossAlignment.center,
               spacing: 12,
-              runSpacing: 12,
+              runSpacing: 8,
               children: [
                 // Driver & Attendant
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const CircleAvatar(
-                      radius: 14,
-                      backgroundColor: Color(0xFFE2E8F0),
-                      child: Icon(Icons.person, size: 16, color: Color(0xFF64748B)),
+                    const Icon(Icons.badge_outlined, size: 15, color: Color(0xFF64748B)),
+                    const SizedBox(width: 6),
+                    Text(
+                      '${vehicle.driverName} (${vehicle.driverPhone})',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1E293B),
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${vehicle.driverName} (${vehicle.driverPhone})',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF1E293B),
-                          ),
-                        ),
-                        Text(
-                          'Attendant: ${vehicle.attendantName}',
-                          style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
-                        ),
-                      ],
+                    Text(
+                      '• Attendant: ${vehicle.attendantName}',
+                      style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
                     ),
                   ],
                 ),
@@ -186,31 +196,31 @@ class FleetVehicleCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF00B894).withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '${vehicle.onboardToday} / ${vehicle.totalScholars} Scholars Boarded',
+                        '${vehicle.onboardToday}/${vehicle.totalScholars} Boarded',
                         style: const TextStyle(
-                          color: Color(0xFF00B894),
+                          color: Color(0xFF047857),
                           fontSize: 11,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    ElevatedButton.icon(
+                    const SizedBox(width: 8),
+                    TextButton.icon(
                       onPressed: onOpenDossier,
-                      icon: const Icon(Icons.open_in_new_rounded, size: 14),
-                      label: const Text('Bus 360° Dossier'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
-                        foregroundColor: const Color(0xFF6C5CE7),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      icon: const Icon(Icons.open_in_new_rounded, size: 13),
+                      label: const Text('View 360'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF4F46E5),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ),
                   ],

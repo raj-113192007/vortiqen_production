@@ -30,7 +30,7 @@ class TermsPage extends StatelessWidget {
               child: Container(
                 width: 400,
                 height: 400,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6B8EFF).withOpacity(0.15)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6B8EFF).withValues(alpha: 0.15)),
               ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                .moveY(begin: -20, end: 20, duration: 4.seconds, curve: Curves.easeInOut)
                .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 5.seconds),
@@ -41,7 +41,7 @@ class TermsPage extends StatelessWidget {
               child: Container(
                 width: 500,
                 height: 500,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFC784FF).withOpacity(0.15)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFC784FF).withValues(alpha: 0.15)),
               ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                .moveX(begin: -20, end: 20, duration: 5.seconds, curve: Curves.easeInOut)
                .scale(begin: const Offset(1, 1), end: const Offset(0.9, 0.9), duration: 4.seconds),
@@ -59,7 +59,7 @@ class TermsPage extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+                        BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10)),
                       ],
                     ),
                     child: Column(
@@ -93,33 +93,26 @@ class TermsPage extends StatelessWidget {
                               children: [
                                 _buildSectionTitle('1. Acceptance of Terms'),
                                 _buildSectionText(
-                                    'By accessing and using the Vortiqen ERP Admin Ecosystem, you accept and agree to be bound by the terms and provision of this agreement. Registration is mandatory to use our school management services.'),
-                                _buildSectionTitle('2. User License'),
+                                    'By accessing and using the Vortiqen platform, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.'),
+                                _buildSectionTitle('2. User Account'),
                                 _buildSectionText(
-                                    'Permission is granted to temporarily download one copy of the materials (information or software) on Vortiqen\'s website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.'),
-                                _buildSectionTitle('3. Disclaimer'),
+                                    'To use certain features of the platform, you must register for an account. You agree to provide accurate, current, and complete information during the registration process and to update such information to keep it accurate, current, and complete.'),
+                                _buildSectionTitle('3. Service Availability'),
                                 _buildSectionText(
-                                    'The materials on Vortiqen\'s web ecosystem are provided on an \'as is\' basis. Vortiqen makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.'),
-                                _buildSectionTitle('4. Limitations'),
+                                    'We strive to maintain maximum uptime for all our services, however, we do not guarantee uninterrupted access and reserve the right to perform scheduled maintenance as necessary.'),
+                                _buildSectionTitle('4. Termination'),
                                 _buildSectionText(
-                                    'In no event shall Vortiqen or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Vortiqen\'s ecosystem.'),
-                                _buildSectionTitle('5. Revisions and Errata'),
+                                    'We may terminate or suspend your access to our service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.'),
+                                _buildSectionTitle('5. Changes to Terms'),
                                 _buildSectionText(
-                                    'The materials appearing on Vortiqen could include technical, typographical, or photographic errors. Vortiqen does not warrant that any of the materials on its ecosystem are accurate, complete, or current.'),
-                                const SizedBox(height: 40),
-                                Center(
-                                  child: Text(
-                                    'Last updated: June 2026',
-                                    style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-                                  ),
-                                ),
+                                    'We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will provide notice of any significant changes.'),
                               ],
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
+                  ),
                 ),
               ),
             ),
@@ -131,13 +124,13 @@ class TermsPage extends StatelessWidget {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(top: 24.0, bottom: 12.0),
+      padding: const EdgeInsets.only(top: 24.0, bottom: 8.0),
       child: Text(
         title,
         style: const TextStyle(
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF0F52BA), // Brand Blue
+          color: Color(0xFF1E293B),
         ),
       ),
     );
@@ -146,10 +139,10 @@ class TermsPage extends StatelessWidget {
   Widget _buildSectionText(String text) {
     return Text(
       text,
-      style: TextStyle(
-        fontSize: 15,
+      style: const TextStyle(
+        fontSize: 14,
+        color: Color(0xFF64748B),
         height: 1.6,
-        color: Colors.grey.shade700,
       ),
     );
   }

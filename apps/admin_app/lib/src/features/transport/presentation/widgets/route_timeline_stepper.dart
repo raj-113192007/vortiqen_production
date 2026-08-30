@@ -18,10 +18,10 @@ class RouteTimelineStepper extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
       child: Column(
@@ -32,36 +32,29 @@ class RouteTimelineStepper extends StatelessWidget {
             children: [
               const Row(
                 children: [
-                  Icon(Icons.alt_route_rounded, size: 16, color: Color(0xFF6C5CE7)),
-                  SizedBox(width: 6),
+                  Icon(Icons.alt_route_rounded, size: 14, color: Color(0xFF4F46E5)),
+                  SizedBox(width: 5),
                   Text(
-                    'Live Route Progress',
+                    'Route Stops',
                     style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                       color: Color(0xFF1E293B),
                     ),
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF6C5CE7).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'ETA: $eta',
-                  style: const TextStyle(
-                    color: Color(0xFF6C5CE7),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                  ),
+              Text(
+                'ETA: $eta',
+                style: const TextStyle(
+                  color: Color(0xFF4F46E5),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -88,15 +81,15 @@ class RouteTimelineStepper extends StatelessWidget {
     IconData icon;
 
     if (isCurrent) {
-      nodeColor = const Color(0xFF6C5CE7);
-      textColor = const Color(0xFF6C5CE7);
+      nodeColor = const Color(0xFF4F46E5);
+      textColor = const Color(0xFF4F46E5);
       icon = Icons.directions_bus_filled_rounded;
     } else if (isCompleted) {
-      nodeColor = const Color(0xFF00B894);
+      nodeColor = const Color(0xFF10B981);
       textColor = const Color(0xFF334155);
       icon = Icons.check_circle_rounded;
     } else {
-      nodeColor = const Color(0xFFCBD5E1);
+      nodeColor = const Color(0xFF94A3B8);
       textColor = const Color(0xFF94A3B8);
       icon = Icons.radio_button_unchecked_rounded;
     }
@@ -104,24 +97,17 @@ class RouteTimelineStepper extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: isCurrent ? const Color(0xFF6C5CE7).withValues(alpha: 0.15) : Colors.transparent,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            icon,
-            size: isCurrent ? 20 : 16,
-            color: nodeColor,
-          ),
+        Icon(
+          icon,
+          size: isCurrent ? 15 : 13,
+          color: nodeColor,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           stop.stopName,
           style: TextStyle(
-            fontSize: 11,
-            fontWeight: isCurrent ? FontWeight.w900 : FontWeight.w600,
+            fontSize: 10,
+            fontWeight: isCurrent ? FontWeight.w800 : FontWeight.w600,
             color: textColor,
           ),
         ),
@@ -139,10 +125,10 @@ class RouteTimelineStepper extends StatelessWidget {
   Widget _buildConnectingLine(RouteStopInfo current, RouteStopInfo next) {
     final isPassed = current.isCompleted;
     return Container(
-      width: 44,
-      height: 2,
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
-      color: isPassed ? const Color(0xFF00B894) : const Color(0xFFCBD5E1),
+      width: 32,
+      height: 1.5,
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+      color: isPassed ? const Color(0xFF10B981) : const Color(0xFFCBD5E1),
     );
   }
 }

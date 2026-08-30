@@ -44,7 +44,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
               child: Container(
                 width: 400,
                 height: 400,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6B8EFF).withOpacity(0.15)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF6B8EFF).withValues(alpha: 0.15)),
               ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                .moveY(begin: -20, end: 20, duration: 4.seconds, curve: Curves.easeInOut)
                .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 5.seconds),
@@ -55,7 +55,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
               child: Container(
                 width: 500,
                 height: 500,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFC784FF).withOpacity(0.15)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFC784FF).withValues(alpha: 0.15)),
               ).animate(onPlay: (controller) => controller.repeat(reverse: true))
                .moveX(begin: -20, end: 20, duration: 5.seconds, curve: Curves.easeInOut)
                .scale(begin: const Offset(1, 1), end: const Offset(0.9, 0.9), duration: 4.seconds),
@@ -99,67 +99,79 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Brand / Logo
         Row(
           children: [
-            if (Navigator.canPop(context))
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Color(0xFF0F52BA)),
-                  onPressed: () => Navigator.pop(context),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ),
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFF0F52BA),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Image.asset(
-                'assets/icon.png',
-                width: 24,
-                height: 24,
-                color: Colors.white,
-                errorBuilder: (context, error, stackTrace) => const Icon(Icons.school, color: Colors.white, size: 24),
-              ),
+              child: const Icon(Icons.school, color: Colors.white, size: 28),
             ),
-            const SizedBox(width: 12),
-            Column(
+            const SizedBox(width: 16),
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Vortiqen', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF0F52BA))),
-                Text('ERP Admin Ecosystem', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: Colors.grey.shade700)),
+                Text(
+                  'VortiQen',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+                Text(
+                  'School ERP System',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF64748B),
+                  ),
+                ),
               ],
             ),
           ],
-        ).animate().fadeIn(duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        
-        const SizedBox(height: 40),
-        const Text('Secure your\n', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, height: 1.1, color: Color(0xFF1E293B)))
-            .animate().fadeIn(delay: 200.ms, duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        const Text('Account', style: TextStyle(fontSize: 48, fontWeight: FontWeight.w800, height: 0.5, color: Color(0xFF0F52BA)))
-            .animate().fadeIn(delay: 400.ms, duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        const SizedBox(height: 24),
-        Text('We use industry-standard encryption to keep\nyour school\'s data safe. Verify your identity\nto access the admin dashboard.',
-             style: TextStyle(fontSize: 16, height: 1.5, color: Colors.grey.shade700))
-            .animate().fadeIn(delay: 600.ms, duration: 800.ms).slideX(begin: -0.05, curve: Curves.easeOutQuart),
-        
+        ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.1, curve: Curves.easeOutQuart),
         const SizedBox(height: 48),
+        
+        // Headline
+        const Text(
+          'Two-Step Security\nVerification',
+          style: TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1E293B),
+            height: 1.15,
+            letterSpacing: -0.5,
+          ),
+        ).animate().fadeIn(delay: 200.ms, duration: 800.ms).slideY(begin: 0.1, curve: Curves.easeOutQuart),
+        const SizedBox(height: 16),
+        
+        const Text(
+          'Protecting your institution\'s data is our highest priority.\nPlease verify your credentials to initialize your admin console.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Color(0xFF64748B),
+            height: 1.5,
+          ),
+        ).animate().fadeIn(delay: 400.ms, duration: 800.ms).slideY(begin: 0.1, curve: Curves.easeOutQuart),
+        const SizedBox(height: 40),
+        
+        // Feature Cards
+        _buildFeatureCard(
+          icon: Icons.mark_email_read_outlined,
+          iconColor: const Color(0xFF0F52BA),
+          title: 'Direct Dual Delivery',
+          description: 'OTPs are simultaneously dispatched to both\nregistered mobile and email.',
+        ).animate().fadeIn(delay: 600.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
+        const SizedBox(height: 16),
         _buildFeatureCard(
           icon: Icons.shield_outlined,
-          iconColor: const Color(0xFF10B981), // Emerald green for security
+          iconColor: const Color(0xFF10B981),
           title: 'Bank-Grade Security',
           description: 'Your data is encrypted at rest and in transit\nensuring maximum privacy.',
         ).animate().fadeIn(delay: 800.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
-        const SizedBox(height: 16),
-        _buildFeatureCard(
-          icon: Icons.speed,
-          iconColor: const Color(0xFFF59E0B), // Amber for speed
-          title: 'Lightning Fast',
-          description: 'Our cloud infrastructure guarantees 99.9% uptime\nand instant data retrieval.',
-        ).animate().fadeIn(delay: 1000.ms, duration: 800.ms).slideY(begin: 0.05, curve: Curves.easeOutQuart),
       ],
     );
   }
@@ -168,10 +180,10 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: Colors.white.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +215,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 30, offset: const Offset(0, 15))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 30, offset: const Offset(0, 15))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -361,7 +373,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF10B981), // Green for success/verify
+              backgroundColor: const Color(0xFF10B981),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               elevation: 0,

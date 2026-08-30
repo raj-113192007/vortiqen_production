@@ -19,7 +19,6 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
 
   @override
   Widget build(BuildContext context) {
-    // Collect all students or filtered by bus
     List<StudentPassenger> students = [];
     if (_selectedBusId == 'ALL') {
       students = widget.fleet.expand((v) => v.studentsOnboard).toList();
@@ -28,7 +27,6 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
       students = bus.studentsOnboard;
     }
 
-    // Filter by Boarding Status
     if (_selectedFilter == 'BOARDED') {
       students = students.where((s) => s.isBoarded).toList();
     } else if (_selectedFilter == 'ABSENT') {
@@ -43,27 +41,27 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
       children: [
         // Filter & Controls Header
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             color: const Color(0xFFF8FAFC),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(color: const Color(0xFFE2E8F0)),
           ),
           child: Wrap(
             alignment: WrapAlignment.spaceBetween,
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 12,
-            runSpacing: 12,
+            runSpacing: 8,
             children: [
-              // Status Filter Chips
+              // Status Filter Chips with semantic dots
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildFilterChip('All (${students.length})', 'ALL'),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('Boarded 🟢 ($totalBoarded)', 'BOARDED', activeColor: const Color(0xFF00B894)),
-                  const SizedBox(width: 8),
-                  _buildFilterChip('Absent 🔴 ($totalAbsent)', 'ABSENT', activeColor: const Color(0xFFD63031)),
+                  const SizedBox(width: 6),
+                  _buildFilterChip('Boarded ($totalBoarded)', 'BOARDED', dotColor: const Color(0xFF10B981)),
+                  const SizedBox(width: 6),
+                  _buildFilterChip('Absent ($totalAbsent)', 'ABSENT', dotColor: const Color(0xFFEF4444)),
                 ],
               ),
 
@@ -71,20 +69,20 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Filter Route: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF64748B))),
-                  const SizedBox(width: 6),
+                  const Text('Route: ', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
+                  const SizedBox(width: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(6),
                       border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _selectedBusId,
                         isDense: true,
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF1E293B)),
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
                         items: [
                           const DropdownMenuItem(value: 'ALL', child: Text('All Fleet Routes')),
                           for (var v in widget.fleet)
@@ -101,14 +99,14 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
         // Students Manifest List
         if (students.isEmpty)
           const Center(
             child: Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Text('No students found for this filter.'),
+              padding: EdgeInsets.all(24.0),
+              child: Text('No students found for this filter.', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
             ),
           )
         else
@@ -121,35 +119,35 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
               final isBoarded = s.isBoarded;
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                padding: const EdgeInsets.all(14),
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: const Color(0xFFE2E8F0)),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.01),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 20,
-                      backgroundColor: isBoarded ? const Color(0xFF00B894).withValues(alpha: 0.12) : const Color(0xFFD63031).withValues(alpha: 0.12),
+                      radius: 16,
+                      backgroundColor: isBoarded ? const Color(0xFF10B981).withValues(alpha: 0.1) : const Color(0xFFEF4444).withValues(alpha: 0.1),
                       child: Text(
                         s.name[0],
                         style: TextStyle(
-                          color: isBoarded ? const Color(0xFF00B894) : const Color(0xFFD63031),
-                          fontWeight: FontWeight.w900,
-                          fontSize: 14,
+                          color: isBoarded ? const Color(0xFF047857) : const Color(0xFFB91C1C),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,18 +156,18 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
                             children: [
                               Text(
                                 s.name,
-                                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF1E293B)),
+                                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF1E293B)),
                               ),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: 6),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF1F5F9),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
                                   s.studentClass,
-                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+                                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
                                 ),
                               ),
                             ],
@@ -183,28 +181,44 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: isBoarded ? const Color(0xFF00B894).withValues(alpha: 0.1) : const Color(0xFFD63031).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(6),
+                        color: isBoarded ? const Color(0xFF10B981).withValues(alpha: 0.1) : const Color(0xFFEF4444).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
                       ),
-                      child: Text(
-                        s.status,
-                        style: TextStyle(
-                          color: isBoarded ? const Color(0xFF00B894) : const Color(0xFFD63031),
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 5,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: isBoarded ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            s.status,
+                            style: TextStyle(
+                              color: isBoarded ? const Color(0xFF047857) : const Color(0xFFB91C1C),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 6),
                     IconButton(
-                      icon: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF25D366), size: 20),
-                      tooltip: 'WhatsApp Alert to Parent',
+                      icon: const Icon(Icons.chat_bubble_outline_rounded, color: Color(0xFF25D366), size: 16),
+                      tooltip: 'Send Parent Alert',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('💬 WhatsApp Boarding Notification triggered for ${s.parent} (${s.phone})'),
+                            content: Text('WhatsApp notification dispatched to ${s.parent} (${s.phone})'),
                           ),
                         );
                       },
@@ -218,25 +232,34 @@ class _StudentBoardingTabState extends State<StudentBoardingTab> {
     );
   }
 
-  Widget _buildFilterChip(String label, String value, {Color activeColor = const Color(0xFF6C5CE7)}) {
+  Widget _buildFilterChip(String label, String value, {Color? dotColor}) {
     final isSelected = _selectedFilter == value;
     return InkWell(
       onTap: () => setState(() => _selectedFilter = value),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(6),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: isSelected ? activeColor : const Color(0xFFE2E8F0)),
+          color: isSelected ? const Color(0xFF4F46E5) : Colors.white,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: isSelected ? const Color(0xFF4F46E5) : const Color(0xFFE2E8F0)),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : const Color(0xFF64748B),
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (dotColor != null && !isSelected) ...[
+              Container(width: 6, height: 6, decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle)),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : const Color(0xFF64748B),
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
       ),
     );
