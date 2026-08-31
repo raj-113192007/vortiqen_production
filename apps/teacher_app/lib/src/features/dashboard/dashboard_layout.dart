@@ -81,21 +81,25 @@ class DashboardLayout extends ConsumerWidget {
           ],
         ),
         actions: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: const Color(0xFF10B981).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                const PulsingLiveDot(size: 4, pulseScale: 2.0, color: Color(0xFF10B981)),
-                const SizedBox(width: 6),
-                Text(
-                  user?.name ?? 'Teacher Staff',
-                  style: const TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.w800),
-                ),
-              ],
+          InkWell(
+            onTap: () => context.push('/profile'),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                children: [
+                  const PulsingLiveDot(size: 4, pulseScale: 2.0, color: Color(0xFF10B981)),
+                  const SizedBox(width: 6),
+                  Text(
+                    user?.name ?? 'Prof. Rajesh Sharma',
+                    style: const TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.w800),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 6),
