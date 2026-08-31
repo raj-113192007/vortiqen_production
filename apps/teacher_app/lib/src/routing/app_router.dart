@@ -126,6 +126,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const LeaveApplicationScreen(),
           ),
           GoRoute(
+            path: '/leaves',
+            builder: (context, state) => const LeaveApplicationScreen(),
+          ),
+          GoRoute(
             path: '/chat',
             builder: (context, state) => const ChatListScreen(),
             routes: [

@@ -313,11 +313,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildQuickActionCockpit() {
     final actions = [
       {'title': 'My Profile & KYC', 'sub': 'Aadhaar, Degree & Vault', 'icon': Icons.badge_rounded, 'color': const Color(0xFF10B981), 'route': '/profile'},
+      {'title': 'Leave Sanctions', 'sub': 'My Leaves & Student Approvals', 'icon': Icons.how_to_reg_rounded, 'color': const Color(0xFF8E44AD), 'route': '/hr/leaves'},
       {'title': 'Parent Grievances', 'sub': 'Complaints & Inquiries', 'icon': Icons.forum_rounded, 'color': const Color(0xFFE17055), 'route': '/complaints'},
       {'title': 'Salary & Payslips', 'sub': 'Monthly Slips & Form 16', 'icon': Icons.account_balance_wallet_rounded, 'color': const Color(0xFF0284C7), 'route': '/payslips'},
       {'title': 'Daily Agenda & To-Do', 'sub': 'Calendar, Periods & Tasks', 'icon': Icons.event_available_rounded, 'color': const Color(0xFF6C5CE7), 'route': '/calendar'},
       {'title': 'Mark Roll Call', 'sub': '1-Tap Live Register', 'icon': Icons.checklist_rounded, 'color': const Color(0xFF059669), 'route': '/mark-attendance'},
-      {'title': 'Lesson Planner', 'sub': 'Day-wise Pedagogy Log', 'icon': Icons.edit_calendar_rounded, 'color': const Color(0xFF8E44AD), 'route': '/daily-lesson-planner'},
+      {'title': 'Lesson Planner', 'sub': 'Day-wise Pedagogy Log', 'icon': Icons.edit_calendar_rounded, 'color': const Color(0xFF9B59B6), 'route': '/daily-lesson-planner'},
       {'title': 'Syllabus Tracker', 'sub': 'Teaching Units & Progress', 'icon': Icons.auto_stories_rounded, 'color': const Color(0xFF0984E3), 'route': '/teaching-units'},
       {'title': 'Class Daily Diary', 'sub': 'Broadcast Notes to Parents', 'icon': Icons.menu_book_rounded, 'color': const Color(0xFFF59E0B), 'route': '/academics/diary'},
       {'title': 'Weekly Timetable', 'sub': 'Class Schedule', 'icon': Icons.calendar_view_week_rounded, 'color': const Color(0xFF00CEC9), 'route': '/academics/timetable'},
