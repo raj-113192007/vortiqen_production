@@ -31,11 +31,28 @@ class MarkAttendanceScreen extends StatefulWidget {
 }
 
 class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
+  static const String assignedClassTeacherOf = 'Class 10-A';
+
   DateTime _selectedDate = DateTime.now();
   String _selectedClass = 'Class 10-A';
   String _searchQuery = '';
   String _selectedFilter = 'ALL'; // 'ALL', 'PRESENT', 'ABSENT', 'LATE'
   bool _isSaving = false;
+
+  bool get isAuthorizedClassTeacher => _selectedClass == assignedClassTeacherOf;
+
+  String getAssignedClassTeacher(String className) {
+    switch (className) {
+      case 'Class 10-A':
+        return 'Prof. Rajesh Sharma (You - Class Teacher)';
+      case 'Class 9-B':
+        return 'Mrs. Sunita Kapoor (TGT Mathematics)';
+      case 'Class 11-A':
+        return 'Mr. Arvind Verma (PGT Chemistry)';
+      default:
+        return 'Authorized Class Faculty';
+    }
+  }
 
   final Map<String, List<AttendanceScholar>> _classRosters = {
     'Class 10-A': [
@@ -66,7 +83,30 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
     ],
   };
 
+  void _showUnauthorizedAlert() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '🔒 Permission Restricted: You are assigned Class Teacher for Class 10-A. Attendance for $_selectedClass can only be submitted by ${getAssignedClassTeacher(_selectedClass)}.',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFFEF4444),
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Switch to 10-A',
+          textColor: Colors.white,
+          onPressed: () => setState(() => _selectedClass = 'Class 10-A'),
+        ),
+      ),
+    );
+  }
+
   void _markAllPresent() {
+    if (!isAuthorizedClassTeacher) {
+      _showUnauthorizedAlert();
+      return;
+    }
+
     setState(() {
       final roster = _classRosters[_selectedClass] ?? [];
       for (var s in roster) {
@@ -76,7 +116,7 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('All scholars marked PRESENT for today! 🎯'),
+        content: Text('All scholars marked PRESENT for Class 10-A! 🎯'),
         backgroundColor: Color(0xFF10B981),
         duration: Duration(seconds: 1),
       ),
@@ -84,6 +124,11 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
   }
 
   void _markAllAbsent() {
+    if (!isAuthorizedClassTeacher) {
+      _showUnauthorizedAlert();
+      return;
+    }
+
     setState(() {
       final roster = _classRosters[_selectedClass] ?? [];
       for (var s in roster) {
@@ -93,6 +138,11 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
   }
 
   void _setScholarStatus(AttendanceScholar s, String status) {
+    if (!isAuthorizedClassTeacher) {
+      _showUnauthorizedAlert();
+      return;
+    }
+
     setState(() {
       s.status = status;
     });
@@ -195,26 +245,71 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
           // 6. SAVE REGISTER BUTTON
           FadeSlideEntry(
             delay: const Duration(milliseconds: 220),
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: _isSaving ? null : _saveAttendance,
-                icon: _isSaving
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : const Icon(Icons.cloud_done_rounded, size: 20),
-                label: Text(
-                  _isSaving ? 'Locking Attendance...' : 'Save & Broadcast Attendance Register ($presentCount/$total Present)',
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF10B981),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  elevation: 2,
-                ),
-              ),
-            ),
+            child: isAuthorizedClassTeacher
+                ? SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton.icon(
+                      onPressed: _isSaving ? null : _saveAttendance,
+                      icon: _isSaving
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                          : const Icon(Icons.cloud_done_rounded, size: 20),
+                      label: Text(
+                        _isSaving ? 'Locking Attendance...' : 'Save & Broadcast Attendance Register ($presentCount/$total Present)',
+                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF10B981),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        elevation: 2,
+                      ),
+                    ),
+                  )
+                : Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.lock_person_rounded, color: Color(0xFFEF4444), size: 22),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Attendance Submission Locked for $_selectedClass',
+                                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF991B1B)),
+                                ),
+                                Text(
+                                  'Only assigned Class Teacher (${getAssignedClassTeacher(_selectedClass)}) can submit daily register.',
+                                  style: const TextStyle(fontSize: 11, color: Color(0xFFB91C1C)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          onPressed: () => setState(() => _selectedClass = 'Class 10-A'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF10B981),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 11),
+                          ),
+                          child: const Text('Open Class 10-A'),
+                        ),
+                      ],
+                    ),
+                  ),
           ),
           const SizedBox(height: 30),
         ],
@@ -312,101 +407,174 @@ class _MarkAttendanceScreenState extends State<MarkAttendanceScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: 16,
-        runSpacing: 12,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Class Dropdown
-          Row(
-            mainAxisSize: MainAxisSize.min,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 12,
             children: [
-              const Icon(Icons.school_outlined, size: 20, color: Color(0xFF6C5CE7)),
-              const SizedBox(width: 8),
-              const Text('Select Class: ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF475569))),
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFCBD5E1)),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedClass,
-                    isDense: true,
-                    style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF1E293B), fontSize: 13),
-                    items: _classRosters.keys.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
-                    onChanged: (val) {
-                      if (val != null) {
-                        setState(() {
-                          _selectedClass = val;
-                        });
+              // Class Dropdown with Lock Status
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.school_outlined, size: 20, color: Color(0xFF6C5CE7)),
+                  const SizedBox(width: 8),
+                  const Text('Select Class: ', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF475569))),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: const Color(0xFFCBD5E1)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedClass,
+                        isDense: true,
+                        style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF1E293B), fontSize: 13),
+                        items: _classRosters.keys.map((c) {
+                          final isAllocated = c == assignedClassTeacherOf;
+                          return DropdownMenuItem(
+                            value: c,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  isAllocated ? Icons.stars_rounded : Icons.lock_outline_rounded,
+                                  size: 15,
+                                  color: isAllocated ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  isAllocated ? '$c (My Class Teacher)' : '$c (Subject Only)',
+                                  style: TextStyle(
+                                    fontWeight: isAllocated ? FontWeight.w900 : FontWeight.w600,
+                                    color: isAllocated ? const Color(0xFF10B981) : const Color(0xFF475569),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _selectedClass = val;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Date Picker & Previous/Next Day Buttons
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left_rounded, size: 22, color: Color(0xFF64748B)),
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = _selectedDate.subtract(const Duration(days: 1));
+                      });
+                    },
+                    tooltip: 'Previous Day',
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: _selectedDate,
+                        firstDate: DateTime(2025),
+                        lastDate: DateTime(2027),
+                      );
+                      if (picked != null) {
+                        setState(() => _selectedDate = picked);
                       }
                     },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF1F5F9),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFCBD5E1)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.date_range_rounded, size: 16, color: Color(0xFF6C5CE7)),
+                          const SizedBox(width: 6),
+                          Text(
+                            DateFormat('dd MMM yyyy').format(_selectedDate),
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF1E293B)),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right_rounded, size: 22, color: Color(0xFF64748B)),
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = _selectedDate.add(const Duration(days: 1));
+                      });
+                    },
+                    tooltip: 'Next Day',
+                  ),
+                ],
               ),
             ],
           ),
-
-          // Date Picker & Previous/Next Day Buttons
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const Icon(Icons.chevron_left_rounded, size: 22, color: Color(0xFF64748B)),
-                onPressed: () {
-                  setState(() {
-                    _selectedDate = _selectedDate.subtract(const Duration(days: 1));
-                  });
-                },
-                tooltip: 'Previous Day',
+          const SizedBox(height: 12),
+          // Authorization Status Banner
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: isAuthorizedClassTeacher ? const Color(0xFF10B981).withValues(alpha: 0.08) : const Color(0xFFFEF2F2),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isAuthorizedClassTeacher ? const Color(0xFF10B981).withValues(alpha: 0.25) : const Color(0xFFEF4444).withValues(alpha: 0.25),
               ),
-              InkWell(
-                onTap: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate,
-                    firstDate: DateTime(2025),
-                    lastDate: DateTime(2027),
-                  );
-                  if (picked != null) {
-                    setState(() => _selectedDate = picked);
-                  }
-                },
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFCBD5E1)),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.date_range_rounded, size: 16, color: Color(0xFF6C5CE7)),
-                      const SizedBox(width: 6),
-                      Text(
-                        DateFormat('dd MMM yyyy').format(_selectedDate),
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF1E293B)),
-                      ),
-                    ],
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  isAuthorizedClassTeacher ? Icons.verified_user_rounded : Icons.lock_person_rounded,
+                  color: isAuthorizedClassTeacher ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    isAuthorizedClassTeacher
+                        ? 'Authorized Class Teacher: You have full permissions to take and submit the official daily register for Class 10-A.'
+                        : 'Restricted Subject Faculty View: Official register for $_selectedClass is governed by ${getAssignedClassTeacher(_selectedClass)}. Attendance marking is locked to the designated Class Teacher.',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: isAuthorizedClassTeacher ? const Color(0xFF047857) : const Color(0xFFB91C1C),
+                    ),
                   ),
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.chevron_right_rounded, size: 22, color: Color(0xFF64748B)),
-                onPressed: () {
-                  setState(() {
-                    _selectedDate = _selectedDate.add(const Duration(days: 1));
-                  });
-                },
-                tooltip: 'Next Day',
-              ),
-            ],
+                if (!isAuthorizedClassTeacher)
+                  InkWell(
+                    onTap: () => setState(() => _selectedClass = 'Class 10-A'),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Text('Switch to 10-A', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800)),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ],
       ),

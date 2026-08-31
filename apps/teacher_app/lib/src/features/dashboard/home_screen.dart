@@ -313,6 +313,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildQuickActionCockpit() {
     final actions = [
       {'title': 'My Profile & KYC', 'sub': 'Aadhaar, Degree & Vault', 'icon': Icons.badge_rounded, 'color': const Color(0xFF10B981), 'route': '/profile'},
+      {'title': 'Parent Grievances', 'sub': 'Complaints & Inquiries', 'icon': Icons.forum_rounded, 'color': const Color(0xFFE17055), 'route': '/complaints'},
       {'title': 'Salary & Payslips', 'sub': 'Monthly Slips & Form 16', 'icon': Icons.account_balance_wallet_rounded, 'color': const Color(0xFF0284C7), 'route': '/payslips'},
       {'title': 'Daily Agenda & To-Do', 'sub': 'Calendar, Periods & Tasks', 'icon': Icons.event_available_rounded, 'color': const Color(0xFF6C5CE7), 'route': '/calendar'},
       {'title': 'Mark Roll Call', 'sub': '1-Tap Live Register', 'icon': Icons.checklist_rounded, 'color': const Color(0xFF059669), 'route': '/mark-attendance'},
@@ -320,7 +321,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       {'title': 'Syllabus Tracker', 'sub': 'Teaching Units & Progress', 'icon': Icons.auto_stories_rounded, 'color': const Color(0xFF0984E3), 'route': '/teaching-units'},
       {'title': 'Class Daily Diary', 'sub': 'Broadcast Notes to Parents', 'icon': Icons.menu_book_rounded, 'color': const Color(0xFFF59E0B), 'route': '/academics/diary'},
       {'title': 'Weekly Timetable', 'sub': 'Class Schedule', 'icon': Icons.calendar_view_week_rounded, 'color': const Color(0xFF00CEC9), 'route': '/academics/timetable'},
-      {'title': 'Post Homework', 'sub': 'Add Assignment / PDF', 'icon': Icons.post_add_rounded, 'color': const Color(0xFFE17055), 'route': '/assignments/create'},
+      {'title': 'Post Homework', 'sub': 'Add Assignment / PDF', 'icon': Icons.post_add_rounded, 'color': const Color(0xFFD63031), 'route': '/assignments/create'},
       {'title': 'Enter Marks', 'sub': 'Marksheet Gradebook', 'icon': Icons.grade_rounded, 'color': const Color(0xFFFD79A8), 'route': '/exams'},
       {'title': 'Scholar 360', 'sub': 'Class Student Roster', 'icon': Icons.people_alt_rounded, 'color': const Color(0xFF2D3436), 'route': '/students'},
     ];
