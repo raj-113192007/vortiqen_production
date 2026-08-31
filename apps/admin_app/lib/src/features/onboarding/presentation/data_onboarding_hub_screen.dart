@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class DataOnboardingHubScreen extends StatefulWidget {
   const DataOnboardingHubScreen({super.key});
@@ -118,8 +116,6 @@ class _DataOnboardingHubScreenState extends State<DataOnboardingHubScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       body: SingleChildScrollView(

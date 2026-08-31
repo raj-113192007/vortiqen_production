@@ -46,4 +46,14 @@ class InventoryNotifier extends AsyncNotifier<List<Asset>> {
     await apiClient.dio.post('/inventory/assets/$assetId/assign', data: data);
     await fetchAssets();
   }
+
+  Future<void> checkOutAsset({required String assetId, required String userId}) async {
+    await assignAsset(assetId, {'assignedTo': userId, 'status': 'ASSIGNED'});
+  }
+
+  Future<void> checkInAsset({required String assetId}) async {
+    final apiClient = ref.read(apiClientProvider);
+    await apiClient.dio.post('/inventory/assets/$assetId/checkin');
+    await fetchAssets();
+  }
 }

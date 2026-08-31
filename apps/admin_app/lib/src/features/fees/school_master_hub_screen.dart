@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class ClassFeeRule {
   final String grade;
@@ -64,6 +65,24 @@ class AcademicClassMaster {
     required this.currentStrength,
     required this.maxCapacity,
   });
+
+  AcademicClassMaster copyWith({
+    String? className,
+    String? section,
+    String? classTeacher,
+    String? roomNumber,
+    int? currentStrength,
+    int? maxCapacity,
+  }) {
+    return AcademicClassMaster(
+      className: className ?? this.className,
+      section: section ?? this.section,
+      classTeacher: classTeacher ?? this.classTeacher,
+      roomNumber: roomNumber ?? this.roomNumber,
+      currentStrength: currentStrength ?? this.currentStrength,
+      maxCapacity: maxCapacity ?? this.maxCapacity,
+    );
+  }
 }
 
 class SchoolMasterHubScreen extends ConsumerStatefulWidget {
@@ -146,6 +165,113 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
     const AcademicClassMaster(className: 'Class 12', section: 'Commerce', classTeacher: 'Mrs. Sunita Rao', roomNumber: 'Commerce Wing 2', currentStrength: 35, maxCapacity: 40),
   ];
 
+  final List<Map<String, String>> _availableFaculty = const [
+    {'name': 'Dr. Priya Verma', 'dept': 'Physics & Natural Sciences', 'phone': '+91 98111 22334'},
+    {'name': 'Prof. Alok Mukherjee', 'dept': 'Advanced Mathematics & Calculus', 'phone': '+91 98222 33445'},
+    {'name': 'Mrs. Sunita Rao', 'dept': 'Biology & Biotechnology', 'phone': '+91 98666 77889'},
+    {'name': 'Mr. Rajesh Nambiar', 'dept': 'Commerce & Accountancy', 'phone': '+91 98777 88990'},
+    {'name': 'Ms. Ananya Sengupta', 'dept': 'Computer Science & AI', 'phone': '+91 98333 44556'},
+    {'name': 'Dr. Ramesh Iyer', 'dept': 'Organic Chemistry', 'phone': '+91 98444 55667'},
+    {'name': 'Mr. Vikram Sethi', 'dept': 'Physical Education & Athletics', 'phone': '+91 98555 66778'},
+  ];
+
+  void _showAssignTeacherDialog(BuildContext context, AcademicClassMaster c, int index) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF6C5CE7), size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Assign Class Teacher', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1E293B))),
+                  Text('Class: ${c.className} - Section ${c.section}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                ],
+              ),
+            ),
+          ],
+        ),
+        content: SizedBox(
+          width: 480,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Select a teacher to appoint as the official Class Teacher for this section:', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 260,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _availableFaculty.length,
+                  itemBuilder: (context, fIndex) {
+                    final f = _availableFaculty[fIndex];
+                    final isSelected = f['name'] == c.classTeacher;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? const Color(0xFF6C5CE7).withValues(alpha: 0.08) : Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: isSelected ? const Color(0xFF6C5CE7) : const Color(0xFFE2E8F0)),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: isSelected ? const Color(0xFF6C5CE7) : const Color(0xFFF1F5F9),
+                          child: Text(f['name']![0], style: TextStyle(color: isSelected ? Colors.white : const Color(0xFF1E293B), fontWeight: FontWeight.w800)),
+                        ),
+                        title: Text(f['name']!, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF1E293B))),
+                        subtitle: Text('${f['dept']} • ${f['phone']}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                        trailing: ElevatedButton(
+                          onPressed: isSelected
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _classList[index] = _classList[index].copyWith(classTeacher: f['name']);
+                                  });
+                                  Navigator.pop(ctx);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Appointed ${f['name']} as Class Teacher for ${c.className}-${c.section}! 🎓'),
+                                      backgroundColor: const Color(0xFF10B981),
+                                    ),
+                                  );
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isSelected ? const Color(0xFF94A3B8) : const Color(0xFF6C5CE7),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            elevation: 0,
+                          ),
+                          child: Text(isSelected ? 'Current' : 'Assign'),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -172,43 +298,53 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header
-          _buildHeaderBar(context),
-          const SizedBox(height: 24),
+          FadeSlideEntry(
+            duration: const Duration(milliseconds: 400),
+            child: _buildHeaderBar(context),
+          ),
+          const SizedBox(height: 20),
 
           // Tab Bar
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: const Color(0xFF6C5CE7),
-              indicatorWeight: 3,
-              labelColor: const Color(0xFF6C5CE7),
-              unselectedLabelColor: const Color(0xFF64748B),
-              labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-              tabs: const [
-                Tab(icon: Icon(Icons.account_balance_wallet_rounded, size: 18), text: '1. Class Fee Structure Matrix'),
-                Tab(icon: Icon(Icons.directions_bus_rounded, size: 18), text: '2. Transport Routes & Bus Slabs'),
-                Tab(icon: Icon(Icons.school_rounded, size: 18), text: '3. Academic Classes & Capacities'),
-              ],
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 400),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: const Color(0xFF6C5CE7),
+                indicatorWeight: 3,
+                labelColor: const Color(0xFF6C5CE7),
+                unselectedLabelColor: const Color(0xFF64748B),
+                labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                tabs: const [
+                  Tab(icon: Icon(Icons.account_balance_wallet_rounded, size: 18), text: '1. Class Fee Structure Matrix'),
+                  Tab(icon: Icon(Icons.directions_bus_rounded, size: 18), text: '2. Transport Routes & Bus Slabs'),
+                  Tab(icon: Icon(Icons.school_rounded, size: 18), text: '3. Academic Classes & Capacities'),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Tab Content
-          SizedBox(
-            height: 650,
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildFeeMatrixTab(context, isDesktop),
-                _buildTransportMasterTab(context, isDesktop),
-                _buildClassMasterTab(context, isDesktop),
-              ],
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 150),
+            child: SizedBox(
+              height: 650,
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildFeeMatrixTab(context, isDesktop),
+                  _buildTransportMasterTab(context, isDesktop),
+                  _buildClassMasterTab(context, isDesktop),
+                ],
+              ),
             ),
           ),
         ],
@@ -224,11 +360,14 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 16,
+        runSpacing: 16,
         children: [
           const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,21 +383,41 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
               ),
             ],
           ),
-          ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Master rule saved & live student ledgers recalculated!')),
-              );
-            },
-            icon: const Icon(Icons.save_rounded, size: 16),
-            label: const Text('Save & Apply Rules'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF6C5CE7),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 0,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  children: [
+                    PulsingLiveDot(size: 5, pulseScale: 2.0, color: Color(0xFF10B981)),
+                    SizedBox(width: 6),
+                    Text('MATRIX LIVE', style: TextStyle(color: Color(0xFF10B981), fontSize: 11, fontWeight: FontWeight.w800)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Master rule saved & live student ledgers recalculated!')),
+                  );
+                },
+                icon: const Icon(Icons.save_rounded, size: 16),
+                label: const Text('Save & Apply Rules'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6C5CE7),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -514,7 +673,7 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(color: const Color(0xFF6C5CE7).withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
+                              decoration: BoxDecoration(color: const Color(0xFF6C5CE7).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
                               child: Text('${c.className} - ${c.section}', style: const TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF6C5CE7), fontSize: 12)),
                             ),
                           ],
@@ -522,7 +681,18 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
                       ),
                       Expanded(
                         flex: 3,
-                        child: Text(c.classTeacher, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF1E293B))),
+                        child: InkWell(
+                          onTap: () => _showAssignTeacherDialog(context, c, index),
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(c.classTeacher, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF1E293B)), overflow: TextOverflow.ellipsis),
+                              ),
+                              const SizedBox(width: 6),
+                              const Icon(Icons.edit_note_rounded, size: 16, color: Color(0xFF6C5CE7)),
+                            ],
+                          ),
+                        ),
                       ),
                       Expanded(
                         flex: 2,
@@ -554,10 +724,9 @@ class _SchoolMasterHubScreenState extends ConsumerState<SchoolMasterHubScreen> w
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
-                            icon: const Icon(Icons.edit_outlined, size: 16, color: Color(0xFF6C5CE7)),
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Editing Capacity for ${c.className}-${c.section}')));
-                            },
+                            tooltip: 'Assign Class Teacher',
+                            icon: const Icon(Icons.person_add_alt_1_rounded, size: 18, color: Color(0xFF6C5CE7)),
+                            onPressed: () => _showAssignTeacherDialog(context, c, index),
                           ),
                         ),
                       ),

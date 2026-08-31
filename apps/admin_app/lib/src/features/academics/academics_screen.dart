@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ClassroomLiveInfo {
@@ -45,6 +46,34 @@ class ClassroomLiveInfo {
     required this.students,
     required this.timetable,
   });
+
+  ClassroomLiveInfo copyWith({
+    String? classTeacher,
+    String? teacherPhone,
+  }) {
+    return ClassroomLiveInfo(
+      id: id,
+      grade: grade,
+      section: section,
+      roomNumber: roomNumber,
+      classTeacher: classTeacher ?? this.classTeacher,
+      teacherPhone: teacherPhone ?? this.teacherPhone,
+      totalStrength: totalStrength,
+      presentCount: presentCount,
+      absentCount: absentCount,
+      monthlyTuition: monthlyTuition,
+      labFee: labFee,
+      annualFee: annualFee,
+      feeCollectionPct: feeCollectionPct,
+      currentPeriod: currentPeriod,
+      currentSubject: currentSubject,
+      currentTeacherTeaching: currentTeacherTeaching,
+      currentTopic: currentTopic,
+      nextPeriod: nextPeriod,
+      students: students,
+      timetable: timetable,
+    );
+  }
 }
 
 class AcademicsScreen extends ConsumerStatefulWidget {
@@ -200,12 +229,149 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
     ),
   ];
 
+  late List<ClassroomLiveInfo> _classList;
+
+  final List<Map<String, String>> _availableFaculty = const [
+    {'name': 'Dr. Priya Verma', 'dept': 'Physics & Natural Sciences', 'phone': '+91 98111 22334', 'assigned': 'Class 10-A'},
+    {'name': 'Prof. Alok Mukherjee', 'dept': 'Advanced Mathematics & Calculus', 'phone': '+91 98222 33445', 'assigned': 'Class 10-B'},
+    {'name': 'Mrs. Sunita Rao', 'dept': 'Biology & Biotechnology', 'phone': '+91 98666 77889', 'assigned': 'Class 9-A'},
+    {'name': 'Mr. Rajesh Nambiar', 'dept': 'Commerce & Accountancy', 'phone': '+91 98777 88990', 'assigned': 'Class 9-B'},
+    {'name': 'Ms. Ananya Sengupta', 'dept': 'Computer Science & AI', 'phone': '+91 98333 44556', 'assigned': 'Class 11-CS'},
+    {'name': 'Dr. Ramesh Iyer', 'dept': 'Organic Chemistry', 'phone': '+91 98444 55667', 'assigned': 'Class 12-Sci'},
+    {'name': 'Mr. Vikram Sethi', 'dept': 'Physical Education & Athletics', 'phone': '+91 98555 66778', 'assigned': 'Sports Wing'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _classList = List.from(_classrooms);
+  }
+
+  void _showAssignTeacherModal(BuildContext context, ClassroomLiveInfo c) {
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.person_add_alt_1_rounded, color: Color(0xFF6C5CE7), size: 22),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Assign Class Teacher - ${c.grade} (${c.section})',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1E293B)),
+                      ),
+                      Text('Current Teacher: ${c.classTeacher}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: 480,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Select a faculty member from the academic roster below to assign as the official Class Incharge & Homeroom Teacher:',
+                    style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    height: 280,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: _availableFaculty.length,
+                      itemBuilder: (context, index) {
+                        final f = _availableFaculty[index];
+                        final isCurrentlyAssigned = f['name'] == c.classTeacher;
+
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            color: isCurrentlyAssigned ? const Color(0xFF6C5CE7).withValues(alpha: 0.06) : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: isCurrentlyAssigned ? const Color(0xFF6C5CE7) : const Color(0xFFE2E8F0)),
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: isCurrentlyAssigned ? const Color(0xFF6C5CE7) : const Color(0xFFF1F5F9),
+                              child: Text(
+                                f['name']![0],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  color: isCurrentlyAssigned ? Colors.white : const Color(0xFF1E293B),
+                                ),
+                              ),
+                            ),
+                            title: Text(f['name']!, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: Color(0xFF1E293B))),
+                            subtitle: Text('${f['dept']} • ${f['phone']}', style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                            trailing: ElevatedButton(
+                              onPressed: isCurrentlyAssigned
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        final targetIdx = _classList.indexWhere((item) => item.id == c.id);
+                                        if (targetIdx != -1) {
+                                          _classList[targetIdx] = _classList[targetIdx].copyWith(
+                                            classTeacher: f['name'],
+                                            teacherPhone: f['phone'],
+                                          );
+                                        }
+                                      });
+                                      Navigator.pop(ctx);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Successfully assigned ${f['name']} as Class Teacher for ${c.grade}-${c.section}! 🎓'),
+                                          backgroundColor: const Color(0xFF10B981),
+                                        ),
+                                      );
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isCurrentlyAssigned ? const Color(0xFF94A3B8) : const Color(0xFF6C5CE7),
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                elevation: 0,
+                              ),
+                              child: Text(isCurrentlyAssigned ? 'Assigned' : 'Assign'),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final isDesktop = width >= 1024;
 
-    final filtered = _classrooms.where((c) {
+    final filtered = _classList.where((c) {
       final matchesFilter = _selectedFilter == 'ALL' || c.grade == _selectedFilter;
       final matchesSearch = c.grade.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           c.section.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -274,11 +440,11 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(color: const Color(0xFF00B894).withOpacity(0.12), borderRadius: BorderRadius.circular(20)),
+                decoration: BoxDecoration(color: const Color(0xFF00B894).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20)),
                 child: const Row(
                   children: [
-                    Icon(Icons.circle, color: Color(0xFF00B894), size: 10),
-                    SizedBox(width: 6),
+                    PulsingLiveDot(size: 6, pulseScale: 2.2, color: Color(0xFF00B894)),
+                    SizedBox(width: 8),
                     Text('PERIOD 4 ACTIVE (10:30 AM)', style: TextStyle(color: Color(0xFF00B894), fontSize: 11, fontWeight: FontWeight.w800)),
                   ],
                 ),
@@ -362,7 +528,10 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
           ),
           itemBuilder: (context, index) {
             final c = classrooms[index];
-            return _buildClassCard(context, c);
+            return FadeSlideEntry(
+              delay: Duration(milliseconds: 60 * index),
+              child: _buildClassCard(context, c),
+            );
           },
         );
       },
@@ -370,94 +539,94 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
   }
 
   Widget _buildClassCard(BuildContext context, ClassroomLiveInfo c) {
-    final attendancePct = (c.presentCount / c.totalStrength) * 100;
-
-    return InkWell(
+    return HoverLiftCard(
       onTap: () => _openClass360Dossier(context, c),
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Header: Grade & Room + Teacher
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          '${c.grade} - Section ${c.section}',
-                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: Color(0xFF1E293B)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(c.roomNumber, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6C5CE7).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text('₹ ${c.annualFee.toInt()}/yr', style: const TextStyle(color: Color(0xFF6C5CE7), fontWeight: FontWeight.w800, fontSize: 11)),
-                ),
-              ],
-            ),
-
-            // Class Teacher Tag
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFFE2E8F0))),
-              child: Row(
-                children: [
-                  const Icon(Icons.person_pin_rounded, color: Color(0xFF6C5CE7), size: 16),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text('Class Teacher: ${c.classTeacher}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF334155)), overflow: TextOverflow.ellipsis),
-                  ),
-                ],
-              ),
-            ),
-
-            // LIVE PERIOD HIGHLIGHT BOX
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF0FDF4), // Soft Green
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFDCFCE7)),
-              ),
-              child: Column(
+      borderRadius: 18,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Header: Grade & Room + Teacher
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.live_tv_rounded, color: Color(0xFF00B894), size: 14),
-                          SizedBox(width: 6),
-                          Text('LIVE ONGOING PERIOD', style: TextStyle(color: Color(0xFF15803D), fontSize: 10, fontWeight: FontWeight.w900)),
-                        ],
+                      Text(
+                        '${c.grade} - Section ${c.section}',
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: Color(0xFF1E293B)),
                       ),
-                      Text('Period 4', style: TextStyle(color: Colors.green[800], fontSize: 10, fontWeight: FontWeight.w800)),
                     ],
                   ),
+                  const SizedBox(height: 2),
+                  Text(c.roomNumber, style: const TextStyle(fontSize: 11, color: Color(0xFF64748B))),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text('₹ ${c.annualFee.toInt()}/yr', style: const TextStyle(color: Color(0xFF6C5CE7), fontWeight: FontWeight.w800, fontSize: 11)),
+              ),
+            ],
+          ),
+
+          // Class Teacher Tag
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(color: const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFFE2E8F0))),
+            child: Row(
+              children: [
+                const Icon(Icons.person_pin_rounded, color: Color(0xFF6C5CE7), size: 16),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text('Class Teacher: ${c.classTeacher}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: Color(0xFF334155)), overflow: TextOverflow.ellipsis),
+                ),
+                InkWell(
+                  onTap: () => _showAssignTeacherModal(context, c),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6C5CE7).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text('Assign', style: TextStyle(color: Color(0xFF6C5CE7), fontWeight: FontWeight.w800, fontSize: 10)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // LIVE PERIOD HIGHLIGHT BOX
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0FDF4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFDCFCE7)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Row(
+                      children: [
+                        PulsingLiveDot(size: 5, pulseScale: 2.2, color: Color(0xFF00B894)),
+                        SizedBox(width: 8),
+                        Text('LIVE ONGOING PERIOD', style: TextStyle(color: Color(0xFF15803D), fontSize: 10, fontWeight: FontWeight.w900)),
+                      ],
+                    ),
+                    Text('Period 4', style: TextStyle(color: Colors.green[800], fontSize: 10, fontWeight: FontWeight.w800)),
+                  ],
+                ),
                   const SizedBox(height: 6),
                   Text(c.currentSubject, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: Color(0xFF14532D))),
                   const SizedBox(height: 3),
@@ -503,8 +672,7 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   // --- CLASS 360° LIVE DOSSIER MODAL ---
@@ -515,7 +683,10 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
       barrierLabel: 'Class Cockpit',
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, anim1, anim2) {
-        return _Class360DossierDialog(classroom: c);
+        return _Class360DossierDialog(
+          classroom: c,
+          onAssignTeacher: () => _showAssignTeacherModal(context, c),
+        );
       },
       transitionBuilder: (context, anim1, anim2, child) {
         return SlideTransition(
@@ -532,8 +703,12 @@ class _AcademicsScreenState extends ConsumerState<AcademicsScreen> {
 
 class _Class360DossierDialog extends StatefulWidget {
   final ClassroomLiveInfo classroom;
+  final VoidCallback onAssignTeacher;
 
-  const _Class360DossierDialog({required this.classroom});
+  const _Class360DossierDialog({
+    required this.classroom,
+    required this.onAssignTeacher,
+  });
 
   @override
   State<_Class360DossierDialog> createState() => _Class360DossierDialogState();
@@ -654,7 +829,7 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
                     const SizedBox(width: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(color: const Color(0xFF6C5CE7).withOpacity(0.1), borderRadius: BorderRadius.circular(6)),
+                      decoration: BoxDecoration(color: const Color(0xFF6C5CE7).withValues(alpha: 0.1), borderRadius: BorderRadius.circular(6)),
                       child: Text(c.roomNumber, style: const TextStyle(color: Color(0xFF6C5CE7), fontWeight: FontWeight.w800, fontSize: 11)),
                     ),
                   ],
@@ -672,6 +847,23 @@ class _Class360DossierDialogState extends State<_Class360DossierDialog> with Sin
               ],
             ),
           ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(context);
+              widget.onAssignTeacher();
+            },
+            icon: const Icon(Icons.person_add_alt_1_rounded, size: 15),
+            label: const Text('Assign Class Teacher'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C5CE7),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+              textStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+            ),
+          ),
+          const SizedBox(width: 8),
           IconButton(
             onPressed: () => Navigator.pop(context),
             icon: const Icon(Icons.close_rounded, color: Color(0xFF94A3B8), size: 24),

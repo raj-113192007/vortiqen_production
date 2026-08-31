@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 import '../../domain/student_models.dart';
 
 class StudentCard extends StatelessWidget {
@@ -15,20 +16,9 @@ class StudentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPaid = student.isFeePaid;
 
-    return Container(
+    return HoverLiftCard(
+      onTap: onOpenDossier,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,13 +73,23 @@ class StudentCard extends StatelessWidget {
                   color: isPaid ? const Color(0xFFECFDF5) : const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: Text(
-                  isPaid ? 'PAID' : 'DUE',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: isPaid ? const Color(0xFF047857) : const Color(0xFFB91C1C),
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isPaid)
+                      const PulsingLiveDot(size: 4, pulseScale: 2.2, color: Color(0xFF10B981))
+                    else
+                      Container(width: 4, height: 4, decoration: const BoxDecoration(color: Color(0xFFEF4444), shape: BoxShape.circle)),
+                    const SizedBox(width: 4),
+                    Text(
+                      isPaid ? 'PAID' : 'DUE',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: isPaid ? const Color(0xFF047857) : const Color(0xFFB91C1C),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

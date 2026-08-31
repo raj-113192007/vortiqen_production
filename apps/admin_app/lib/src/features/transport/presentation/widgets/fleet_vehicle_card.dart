@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 import '../../domain/transport_models.dart';
 import 'route_timeline_stepper.dart';
 
@@ -34,25 +35,13 @@ class FleetVehicleCard extends StatelessWidget {
       statusTextColor = const Color(0xFFB45309);
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+    return HoverLiftCard(
+      onTap: onOpenDossier,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row: Bus Plate, Model, Status Badge with dot
+          // Header Row: Bus Plate, Model, Status Badge with pulse
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -93,14 +82,17 @@ class FleetVehicleCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: statusDotColor,
-                        shape: BoxShape.circle,
+                    if (isMoving)
+                      PulsingLiveDot(size: 4.5, pulseScale: 2.2, color: statusDotColor)
+                    else
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: statusDotColor,
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    ),
                     const SizedBox(width: 6),
                     Text(
                       vehicle.liveStatus,

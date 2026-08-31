@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 import '../../domain/staff_models.dart';
 
 class TeacherCard extends StatelessWidget {
@@ -15,21 +16,9 @@ class TeacherCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isPresent = teacher.isPresentToday;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+    return HoverLiftCard(
+      onTap: onOpenDossier,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -97,7 +86,7 @@ class TeacherCard extends StatelessWidget {
                 ),
               ),
 
-              // Status Indicator & Rating
+              // Status Indicator with Pulse & Rating
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -110,14 +99,17 @@ class TeacherCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 5,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: isPresent ? const Color(0xFF10B981) : const Color(0xFFEF4444),
-                            shape: BoxShape.circle,
+                        if (isPresent)
+                          const PulsingLiveDot(size: 4.5, pulseScale: 2.2, color: Color(0xFF10B981))
+                        else
+                          Container(
+                            width: 5,
+                            height: 5,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFEF4444),
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
                         const SizedBox(width: 5),
                         Text(
                           teacher.todayStatus,

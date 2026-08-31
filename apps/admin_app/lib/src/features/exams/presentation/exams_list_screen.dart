@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class ExamPaperSchedule {
   final String id;
@@ -221,57 +222,70 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Top Header & Summary Dials
-          _buildExamOverviewHeader(context),
+          FadeSlideEntry(
+            duration: const Duration(milliseconds: 400),
+            child: _buildExamOverviewHeader(context),
+          ),
           const SizedBox(height: 20),
 
           // Search & Filter Row
-          _buildFilterAndSearchRow(context),
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 400),
+            child: _buildFilterAndSearchRow(context),
+          ),
           const SizedBox(height: 20),
 
           // Master Tabs (Date Sheet, Seating Plan, Invigilation, Evaluation)
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicatorColor: const Color(0xFF6C5CE7),
-                  indicatorWeight: 3,
-                  labelColor: const Color(0xFF6C5CE7),
-                  unselectedLabelColor: const Color(0xFF64748B),
-                  labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
-                  unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-                  tabs: const [
-                    Tab(icon: Icon(Icons.date_range_rounded, size: 18), text: '1. Date Sheet & Paper Setters'),
-                    Tab(icon: Icon(Icons.chair_alt_rounded, size: 18), text: '2. Seating Plan & Halls (420 Desks)'),
-                    Tab(icon: Icon(Icons.badge_rounded, size: 18), text: '3. Invigilation Duty Roster'),
-                    Tab(icon: Icon(Icons.grading_rounded, size: 18), text: '4. Marks Entry & Report Cards'),
-                  ],
-                ),
-                SizedBox(
-                  height: 620,
-                  child: TabBarView(
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 150),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Column(
+                children: [
+                  TabBar(
                     controller: _tabController,
-                    children: [
-                      _buildDateSheetTab(context, filteredPapers),
-                      _buildSeatingPlanTab(context),
-                      _buildInvigilationRosterTab(context),
-                      _buildEvaluationTab(context, filteredPapers),
+                    isScrollable: true,
+                    indicatorColor: const Color(0xFF6C5CE7),
+                    indicatorWeight: 3,
+                    labelColor: const Color(0xFF6C5CE7),
+                    unselectedLabelColor: const Color(0xFF64748B),
+                    labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+                    unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+                    tabs: const [
+                      Tab(icon: Icon(Icons.date_range_rounded, size: 18), text: '1. Date Sheet & Paper Setters'),
+                      Tab(icon: Icon(Icons.chair_alt_rounded, size: 18), text: '2. Seating Plan & Halls (420 Desks)'),
+                      Tab(icon: Icon(Icons.badge_rounded, size: 18), text: '3. Invigilation Duty Roster'),
+                      Tab(icon: Icon(Icons.grading_rounded, size: 18), text: '4. Marks Entry & Report Cards'),
                     ],
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 620,
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildDateSheetTab(context, filteredPapers),
+                        _buildSeatingPlanTab(context),
+                        _buildInvigilationRosterTab(context),
+                        _buildEvaluationTab(context, filteredPapers),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 24),
 
           // Bottom Action Hub
-          _buildBottomActionHub(context),
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 200),
+            child: _buildBottomActionHub(context),
+          ),
         ],
       ),
     );
@@ -285,7 +299,7 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -350,10 +364,10 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
                 mainAxisSpacing: 12,
                 childAspectRatio: isNarrow ? 2.3 : 2.6,
                 children: [
-                  _buildMetricTile('14 Subject Papers', 'Datesheet Finalized', Icons.assignment_rounded, const Color(0xFF6C5CE7)),
-                  _buildMetricTile('8 Paper Setters', 'Faculty In-Charge', Icons.person_pin_rounded, const Color(0xFF00B894)),
-                  _buildMetricTile('420 Allotted Desks', 'Across 3 Halls', Icons.chair_rounded, const Color(0xFF0984E3)),
-                  _buildMetricTile('100% Sealed & Printed', 'Locker Vault Secured', Icons.lock_clock_rounded, const Color(0xFFE84393)),
+                  _buildAnimatedMetricTile(14, ' Subject Papers', '', 'Datesheet Finalized', Icons.assignment_rounded, const Color(0xFF6C5CE7)),
+                  _buildAnimatedMetricTile(8, ' Paper Setters', '', 'Faculty In-Charge', Icons.person_pin_rounded, const Color(0xFF00B894)),
+                  _buildAnimatedMetricTile(420, ' Allotted Desks', '', 'Across 3 Halls', Icons.chair_rounded, const Color(0xFF0984E3)),
+                  _buildAnimatedMetricTile(100, '% Sealed & Printed', '', 'Locker Vault Secured', Icons.lock_clock_rounded, const Color(0xFFE84393)),
                 ],
               );
             },
@@ -363,24 +377,34 @@ class _ExamsListScreenState extends ConsumerState<ExamsListScreen> with SingleTi
     );
   }
 
-  Widget _buildMetricTile(String title, String sub, IconData icon, Color color) {
-    return Container(
+  Widget _buildAnimatedMetricTile(double value, String suffix, String prefix, String sub, IconData icon, Color color) {
+    return HoverLiftCard(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.06),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withOpacity(0.15)),
-      ),
+      borderRadius: 14,
+      hoverBorderColor: color.withValues(alpha: 0.35),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 22),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(title, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: color), overflow: TextOverflow.ellipsis),
+                AnimatedMetricCounter(
+                  targetValue: value,
+                  prefix: prefix,
+                  suffix: suffix,
+                  fractionDigits: 0,
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13, color: color),
+                ),
                 Text(sub, style: const TextStyle(fontSize: 10, color: Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
               ],
             ),

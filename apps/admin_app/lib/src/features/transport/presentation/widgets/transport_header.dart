@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 class TransportHeader extends StatelessWidget {
   final VoidCallback onAddVehicle;
@@ -10,91 +11,102 @@ class TransportHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Fleet & Transport Control Hub',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF1E293B),
-                      letterSpacing: -0.3,
+    return FadeSlideEntry(
+      duration: const Duration(milliseconds: 450),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Fleet & Transport Control Hub',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1E293B),
+                        letterSpacing: -0.3,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    'Real-time GPS Monitoring • Fuel Analytics • RTO Compliance • Student Manifest',
-                    style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
-                  ),
-                ],
-              ),
-              ElevatedButton.icon(
-                onPressed: onAddVehicle,
-                icon: const Icon(Icons.add_rounded, size: 16),
-                label: const Text('Add Fleet Bus'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F46E5),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  elevation: 0,
-                  textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                    SizedBox(height: 2),
+                    Text(
+                      'Real-time GPS Monitoring • Fuel Analytics • RTO Compliance • Student Manifest',
+                      style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
+                ElevatedButton.icon(
+                  onPressed: onAddVehicle,
+                  icon: const Icon(Icons.add_rounded, size: 16),
+                  label: const Text('Add Fleet Bus'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4F46E5),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    elevation: 0,
+                    textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
 
-          // 4 Pulse Metrics
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 720;
-              return GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: isNarrow ? 2 : 4,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: isNarrow ? 2.5 : 2.8,
-                children: [
-                  _buildMetricTile('12 / 12 GPS Active', 'All Buses Tracked', Icons.gps_fixed_rounded, const Color(0xFF10B981)),
-                  _buildMetricTile('418 Onboard Today', '95% Attendance', Icons.people_alt_outlined, const Color(0xFF4F46E5)),
-                  _buildMetricTile('₹ 1,48,250 MTD Fuel', 'Diesel & CNG Total', Icons.local_gas_station_outlined, const Color(0xFF0284C7)),
-                  _buildMetricTile('100% RTO Fitness', 'Insurance & PUC Valid', Icons.verified_user_outlined, const Color(0xFFD946EF)),
-                ],
-              );
-            },
-          ),
-        ],
+            // 4 Animated Pulse Metrics
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 720;
+                return GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: isNarrow ? 2 : 4,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: isNarrow ? 2.5 : 2.8,
+                  children: [
+                    _buildAnimatedMetricTile(12, '', ' / 12 GPS Active', 'All Buses Tracked', Icons.gps_fixed_rounded, const Color(0xFF10B981), 0),
+                    _buildAnimatedMetricTile(418, '', ' Onboard Today', '95% Attendance', Icons.people_alt_outlined, const Color(0xFF4F46E5), 0),
+                    _buildAnimatedMetricTile(148250, '₹ ', ' MTD Fuel', 'Diesel & CNG Total', Icons.local_gas_station_outlined, const Color(0xFF0284C7), 0),
+                    _buildAnimatedMetricTile(100, '', '% RTO Fitness', 'Insurance & PUC Valid', Icons.verified_user_outlined, const Color(0xFFD946EF), 0),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMetricTile(String title, String sub, IconData icon, Color color) {
+  Widget _buildAnimatedMetricTile(
+    double value,
+    String prefix,
+    String suffix,
+    String sub,
+    IconData icon,
+    Color color,
+    int fractionDigits,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -118,10 +130,12 @@ class TransportHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  title,
+                AnimatedMetricCounter(
+                  targetValue: value,
+                  prefix: prefix,
+                  suffix: suffix,
+                  fractionDigits: fractionDigits,
                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: color),
-                  overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   sub,

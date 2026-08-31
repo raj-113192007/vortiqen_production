@@ -9,10 +9,14 @@ import '../features/dashboard/home_screen.dart';
 import '../features/assignments/assignments_screen.dart';
 import '../features/assignments/create_assignment_screen.dart';
 import '../features/attendance/mark_attendance_screen.dart';
+import '../features/academics/timetable_screen.dart';
+import '../features/academics/class_diary_screen.dart';
 import '../features/exams/exams_screen.dart';
 import '../features/exams/create_exam_screen.dart';
 import '../features/exams/enter_marks_screen.dart';
+import '../features/students/student_roster_screen.dart';
 import '../features/hr/payslips_screen.dart';
+import '../features/hr/leave_application_screen.dart';
 import '../features/chat/presentation/chat_list_screen.dart';
 import '../features/chat/presentation/chat_room_screen.dart';
 
@@ -57,6 +61,18 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const HomeScreen(),
           ),
           GoRoute(
+            path: 'mark-attendance',
+            builder: (context, state) => const MarkAttendanceScreen(),
+          ),
+          GoRoute(
+            path: 'academics/timetable',
+            builder: (context, state) => const TimetableScreen(),
+          ),
+          GoRoute(
+            path: 'academics/diary',
+            builder: (context, state) => const ClassDiaryScreen(),
+          ),
+          GoRoute(
             path: 'assignments',
             builder: (context, state) => const AssignmentsScreen(),
             routes: [
@@ -65,10 +81,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const CreateAssignmentScreen(),
               ),
             ],
-          ),
-          GoRoute(
-            path: 'mark-attendance',
-            builder: (context, state) => const MarkAttendanceScreen(),
           ),
           GoRoute(
             path: 'exams',
@@ -91,8 +103,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
+            path: 'students',
+            builder: (context, state) => const StudentRosterScreen(),
+          ),
+          GoRoute(
             path: 'payslips',
             builder: (context, state) => const PayslipsScreen(),
+          ),
+          GoRoute(
+            path: 'hr/leaves',
+            builder: (context, state) => const LeaveApplicationScreen(),
           ),
           GoRoute(
             path: 'chat',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'dashboard_layout.dart';
 import '../academics/academics_screen.dart';
@@ -108,49 +109,72 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 1. Executive Welcome Header
-          _buildExecutiveHeader(context),
+          FadeSlideEntry(
+            duration: const Duration(milliseconds: 400),
+            child: _buildExecutiveHeader(context),
+          ),
           const SizedBox(height: 24),
 
           // 2. Primary 4 KPI Pulse Cards
-          _buildKpiGrid(context, isDesktop),
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 450),
+            child: _buildKpiGrid(context, isDesktop),
+          ),
           const SizedBox(height: 24),
 
           // 3. Dual Charts Row: Weekly Attendance Curve & Fee Realisation
-          if (isDesktop)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 7, child: _buildAttendanceChartCard(context)),
-                const SizedBox(width: 24),
-                Expanded(flex: 5, child: _buildFeeRealisationCard(context)),
-              ],
-            )
-          else ...[
-            _buildAttendanceChartCard(context),
-            const SizedBox(height: 20),
-            _buildFeeRealisationCard(context),
-          ],
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 180),
+            duration: const Duration(milliseconds: 450),
+            child: isDesktop
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 7, child: _buildAttendanceChartCard(context)),
+                      const SizedBox(width: 24),
+                      Expanded(flex: 5, child: _buildFeeRealisationCard(context)),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _buildAttendanceChartCard(context),
+                      const SizedBox(height: 20),
+                      _buildFeeRealisationCard(context),
+                    ],
+                  ),
+          ),
           const SizedBox(height: 24),
 
           // 4. Principal's Urgent Action Queue
-          _buildActionQueue(context),
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 240),
+            duration: const Duration(milliseconds: 450),
+            child: _buildActionQueue(context),
+          ),
           const SizedBox(height: 24),
 
           // 5. Bottom Dual Row: Live Bus & Safety Pulse + Today's Schedule
-          if (isDesktop)
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 6, child: _buildTransportSafetyCard(context)),
-                const SizedBox(width: 24),
-                Expanded(flex: 6, child: _buildTodayScheduleCard(context)),
-              ],
-            )
-          else ...[
-            _buildTransportSafetyCard(context),
-            const SizedBox(height: 20),
-            _buildTodayScheduleCard(context),
-          ],
+          FadeSlideEntry(
+            delay: const Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 450),
+            child: isDesktop
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 6, child: _buildTransportSafetyCard(context)),
+                      const SizedBox(width: 24),
+                      Expanded(flex: 6, child: _buildTodayScheduleCard(context)),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _buildTransportSafetyCard(context),
+                      const SizedBox(height: 20),
+                      _buildTodayScheduleCard(context),
+                    ],
+                  ),
+          ),
           const SizedBox(height: 32),
         ],
       ),
@@ -167,7 +191,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -182,9 +206,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              const Row(
                 children: [
-                  const Text(
+                  Text(
                     'Good Morning, Principal Sharma',
                     style: TextStyle(
                       fontSize: 22,
@@ -193,8 +217,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  const Icon(Icons.wb_sunny_outlined, size: 22, color: Color(0xFFF59E0B)),
+                  SizedBox(width: 8),
+                  Icon(Icons.wb_sunny_outlined, size: 22, color: Color(0xFFF59E0B)),
                 ],
               ),
               const SizedBox(height: 6),
@@ -203,7 +227,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6C5CE7).withOpacity(0.1),
+                      color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
@@ -277,9 +301,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           mainAxisSpacing: 18,
           childAspectRatio: crossAxisCount == 4 ? 1.6 : 2.2,
           children: [
-            _buildKpiCard(
+            _buildAnimatedKpiCard(
               title: 'Total Students',
-              value: '1,420',
+              targetValue: 1420,
+              prefix: '',
+              suffix: '',
+              fractionDigits: 0,
               badgeText: '96.8% Present Today',
               badgeColor: const Color(0xFF00B894),
               icon: Icons.people_alt_rounded,
@@ -287,9 +314,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               subtext: '46 Absent • 12 On Leave',
               onTap: () => setState(() => _selectedIndex = 2),
             ),
-            _buildKpiCard(
+            _buildAnimatedKpiCard(
               title: 'Fee Collection (MTD)',
-              value: '₹ 42.8 L',
+              targetValue: 42.8,
+              prefix: '₹ ',
+              suffix: ' L',
+              fractionDigits: 1,
               badgeText: '88.7% Realised',
               badgeColor: const Color(0xFF0984E3),
               icon: Icons.account_balance_wallet_rounded,
@@ -297,9 +327,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               subtext: '₹ 5.4 L Pending Dues',
               onTap: () => setState(() => _selectedIndex = 4),
             ),
-            _buildKpiCard(
+            _buildAnimatedKpiCard(
               title: 'Staff & Faculty Duty',
-              value: '81 / 84',
+              targetValue: 81,
+              prefix: '',
+              suffix: ' / 84',
+              fractionDigits: 0,
               badgeText: '3 Approved Leaves',
               badgeColor: const Color(0xFFF39C12),
               icon: Icons.badge_rounded,
@@ -307,9 +340,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               subtext: 'All Periods Covered',
               onTap: () => setState(() => _selectedIndex = 6),
             ),
-            _buildKpiCard(
+            _buildAnimatedKpiCard(
               title: 'Smart Bus Fleet',
-              value: '8 / 8 Active',
+              targetValue: 8,
+              prefix: '',
+              suffix: ' / 8 Active',
+              fractionDigits: 0,
               badgeText: 'All GPS Live',
               badgeColor: const Color(0xFF00B894),
               icon: Icons.directions_bus_rounded,
@@ -323,9 +359,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildKpiCard({
+  Widget _buildAnimatedKpiCard({
     required String title,
-    required String value,
+    required double targetValue,
+    required String prefix,
+    required String suffix,
+    required int fractionDigits,
     required String badgeText,
     required Color badgeColor,
     required IconData icon,
@@ -333,85 +372,75 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     required String subtext,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return HoverLiftCard(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF64748B),
+      borderRadius: 18,
+      padding: const EdgeInsets.all(20),
+      hoverBorderColor: color.withValues(alpha: 0.4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              AnimatedMetricCounter(
+                targetValue: targetValue,
+                prefix: prefix,
+                suffix: suffix,
+                fractionDigits: fractionDigits,
+                style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1E293B),
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: badgeColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  badgeText,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: badgeColor,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(icon, color: color, size: 20),
-                ),
-              ],
-            ),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF1E293B),
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: badgeColor.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    badgeText,
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: badgeColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              subtext,
-              style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          Text(
+            subtext,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8), fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }
@@ -690,19 +719,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     required String actionText,
     required VoidCallback onAction,
   }) {
-    return Container(
+    return HoverLiftCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
+      borderRadius: 14,
+      hoverBorderColor: iconColor.withValues(alpha: 0.35),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: iconColor.withOpacity(0.12), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
             child: Icon(icon, color: iconColor, size: 22),
           ),
           const SizedBox(width: 14),
@@ -742,7 +768,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -790,7 +816,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+          decoration: BoxDecoration(color: iconColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
           child: Icon(icon, color: iconColor, size: 20),
         ),
         const SizedBox(width: 14),
@@ -803,9 +829,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: [
                   Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13))),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(color: badgeColor.withOpacity(0.12), borderRadius: BorderRadius.circular(6)),
-                    child: Text(badge, style: TextStyle(color: badgeColor, fontSize: 9, fontWeight: FontWeight.w800)),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: badgeColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        PulsingLiveDot(size: 5, pulseScale: 2.0, color: badgeColor),
+                        const SizedBox(width: 6),
+                        Text(badge, style: TextStyle(color: badgeColor, fontSize: 9, fontWeight: FontWeight.w800)),
+                      ],
+                    ),
                   ),
                 ],
               ),

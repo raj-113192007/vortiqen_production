@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vortiqen_core/vortiqen_core.dart';
-import '../../academics/academics_screen.dart';
 
 class ExamDetailsScreen extends ConsumerWidget {
   final Exam exam;
