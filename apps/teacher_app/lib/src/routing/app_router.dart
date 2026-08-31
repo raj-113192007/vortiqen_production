@@ -11,6 +11,8 @@ import '../features/assignments/create_assignment_screen.dart';
 import '../features/attendance/mark_attendance_screen.dart';
 import '../features/academics/timetable_screen.dart';
 import '../features/academics/class_diary_screen.dart';
+import '../features/academics/teaching_units_screen.dart';
+import '../features/academics/daily_lesson_planner_screen.dart';
 import '../features/exams/exams_screen.dart';
 import '../features/exams/create_exam_screen.dart';
 import '../features/exams/enter_marks_screen.dart';
@@ -71,6 +73,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: 'academics/diary',
             builder: (context, state) => const ClassDiaryScreen(),
+          ),
+          GoRoute(
+            path: 'teaching-units',
+            builder: (context, state) => const TeachingUnitsScreen(),
+          ),
+          GoRoute(
+            path: 'daily-lesson-planner',
+            builder: (context, state) => const DailyLessonPlannerScreen(),
           ),
           GoRoute(
             path: 'assignments',

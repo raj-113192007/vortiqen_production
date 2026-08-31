@@ -222,16 +222,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () => context.go('/mark-attendance'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF059669),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            ),
-            child: const Text('Take Roll Call', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              OutlinedButton(
+                onPressed: () => context.push('/daily-lesson-planner'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.white70),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                child: const Text('Plan Lesson', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11)),
+              ),
+              ElevatedButton(
+                onPressed: () => context.go('/mark-attendance'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF059669),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                ),
+                child: const Text('Take Roll Call', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 11)),
+              ),
+            ],
           ),
         ],
       ),
@@ -297,10 +313,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildQuickActionCockpit() {
     final actions = [
       {'title': 'Mark Roll Call', 'sub': '1-Tap Live Register', 'icon': Icons.checklist_rounded, 'color': const Color(0xFF10B981), 'route': '/mark-attendance'},
-      {'title': 'Post Homework', 'sub': 'Add Assignment / PDF', 'icon': Icons.post_add_rounded, 'color': const Color(0xFF6C5CE7), 'route': '/assignments/create'},
-      {'title': 'Weekly Timetable', 'sub': 'Class Schedule', 'icon': Icons.calendar_view_week_rounded, 'color': const Color(0xFF0984E3), 'route': '/academics/timetable'},
-      {'title': 'Class Daily Diary', 'sub': 'Log Lesson Notes', 'icon': Icons.menu_book_rounded, 'color': const Color(0xFFF59E0B), 'route': '/academics/diary'},
-      {'title': 'Enter Exam Marks', 'sub': 'Gradebook Sheet', 'icon': Icons.grade_rounded, 'color': const Color(0xFFE17055), 'route': '/exams'},
+      {'title': 'Lesson Planner', 'sub': 'Day-wise Pedagogy Log', 'icon': Icons.edit_calendar_rounded, 'color': const Color(0xFF6C5CE7), 'route': '/daily-lesson-planner'},
+      {'title': 'Syllabus Tracker', 'sub': 'Teaching Units & Progress', 'icon': Icons.auto_stories_rounded, 'color': const Color(0xFF0984E3), 'route': '/teaching-units'},
+      {'title': 'Class Daily Diary', 'sub': 'Broadcast Notes to Parents', 'icon': Icons.menu_book_rounded, 'color': const Color(0xFFF59E0B), 'route': '/academics/diary'},
+      {'title': 'Weekly Timetable', 'sub': 'Class Schedule', 'icon': Icons.calendar_view_week_rounded, 'color': const Color(0xFF00CEC9), 'route': '/academics/timetable'},
+      {'title': 'Post Homework', 'sub': 'Add Assignment / PDF', 'icon': Icons.post_add_rounded, 'color': const Color(0xFFE17055), 'route': '/assignments/create'},
+      {'title': 'Enter Marks', 'sub': 'Marksheet Gradebook', 'icon': Icons.grade_rounded, 'color': const Color(0xFFFD79A8), 'route': '/exams'},
       {'title': 'Scholar 360', 'sub': 'Class Student Roster', 'icon': Icons.people_alt_rounded, 'color': const Color(0xFF00B894), 'route': '/students'},
     ];
 
