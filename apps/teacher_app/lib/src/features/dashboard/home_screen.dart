@@ -313,6 +313,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildQuickActionCockpit() {
     final actions = [
       {'title': 'My Profile & KYC', 'sub': 'Aadhaar, Degree & Vault', 'icon': Icons.badge_rounded, 'color': const Color(0xFF10B981), 'route': '/profile'},
+      {'title': 'Salary & Payslips', 'sub': 'Monthly Slips & Form 16', 'icon': Icons.account_balance_wallet_rounded, 'color': const Color(0xFF0284C7), 'route': '/payslips'},
       {'title': 'Daily Agenda & To-Do', 'sub': 'Calendar, Periods & Tasks', 'icon': Icons.event_available_rounded, 'color': const Color(0xFF6C5CE7), 'route': '/calendar'},
       {'title': 'Mark Roll Call', 'sub': '1-Tap Live Register', 'icon': Icons.checklist_rounded, 'color': const Color(0xFF059669), 'route': '/mark-attendance'},
       {'title': 'Lesson Planner', 'sub': 'Day-wise Pedagogy Log', 'icon': Icons.edit_calendar_rounded, 'color': const Color(0xFF8E44AD), 'route': '/daily-lesson-planner'},
