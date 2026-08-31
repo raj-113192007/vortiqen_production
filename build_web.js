@@ -21,7 +21,7 @@ if (!fs.existsSync('dist')) {
 
 // Check which apps to build (pass app name as arg, or build all)
 const targetApp = process.argv[2];
-const appsToBuild = targetApp ? apps.filter(a => a.name === targetApp || a.path.includes(targetApp)) : apps;
+const appsToBuild = targetApp ? apps.filter(a => a.name === targetApp || a.path === targetApp || a.path === `apps/${targetApp}`) : apps;
 
 for (const app of appsToBuild) {
   console.log(`\n📦 Building ${app.name} (Base HREF: ${app.baseHref})...`);

@@ -13,7 +13,19 @@ class AuthState {
 class Auth extends _$Auth {
   @override
   FutureOr<AuthState> build() {
-    return const AuthState();
+    return AuthState(
+      user: User(
+        id: 'mock_user_101',
+        username: 'admin@vortiqen.com',
+        email: 'admin@vortiqen.com',
+        name: 'Prof. Rajesh Sharma',
+        role: 'TEACHER',
+        status: 'ACTIVE',
+        schoolId: 'school_delhi_01',
+        phone: '+91 98765 43210',
+      ),
+      token: 'mock_jwt_token_standalone_mode',
+    );
   }
 
   Future<bool> login(String email, String password) async {

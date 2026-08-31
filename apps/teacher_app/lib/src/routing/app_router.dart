@@ -23,22 +23,8 @@ import '../features/chat/presentation/chat_list_screen.dart';
 import '../features/chat/presentation/chat_room_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-
   return GoRouter(
-    initialLocation: '/splash',
-    redirect: (context, state) {
-      final isSplash = state.uri.path == '/splash';
-      if (isSplash) return null;
-
-      final isLoggedIn = authState.value?.token != null;
-      final isLoggingIn = state.uri.path == '/login';
-
-      if (!isLoggedIn && !isLoggingIn) return '/login';
-      if (isLoggedIn && isLoggingIn) return '/';
-
-      return null;
-    },
+    initialLocation: '/',
     routes: [
       GoRoute(
         path: '/splash',
@@ -63,27 +49,27 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const HomeScreen(),
           ),
           GoRoute(
-            path: 'mark-attendance',
+            path: '/mark-attendance',
             builder: (context, state) => const MarkAttendanceScreen(),
           ),
           GoRoute(
-            path: 'academics/timetable',
+            path: '/academics/timetable',
             builder: (context, state) => const TimetableScreen(),
           ),
           GoRoute(
-            path: 'academics/diary',
+            path: '/academics/diary',
             builder: (context, state) => const ClassDiaryScreen(),
           ),
           GoRoute(
-            path: 'teaching-units',
+            path: '/teaching-units',
             builder: (context, state) => const TeachingUnitsScreen(),
           ),
           GoRoute(
-            path: 'daily-lesson-planner',
+            path: '/daily-lesson-planner',
             builder: (context, state) => const DailyLessonPlannerScreen(),
           ),
           GoRoute(
-            path: 'assignments',
+            path: '/assignments',
             builder: (context, state) => const AssignmentsScreen(),
             routes: [
               GoRoute(
@@ -93,7 +79,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
-            path: 'exams',
+            path: '/exams',
             builder: (context, state) => const ExamsScreen(),
             routes: [
               GoRoute(
@@ -113,19 +99,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
-            path: 'students',
+            path: '/students',
             builder: (context, state) => const StudentRosterScreen(),
           ),
           GoRoute(
-            path: 'payslips',
+            path: '/payslips',
             builder: (context, state) => const PayslipsScreen(),
           ),
           GoRoute(
-            path: 'hr/leaves',
+            path: '/hr/leaves',
             builder: (context, state) => const LeaveApplicationScreen(),
           ),
           GoRoute(
-            path: 'chat',
+            path: '/chat',
             builder: (context, state) => const ChatListScreen(),
             routes: [
               GoRoute(
@@ -140,5 +126,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
     ],
+    errorBuilder: (context, state) => const DashboardLayout(child: HomeScreen()),
   );
 });

@@ -16,21 +16,8 @@ import '../features/exams/presentation/exam_details_screen.dart';
 import '../features/auth/register_school_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
-
   return GoRouter(
-    initialLocation: '/splash',
-    redirect: (context, state) {
-      final isSplash = state.uri.path == '/splash';
-      if (isSplash) return null; // Don't redirect from splash automatically
-
-      final isLoggedIn = authState.value?.token != null;
-      final isLoggingIn = state.uri.path == '/login';
-      final isRegistering = state.uri.path == '/register';
-      if (!isLoggedIn && !isLoggingIn && !isRegistering) return '/login';
-      if (isLoggedIn && (isLoggingIn || isRegistering)) return '/dashboard';
-      return null;
-    },
+    initialLocation: '/dashboard',
     routes: [
       GoRoute(
         path: '/splash',
