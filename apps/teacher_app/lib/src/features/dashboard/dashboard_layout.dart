@@ -98,7 +98,13 @@ class DashboardLayout extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
+          IconButton(
+            icon: const Icon(Icons.event_note_rounded, color: Color(0xFF6C5CE7), size: 22),
+            tooltip: 'Daily Agenda & To-Do Calendar',
+            onPressed: () => context.push('/calendar'),
+          ),
+          const SizedBox(width: 4),
           IconButton(
             icon: const Icon(Icons.logout_rounded, color: Color(0xFF64748B), size: 20),
             tooltip: 'Logout',

@@ -13,6 +13,7 @@ import '../features/academics/timetable_screen.dart';
 import '../features/academics/class_diary_screen.dart';
 import '../features/academics/teaching_units_screen.dart';
 import '../features/academics/daily_lesson_planner_screen.dart';
+import '../features/calendar/teacher_calendar_screen.dart';
 import '../features/exams/exams_screen.dart';
 import '../features/exams/create_exam_screen.dart';
 import '../features/exams/enter_marks_screen.dart';
@@ -67,6 +68,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/daily-lesson-planner',
             builder: (context, state) => const DailyLessonPlannerScreen(),
+          ),
+          GoRoute(
+            path: '/calendar',
+            builder: (context, state) => const TeacherCalendarScreen(),
           ),
           GoRoute(
             path: '/assignments',
