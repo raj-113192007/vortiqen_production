@@ -104,6 +104,12 @@ class DashboardLayout extends ConsumerWidget {
           ),
           const SizedBox(width: 6),
           IconButton(
+            icon: const Icon(Icons.alarm_on_rounded, color: Color(0xFF10B981), size: 22),
+            tooltip: 'Period Alarms & Faculty Reminders',
+            onPressed: () => context.push('/reminders'),
+          ),
+          const SizedBox(width: 4),
+          IconButton(
             icon: const Icon(Icons.event_note_rounded, color: Color(0xFF6C5CE7), size: 22),
             tooltip: 'Daily Agenda & To-Do Calendar',
             onPressed: () => context.push('/calendar'),

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vortiqen_core/vortiqen_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
-import '../transport/student_transport_screen.dart' as vortiqen_transport_tab;
-import '../chat/presentation/chat_list_screen.dart' as vortiqen_chat_tab;
-import '../exams/utils/report_card_pdf.dart';
+import 'package:vortiqen_core/vortiqen_core.dart';
+import 'package:vortiqen_ui/vortiqen_ui.dart';
+
+import 'student_dashboard_tab.dart';
+import '../academics/academics_screen.dart';
+import '../attendance/student_attendance_screen.dart';
+import '../exams/exams_and_results_screen.dart';
+import '../fees/student_fees_screen.dart';
+import '../transport/student_transport_screen.dart';
+import '../profile/student_id_card_screen.dart';
+import '../notices/school_notices_screen.dart';
+import '../calendar/student_calendar_tasks_screen.dart';
+import '../reminders/student_alarm_reminder_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -14,284 +22,243 @@ class DashboardScreen extends ConsumerStatefulWidget {
   ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends ConsumerState<DashboardScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  int _selectedNavIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 6, vsync: this);
-  }
+  final List<AdaptiveNavItem> _navItems = const [
+    AdaptiveNavItem(
+      label: 'Home',
+      icon: Icons.dashboard_outlined,
+      selectedIcon: Icons.dashboard,
+    ),
+    AdaptiveNavItem(
+      label: 'Academics',
+      icon: Icons.menu_book_outlined,
+      selectedIcon: Icons.menu_book,
+      badge: 'LMS',
+    ),
+    AdaptiveNavItem(
+      label: 'Planner',
+      icon: Icons.calendar_month_outlined,
+      selectedIcon: Icons.calendar_month,
+      badge: 'To-Do',
+    ),
+    AdaptiveNavItem(
+      label: 'Attendance',
+      icon: Icons.fact_check_outlined,
+      selectedIcon: Icons.fact_check,
+    ),
+    AdaptiveNavItem(
+      label: 'Exams',
+      icon: Icons.analytics_outlined,
+      selectedIcon: Icons.analytics,
+    ),
+    AdaptiveNavItem(
+      label: 'Fees',
+      icon: Icons.account_balance_wallet_outlined,
+      selectedIcon: Icons.account_balance_wallet,
+    ),
+    AdaptiveNavItem(
+      label: 'Transport',
+      icon: Icons.directions_bus_outlined,
+      selectedIcon: Icons.directions_bus,
+      badge: 'LIVE',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).value?.user;
-    
-    if (user == null || user.schoolId == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final primaryColor = AppColors.studentPrimary;
 
-    final studentAsync = ref.watch(studentProfileProvider({
-      'schoolId': user.schoolId,
-      'userId': user.id,
-    }));
+    final pages = [
+      StudentDashboardTab(
+        onNavigateTab: (index) => setState(() => _selectedNavIndex = index),
+        onOpenIdCard: () => _openIdCardScreen(context),
+        onOpenNotices: () => _openNoticesScreen(context),
+        onOpenAiDoubt: () => setState(() => _selectedNavIndex = 1),
+        onOpenCalendar: () => setState(() => _selectedNavIndex = 2),
+        onOpenReminders: () => _openRemindersScreen(context),
+      ),
+      const AcademicsScreen(),
+      const StudentCalendarTasksScreen(),
+      const StudentAttendanceScreen(),
+      const ExamsAndResultsScreen(),
+      const StudentFeesScreen(),
+      const StudentTransportScreen(),
+    ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('VortiQen Student'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
+    return AdaptiveScaffold(
+      role: AppRole.student,
+      title: _navItems[_selectedNavIndex].label == 'Home' ? 'VortiQen Student Hub' : _navItems[_selectedNavIndex].label,
+      subtitle: 'Class 10-A  •  Aarav Sharma  •  Roll #24',
+      selectedIndex: _selectedNavIndex,
+      onDestinationSelected: (index) => setState(() => _selectedNavIndex = index),
+      destinations: _navItems,
+      actions: [
+        // Alarms & Smart Reminders Button
+        IconButton(
+          icon: const Icon(Icons.alarm_on_outlined),
+          tooltip: 'Alarms & Smart Reminders',
+          onPressed: () => _openRemindersScreen(context),
+        ),
+
+        // Smart Calendar Planner Button
+        IconButton(
+          icon: const Icon(Icons.event_note_outlined),
+          tooltip: 'Calendar & To-Do Planner',
+          onPressed: () => _openCalendarScreen(context),
+        ),
+
+        // Digital ID Card Quick Button
+        IconButton(
+          icon: const Icon(Icons.badge_outlined),
+          tooltip: 'Digital ID Card',
+          onPressed: () => _openIdCardScreen(context),
+        ),
+
+        // School Notices Bell
+        IconButton(
+          icon: Stack(
+            children: [
+              const Icon(Icons.notifications_outlined),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFE84393),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Text('2', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          ),
+          tooltip: 'School Notices',
+          onPressed: () => _openNoticesScreen(context),
+        ),
+
+        // Community / Teacher Chat Shortcut
+        IconButton(
+          icon: const Icon(Icons.chat_bubble_outline),
+          tooltip: 'Teacher & Group Chat',
+          onPressed: () => context.push('/chat'),
+        ),
+
+        // User Avatar Menu
+        PopupMenuButton<String>(
+          icon: CircleAvatar(
+            radius: 16,
+            backgroundColor: primaryColor.withValues(alpha: 0.2),
+            child: const Icon(Icons.person, size: 20, color: Color(0xFF0984E3)),
+          ),
+          onSelected: (val) {
+            if (val == 'id_card') {
+              _openIdCardScreen(context);
+            } else if (val == 'calendar') {
+              _openCalendarScreen(context);
+            } else if (val == 'reminders') {
+              _openRemindersScreen(context);
+            } else if (val == 'notices') {
+              _openNoticesScreen(context);
+            } else if (val == 'logout') {
               ref.read(authProvider.notifier).logout();
               context.go('/login');
-            },
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: 'Attendance'),
-            Tab(text: 'Fees'),
-            Tab(text: 'Assignments'),
-            Tab(text: 'Exams'),
-            Tab(text: 'Transport'),
-            Tab(text: 'Chat'),
-          ],
-        ),
-      ),
-      body: studentAsync.when(
-        data: (student) {
-          if (student == null) {
-            return const Center(child: Text('Student profile not found.'));
-          }
-
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              _buildAttendanceTab(student, user.schoolId!),
-              _buildFeesTab(student, user.schoolId!),
-              _buildAssignmentsTab(student, user.schoolId!),
-              _buildExamsTab(student, user.schoolId!),
-              const vortiqen_transport_tab.StudentTransportScreen(),
-              const vortiqen_chat_tab.ChatListScreen(),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Error: $e')),
-      ),
-    );
-  }
-
-  Widget _buildAttendanceTab(Student student, String schoolId) {
-    final attendanceAsync = ref.watch(studentAttendanceProvider(student.id));
-
-    return attendanceAsync.when(
-      data: (attendanceRecords) {
-        if (attendanceRecords.isEmpty) return const Center(child: Text('No attendance records found.'));
-        
-        // Sort descending by date
-        final sorted = List<Attendance>.from(attendanceRecords)
-          ..sort((a, b) => b.date.compareTo(a.date));
-
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: sorted.length,
-          itemBuilder: (context, index) {
-            final record = sorted[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: record.status == 'PRESENT' ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
-                  child: Icon(
-                    record.status == 'PRESENT' ? Icons.check : Icons.close,
-                    color: record.status == 'PRESENT' ? Colors.green : Colors.red,
-                  ),
-                ),
-                title: Text(DateFormat('EEEE, dd MMM yyyy').format(record.date)),
-                subtitle: record.remarks != null ? Text(record.remarks!) : null,
-                trailing: Text(record.status, style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            );
+            }
           },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
-    );
-  }
-
-  Widget _buildFeesTab(Student student, String schoolId) {
-    final feeLedgersAsync = ref.watch(feeLedgersProvider({'schoolId': schoolId}));
-    
-    return feeLedgersAsync.when(
-      data: (ledgers) {
-        final studentLedgers = ledgers.where((l) => l.studentId == student.id).toList();
-        if (studentLedgers.isEmpty) return const Center(child: Text('No fee records found.'));
-        
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: studentLedgers.length,
-          itemBuilder: (context, index) {
-            final ledger = studentLedgers[index];
-            final theme = Theme.of(context);
-            
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'profile',
               child: ListTile(
-                title: Text(ledger.category?.name ?? 'Fee', style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Due: ${DateFormat('dd MMM yyyy').format(ledger.dueDate)}'),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('₹${ledger.amountDue - ledger.amountPaid}', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: ledger.status == 'PAID' ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(ledger.status, style: TextStyle(
-                        fontSize: 10,
-                        color: ledger.status == 'PAID' ? Colors.green : Colors.red,
-                      )),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
-    );
-  }
-
-  Widget _buildAssignmentsTab(Student student, String schoolId) {
-    if (student.sectionId == null) {
-      return const Center(child: Text('No section assigned to student.'));
-    }
-
-    final assignmentsAsync = ref.watch(sectionAssignmentsProvider(student.sectionId!));
-    
-    return assignmentsAsync.when(
-      data: (assignments) {
-        if (assignments.isEmpty) return const Center(child: Text('No assignments found.'));
-        
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: assignments.length,
-          itemBuilder: (context, index) {
-            final assignment = assignments[index];
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2),
-                  child: Icon(Icons.assignment, color: Theme.of(context).colorScheme.primary),
-                ),
-                title: Text(assignment.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-                    Text('Subject: ${assignment.subjectName ?? '-'}'),
-                    Text('Due: ${DateFormat('dd MMM, yyyy').format(assignment.dueDate)}', 
-                      style: TextStyle(color: assignment.dueDate.isBefore(DateTime.now()) ? Colors.red : null),
-                    ),
-                  ],
-                ),
-                trailing: const Icon(Icons.upload_file),
-                isThreeLine: true,
-                onTap: () {
-                  context.push('/assignments/${assignment.id}/submit');
-                },
-              ),
-            );
-          },
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
-    );
-  }
-
-  Widget _buildExamsTab(Student student, String schoolId) {
-    final reportCardAsync = ref.watch(studentReportCardProvider(student.id));
-
-    return reportCardAsync.when(
-      data: (exams) {
-        if (exams.isEmpty) return const Center(child: Text('No exam results found.'));
-
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton.icon(
-                onPressed: () => ReportCardPdf.generateAndPrint(student.firstName, exams),
-                icon: const Icon(Icons.picture_as_pdf),
-                label: const Text('Download Report Card (PDF)'),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                ),
+                leading: const Icon(Icons.account_circle),
+                title: Text(user?.name ?? 'Aarav Sharma', style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: const Text('Class 10-A • Student'),
+                contentPadding: EdgeInsets.zero,
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: exams.length,
-                itemBuilder: (context, index) {
-            final exam = exams[index];
-            final subjects = (exam['subjects'] as List<dynamic>).cast<Map<String, dynamic>>();
-
-            return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ExpansionTile(
-                initiallyExpanded: index == 0,
-                title: Text(exam['name'] ?? 'Exam', style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text('Status: ${exam['status']}'),
-                children: subjects.map((sub) {
-                  return ListTile(
-                    title: Text(sub['subjectName'] ?? 'Subject'),
-                    subtitle: Text('Max: ${sub['maxMarks']}'),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        if (sub['marksObtained'] != null)
-                          Text('${sub['marksObtained']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        if (sub['grade'] != null && (sub['grade'] as String).isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(sub['grade'], style: TextStyle(
-                              fontSize: 12,
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            )),
-                          ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+            const PopupMenuDivider(),
+            const PopupMenuItem(
+              value: 'calendar',
+              child: Row(
+                children: [
+                  Icon(Icons.calendar_month, size: 20),
+                  SizedBox(width: 12),
+                  Text('Calendar Planner'),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+            const PopupMenuItem(
+              value: 'reminders',
+              child: Row(
+                children: [
+                  Icon(Icons.alarm_on, size: 20),
+                  SizedBox(width: 12),
+                  Text('Alarms & Reminders'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'id_card',
+              child: Row(
+                children: [
+                  Icon(Icons.badge, size: 20),
+                  SizedBox(width: 12),
+                  Text('Digital ID Card'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'notices',
+              child: Row(
+                children: [
+                  Icon(Icons.campaign, size: 20),
+                  SizedBox(width: 12),
+                  Text('School Notices'),
+                ],
+              ),
+            ),
+            const PopupMenuDivider(),
+            const PopupMenuItem(
+              value: 'logout',
+              child: Row(
+                children: [
+                  Icon(Icons.logout, color: Colors.red, size: 20),
+                  SizedBox(width: 12),
+                  Text('Sign Out', style: TextStyle(color: Colors.red)),
+                ],
+              ),
             ),
           ],
-        );
-      },
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error: $e')),
+        ),
+        const SizedBox(width: 8),
+      ],
+      body: pages[_selectedNavIndex],
+    );
+  }
+
+  void _openRemindersScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const StudentAlarmReminderScreen()),
+    );
+  }
+
+  void _openIdCardScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const StudentIdCardScreen()),
+    );
+  }
+
+  void _openNoticesScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SchoolNoticesScreen()),
+    );
+  }
+
+  void _openCalendarScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const StudentCalendarTasksScreen()),
     );
   }
 }
-

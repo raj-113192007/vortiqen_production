@@ -51,8 +51,9 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     final width = MediaQuery.of(context).size.width;
 
     final isDesktop = width >= 1024;
-    final isTablet = width >= 640 && width < 1024;
+    final isTablet = width >= 600 && width < 1024;
 
+    // 1. DESKTOP VIEW (>= 1024px)
     if (isDesktop) {
       return Scaffold(
         backgroundColor: const Color(0xFFF8F9FE),
@@ -60,12 +61,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
           children: [
             // Left Desktop Sidebar
             _buildDesktopSidebar(primaryColor, theme),
-            
+
             // Main Content Area with Header
             Expanded(
               child: Column(
                 children: [
-                  _buildDesktopTopBar(primaryColor, theme),
+                  _buildTopBar(primaryColor, theme, isDesktop: true),
                   Expanded(
                     child: Center(
                       child: ConstrainedBox(
@@ -83,6 +84,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
       );
     }
 
+    // 2. TABLET VIEW (600px - 1023px)
     if (isTablet) {
       return Scaffold(
         backgroundColor: const Color(0xFFF8F9FE),
@@ -93,7 +95,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               selectedIndex: widget.selectedIndex,
               onDestinationSelected: widget.onDestinationSelected,
               labelType: NavigationRailLabelType.selected,
-              indicatorColor: primaryColor.withOpacity(0.15),
+              indicatorColor: primaryColor.withValues(alpha: 0.15),
               leading: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Container(
@@ -110,36 +112,68 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               ),
               destinations: widget.destinations.map((item) {
                 return NavigationRailDestination(
-                  icon: Icon(item.icon),
+                  icon: item.badge != null
+                      ? Badge(
+                          label: Text(item.badge!),
+                          backgroundColor: primaryColor,
+                          child: Icon(item.icon),
+                        )
+                      : Icon(item.icon),
                   selectedIcon: Icon(item.selectedIcon ?? item.icon, color: primaryColor),
-                  label: Text(item.label),
+                  label: Text(item.label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                 );
               }).toList(),
             ),
             const VerticalDivider(thickness: 1, width: 1, color: Color(0xFFE2E8F0)),
-            Expanded(child: widget.body),
+            Expanded(
+              child: Column(
+                children: [
+                  _buildTopBar(primaryColor, theme, isDesktop: false),
+                  Expanded(child: widget.body),
+                ],
+              ),
+            ),
           ],
         ),
         floatingActionButton: widget.floatingActionButton,
       );
     }
 
-    // Mobile View (< 640px)
+    // 3. MOBILE VIEW (< 600px)
+    // On small phones, protect actions from overflowing horizontally
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FE),
       appBar: AppBar(
-        title: Text(widget.title),
-        actions: widget.actions,
+        title: Text(widget.title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 17)),
+        centerTitle: false,
+        actions: widget.actions != null
+            ? [
+                Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widget.actions!,
+                  ),
+                ),
+              ]
+            : null,
       ),
       body: widget.body,
       bottomNavigationBar: widget.destinations.length > 1
           ? NavigationBar(
               selectedIndex: widget.selectedIndex,
               onDestinationSelected: widget.onDestinationSelected,
-              indicatorColor: primaryColor.withOpacity(0.15),
+              indicatorColor: primaryColor.withValues(alpha: 0.15),
+              elevation: 4,
               destinations: widget.destinations.map((item) {
                 return NavigationDestination(
-                  icon: Icon(item.icon),
+                  icon: item.badge != null
+                      ? Badge(
+                          label: Text(item.badge!),
+                          backgroundColor: primaryColor,
+                          child: Icon(item.icon),
+                        )
+                      : Icon(item.icon),
                   selectedIcon: Icon(item.selectedIcon ?? item.icon, color: primaryColor),
                   label: item.label,
                 );
@@ -173,7 +207,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: primaryColor.withOpacity(0.3),
+                        color: primaryColor.withValues(alpha: 0.3),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -226,7 +260,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: isSelected ? primaryColor.withOpacity(0.1) : Colors.transparent,
+                        color: isSelected ? primaryColor.withValues(alpha: 0.1) : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -281,7 +315,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
               children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: primaryColor.withOpacity(0.2),
+                  backgroundColor: primaryColor.withValues(alpha: 0.2),
                   child: Text(
                     widget.role.name.substring(0, 1).toUpperCase(),
                     style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
@@ -293,12 +327,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'Demo Session',
+                        'Aarav Sharma',
                         style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        'Offline Mock Mode',
+                        'Class 10-A • Online',
                         style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                       ),
                     ],
@@ -312,10 +346,10 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
     );
   }
 
-  Widget _buildDesktopTopBar(Color primaryColor, ThemeData theme) {
+  Widget _buildTopBar(Color primaryColor, ThemeData theme, {required bool isDesktop}) {
     return Container(
-      height: 70,
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      height: 64,
+      padding: EdgeInsets.symmetric(horizontal: isDesktop ? 32 : 20),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
@@ -328,12 +362,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
             children: [
               Text(
                 widget.title,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.3),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: -0.3),
               ),
               if (widget.subtitle != null)
                 Text(
                   widget.subtitle!,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                 ),
             ],
           ),

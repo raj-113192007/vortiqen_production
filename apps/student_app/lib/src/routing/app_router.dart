@@ -8,6 +8,10 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/assignments/submit_assignment_screen.dart';
 import '../features/chat/presentation/chat_list_screen.dart';
 import '../features/chat/presentation/chat_room_screen.dart';
+import '../features/profile/student_id_card_screen.dart';
+import '../features/notices/school_notices_screen.dart';
+import '../features/calendar/student_calendar_tasks_screen.dart';
+import '../features/reminders/student_alarm_reminder_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
@@ -50,6 +54,22 @@ final routerProvider = Provider<GoRouter>((ref) {
               final id = state.pathParameters['id']!;
               return SubmitAssignmentScreen(assignmentId: id);
             },
+          ),
+          GoRoute(
+            path: 'calendar',
+            builder: (context, state) => const StudentCalendarTasksScreen(),
+          ),
+          GoRoute(
+            path: 'id-card',
+            builder: (context, state) => const StudentIdCardScreen(),
+          ),
+          GoRoute(
+            path: 'notices',
+            builder: (context, state) => const SchoolNoticesScreen(),
+          ),
+          GoRoute(
+            path: 'reminders',
+            builder: (context, state) => const StudentAlarmReminderScreen(),
           ),
           GoRoute(
             path: 'chat',

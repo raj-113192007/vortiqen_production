@@ -312,7 +312,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildQuickActionCockpit() {
     final actions = [
-      {'title': 'My Profile & KYC', 'sub': 'Aadhaar, Degree & Vault', 'icon': Icons.badge_rounded, 'color': const Color(0xFF10B981), 'route': '/profile'},
+      {'title': 'Period Alarms', 'sub': 'Class Bells & Reminders', 'icon': Icons.alarm_on_rounded, 'color': const Color(0xFF10B981), 'route': '/reminders'},
+      {'title': 'My Profile & KYC', 'sub': 'Aadhaar, Degree & Vault', 'icon': Icons.badge_rounded, 'color': const Color(0xFF059669), 'route': '/profile'},
       {'title': 'Leave Sanctions', 'sub': 'My Leaves & Student Approvals', 'icon': Icons.how_to_reg_rounded, 'color': const Color(0xFF8E44AD), 'route': '/hr/leaves'},
       {'title': 'Parent Grievances', 'sub': 'Complaints & Inquiries', 'icon': Icons.forum_rounded, 'color': const Color(0xFFE17055), 'route': '/complaints'},
       {'title': 'Salary & Payslips', 'sub': 'Monthly Slips & Form 16', 'icon': Icons.account_balance_wallet_rounded, 'color': const Color(0xFF0284C7), 'route': '/payslips'},

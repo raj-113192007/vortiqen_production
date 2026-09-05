@@ -1,12 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:vortiqen_ui/vortiqen_ui.dart';
 
 void main() {
-  test('adds one to input values', () {
-    final calculator = Calculator();
-    expect(calculator.addOne(2), 3);
-    expect(calculator.addOne(-7), -6);
-    expect(calculator.addOne(0), 1);
+  test('ResponsiveBreakpoints constants are correctly configured', () {
+    expect(ResponsiveBreakpoints.mobile, 600.0);
+    expect(ResponsiveBreakpoints.tablet, 1024.0);
+    expect(ResponsiveBreakpoints.desktop, 1440.0);
   });
 }
+

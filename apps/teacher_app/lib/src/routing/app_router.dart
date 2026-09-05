@@ -24,6 +24,7 @@ import '../features/hr/payslips_screen.dart';
 import '../features/hr/leave_application_screen.dart';
 import '../features/chat/presentation/chat_list_screen.dart';
 import '../features/chat/presentation/chat_room_screen.dart';
+import '../features/reminders/teacher_alarm_reminder_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -74,6 +75,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/calendar',
             builder: (context, state) => const TeacherCalendarScreen(),
+          ),
+          GoRoute(
+            path: '/reminders',
+            builder: (context, state) => const TeacherAlarmReminderScreen(),
           ),
           GoRoute(
             path: '/profile',
