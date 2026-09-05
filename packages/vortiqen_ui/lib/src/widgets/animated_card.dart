@@ -5,7 +5,9 @@ class AnimatedCard extends StatefulWidget {
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
   final Color? backgroundColor;
+  final Color? color;
   final Color? borderColor;
+  final BoxBorder? border;
   final Color? shadowColor;
   final double borderRadius;
 
@@ -14,8 +16,10 @@ class AnimatedCard extends StatefulWidget {
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.all(20),
-    this.backgroundColor = Colors.white,
+    this.backgroundColor,
+    this.color,
     this.borderColor,
+    this.border,
     this.shadowColor,
     this.borderRadius = 18,
   });
@@ -31,6 +35,12 @@ class _AnimatedCardState extends State<AnimatedCard> {
   @override
   Widget build(BuildContext context) {
     final scale = _isPressed ? 0.98 : (_isHovered ? 1.01 : 1.0);
+    final effectiveBg = widget.color ?? widget.backgroundColor ?? Colors.white;
+    final effectiveBorder = widget.border ??
+        Border.all(
+          color: widget.borderColor ?? const Color(0xFFE2E8F0),
+          width: 1,
+        );
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -48,15 +58,12 @@ class _AnimatedCardState extends State<AnimatedCard> {
             duration: const Duration(milliseconds: 200),
             padding: widget.padding,
             decoration: BoxDecoration(
-              color: widget.backgroundColor ?? Colors.white,
+              color: effectiveBg,
               borderRadius: BorderRadius.circular(widget.borderRadius),
-              border: Border.all(
-                color: widget.borderColor ?? const Color(0xFFE2E8F0),
-                width: 1,
-              ),
+              border: effectiveBorder,
               boxShadow: [
                 BoxShadow(
-                  color: (widget.shadowColor ?? Colors.black).withOpacity(_isHovered ? 0.08 : 0.03),
+                  color: (widget.shadowColor ?? Colors.black).withValues(alpha: _isHovered ? 0.08 : 0.03),
                   blurRadius: _isHovered ? 18 : 10,
                   offset: Offset(0, _isHovered ? 6 : 2),
                 ),
