@@ -9,3 +9,5 @@ build/
 
 
 .vercel
+build_apks/
+*.apk
