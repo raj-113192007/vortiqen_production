@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vortiqen_ui/vortiqen_ui.dart';
 
-enum AgendaItemType { classPeriod, meeting, ptm, task }
+enum AgendaItemType { classPeriod, meeting, ptm, task, reminder }
 
 class AgendaItem {
   final String id;
@@ -15,6 +15,7 @@ class AgendaItem {
   final Color color;
   final IconData icon;
   final String? route;
+  final DateTime date;
   bool isCompleted;
 
   AgendaItem({
@@ -26,6 +27,7 @@ class AgendaItem {
     required this.type,
     required this.color,
     required this.icon,
+    required this.date,
     this.route,
     this.isCompleted = false,
   });
@@ -37,6 +39,7 @@ class TeacherTask {
   final String category; // 'Correction', 'Lesson Prep', 'Admin', 'PTM Followup'
   final String dueTime;
   final String priority; // 'HIGH', 'MEDIUM', 'NORMAL'
+  final DateTime date;
   bool isDone;
 
   TeacherTask({
@@ -45,6 +48,7 @@ class TeacherTask {
     required this.category,
     required this.dueTime,
     required this.priority,
+    required this.date,
     this.isDone = false,
   });
 }
@@ -58,8 +62,37 @@ class TeacherCalendarScreen extends StatefulWidget {
 
 class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
   DateTime _selectedDate = DateTime.now();
-  String _selectedFilter = 'All'; // 'All', 'Classes', 'Meetings & PTM', 'To-Do'
+  DateTime _currentMonth = DateTime.now();
+  String _selectedFilter = 'All'; // 'All', 'Classes', 'Meetings & PTM', 'To-Do', 'Reminders'
   final _newTaskController = TextEditingController();
+
+  // Teacher Daily Energy & Mood Logs keyed by 'yyyy-MM-dd'
+  final Map<String, Map<String, dynamic>> _teacherVibes = {
+    DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 3))): {
+      'emoji': '⚡',
+      'label': 'High Energy & Productive',
+      'color': 0xFF2ECC71,
+      'bgColor': 0xFFE8F8F0,
+    },
+    DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 2))): {
+      'emoji': '☕',
+      'label': 'Steady & Focused',
+      'color': 0xFFF1C40F,
+      'bgColor': 0xFFFEF9E7,
+    },
+    DateFormat('yyyy-MM-dd').format(DateTime.now().subtract(const Duration(days: 1))): {
+      'emoji': '📚',
+      'label': 'Heavy Evaluation Day',
+      'color': 0xFFE67E22,
+      'bgColor': 0xFFFBEEE6,
+    },
+    DateFormat('yyyy-MM-dd').format(DateTime.now()): {
+      'emoji': '⚡',
+      'label': 'High Energy & Productive',
+      'color': 0xFF2ECC71,
+      'bgColor': 0xFFE8F8F0,
+    },
+  };
 
   late List<AgendaItem> _agendaList;
   late List<TeacherTask> _taskList;
@@ -78,6 +111,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         color: const Color(0xFF6C5CE7),
         icon: Icons.auto_stories_rounded,
         route: '/daily-lesson-planner',
+        date: DateTime.now(),
         isCompleted: true,
       ),
       AgendaItem(
@@ -90,6 +124,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         color: const Color(0xFF0984E3),
         icon: Icons.calculate_rounded,
         route: '/daily-lesson-planner',
+        date: DateTime.now(),
         isCompleted: false,
       ),
       AgendaItem(
@@ -101,6 +136,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         type: AgendaItemType.task,
         color: const Color(0xFF64748B),
         icon: Icons.coffee_rounded,
+        date: DateTime.now(),
         isCompleted: false,
       ),
       AgendaItem(
@@ -113,6 +149,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         color: const Color(0xFF00B894),
         icon: Icons.biotech_rounded,
         route: '/daily-lesson-planner',
+        date: DateTime.now(),
         isCompleted: false,
       ),
       AgendaItem(
@@ -124,6 +161,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         type: AgendaItemType.ptm,
         color: const Color(0xFFE17055),
         icon: Icons.groups_rounded,
+        date: DateTime.now(),
         isCompleted: false,
       ),
       AgendaItem(
@@ -135,6 +173,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         type: AgendaItemType.ptm,
         color: const Color(0xFFE17055),
         icon: Icons.videocam_rounded,
+        date: DateTime.now(),
         isCompleted: false,
       ),
       AgendaItem(
@@ -146,6 +185,19 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         type: AgendaItemType.meeting,
         color: const Color(0xFFFD79A8),
         icon: Icons.meeting_room_rounded,
+        date: DateTime.now(),
+        isCompleted: false,
+      ),
+      AgendaItem(
+        id: 'ag_8',
+        time: '05:00 PM',
+        title: '🔔 Reminder: Submit Term-1 Practical Question Bank',
+        subtitle: 'Send finalized softcopy to Academic Coordinator',
+        roomOrLink: 'Faculty Portal',
+        type: AgendaItemType.reminder,
+        color: const Color(0xFF8B5CF6),
+        icon: Icons.notifications_active_rounded,
+        date: DateTime.now().add(const Duration(days: 1)),
         isCompleted: false,
       ),
     ];
@@ -155,32 +207,36 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         id: 't_1',
         title: 'Grade 38 Homework Notebooks for Class 10-A (Quadratic Equations)',
         category: 'Correction',
-        dueTime: 'Today, 02:30 PM',
+        dueTime: '02:30 PM',
         priority: 'HIGH',
+        date: DateTime.now(),
         isDone: true,
       ),
       TeacherTask(
         id: 't_2',
         title: 'Upload Midterm Physics Practical marksheet in Gradebook',
         category: 'Admin',
-        dueTime: 'Today, 04:30 PM',
+        dueTime: '04:30 PM',
         priority: 'HIGH',
+        date: DateTime.now(),
         isDone: false,
       ),
       TeacherTask(
         id: 't_3',
         title: 'Prepare 10 MCQ questions for Unit 2 Quiz generator',
         category: 'Lesson Prep',
-        dueTime: 'Tomorrow, 10:00 AM',
+        dueTime: '10:00 AM',
         priority: 'MEDIUM',
+        date: DateTime.now().add(const Duration(days: 1)),
         isDone: false,
       ),
       TeacherTask(
         id: 't_4',
         title: 'Call parent of Rohan Kumar regarding consecutive 3 days absence',
         category: 'PTM Followup',
-        dueTime: 'Today, 05:00 PM',
+        dueTime: '05:00 PM',
         priority: 'NORMAL',
+        date: DateTime.now(),
         isDone: false,
       ),
     ];
@@ -192,8 +248,9 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
     super.dispose();
   }
 
-  void _addNewTask() {
+  void _addNewTask({DateTime? targetDate}) {
     if (_newTaskController.text.trim().isEmpty) return;
+    final date = targetDate ?? _selectedDate;
 
     setState(() {
       _taskList.insert(
@@ -202,8 +259,9 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
           id: 't_${DateTime.now().millisecondsSinceEpoch}',
           title: _newTaskController.text.trim(),
           category: 'Lesson Prep',
-          dueTime: 'Today, 05:00 PM',
+          dueTime: '05:00 PM',
           priority: 'HIGH',
+          date: date,
           isDone: false,
         ),
       );
@@ -211,15 +269,16 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Task added to your Daily To-Do list! ✍️'),
-        backgroundColor: Color(0xFF10B981),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text('Task added for ${DateFormat('dd MMMM').format(date)}! ✍️'),
+        backgroundColor: const Color(0xFF10B981),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
-  void _showScheduleMeetingModal() {
+  void _showScheduleMeetingModal({DateTime? lockedDate}) {
+    final date = lockedDate ?? _selectedDate;
     final titleController = TextEditingController(text: 'Parent Meeting: Discussion on Academic Progress');
     final roomController = TextEditingController(text: 'Meeting Room 2 / Online Meet');
     final timeController = TextEditingController(text: '02:30 - 02:50 PM');
@@ -242,8 +301,14 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
                 child: const Icon(Icons.event_available_rounded, color: Color(0xFF6C5CE7), size: 22),
               ),
               const SizedBox(width: 12),
-              const Expanded(
-                child: Text('Schedule Meeting / PTM Slot', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF1E293B))),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Schedule Meeting / PTM Slot', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF1E293B))),
+                    Text('For ${DateFormat('EEEE, dd MMMM yyyy').format(date)}', style: const TextStyle(fontSize: 11, color: Color(0xFF6C5CE7), fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ),
             ],
           ),
@@ -332,11 +397,12 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
                       id: 'ag_custom_${DateTime.now().millisecondsSinceEpoch}',
                       time: timeController.text.trim(),
                       title: meetingType == 'PTM' ? '🤝 ${titleController.text.trim()}' : '🏢 ${titleController.text.trim()}',
-                      subtitle: 'Scheduled via Teacher Calendar Cockpit',
+                      subtitle: 'Scheduled on ${DateFormat('dd MMM').format(date)}',
                       roomOrLink: roomController.text.trim(),
                       type: meetingType == 'PTM' ? AgendaItemType.ptm : AgendaItemType.meeting,
                       color: meetingType == 'PTM' ? const Color(0xFFE17055) : const Color(0xFFFD79A8),
                       icon: meetingType == 'PTM' ? Icons.groups_rounded : Icons.meeting_room_rounded,
+                      date: date,
                     ),
                   );
                 });
@@ -344,7 +410,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Scheduled "${titleController.text}" on Calendar! 📅'),
+                    content: Text('Scheduled "${titleController.text}" on ${DateFormat('dd MMM').format(date)}! 📅'),
                     backgroundColor: const Color(0xFF10B981),
                   ),
                 );
@@ -363,37 +429,203 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
     );
   }
 
+  void _showAddReminderModal({required DateTime lockedDate}) {
+    final titleController = TextEditingController();
+    final noteController = TextEditingController();
+    TimeOfDay selectedTime = const TimeOfDay(hour: 16, minute: 0);
+
+    AdaptiveModal.show(
+      context: context,
+      maxWidth: 480,
+      title: Text('Set Teacher Reminder for ${DateFormat('dd MMMM').format(lockedDate)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
+      content: StatefulBuilder(
+        builder: (context, setModalState) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Reminder Title',
+                  hintText: 'e.g. Submit Midterm Physics Practical Grades',
+                  filled: true,
+                  fillColor: const Color(0xFFF1F5F9),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: noteController,
+                decoration: InputDecoration(
+                  labelText: 'Additional Notes / Instructions',
+                  hintText: 'e.g. Include student signatures sheet',
+                  filled: true,
+                  fillColor: const Color(0xFFF1F5F9),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                ),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () async {
+                  final picked = await showTimePicker(context: context, initialTime: selectedTime);
+                  if (picked != null) {
+                    setModalState(() => selectedTime = picked);
+                  }
+                },
+                icon: const Icon(Icons.alarm_rounded, size: 18, color: Color(0xFF8B5CF6)),
+                label: Text('Alert Time: ${selectedTime.format(context)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            if (titleController.text.trim().isEmpty) return;
+
+            setState(() {
+              _agendaList.add(
+                AgendaItem(
+                  id: 'rem_${DateTime.now().millisecondsSinceEpoch}',
+                  time: selectedTime.format(context),
+                  title: '🔔 ${titleController.text.trim()}',
+                  subtitle: noteController.text.trim().isEmpty ? 'Teacher Reminder' : noteController.text.trim(),
+                  roomOrLink: 'Faculty Desk',
+                  type: AgendaItemType.reminder,
+                  color: const Color(0xFF8B5CF6),
+                  icon: Icons.notifications_active_rounded,
+                  date: lockedDate,
+                ),
+              );
+            });
+
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Reminder added for ${DateFormat('dd MMMM').format(lockedDate)}! 🔔'),
+                backgroundColor: const Color(0xFF8B5CF6),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF8B5CF6),
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          child: const Text('Save Reminder', style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  }
+
+  void _showLogVibeModal({required DateTime lockedDate}) {
+    final dateKey = DateFormat('yyyy-MM-dd').format(lockedDate);
+    final vibes = [
+      {'emoji': '⚡', 'label': 'High Energy & Productive', 'color': 0xFF2ECC71, 'bgColor': 0xFFE8F8F0},
+      {'emoji': '☕', 'label': 'Steady & Focused', 'color': 0xFFF1C40F, 'bgColor': 0xFFFEF9E7},
+      {'emoji': '📚', 'label': 'Heavy Evaluation & Marking', 'color': 0xFFE67E22, 'bgColor': 0xFFFBEEE6},
+      {'emoji': '😴', 'label': 'Exhausted & Need Rest', 'color': 0xFF9B59B6, 'bgColor': 0xFFF4ECF7},
+    ];
+
+    AdaptiveModal.show(
+      context: context,
+      maxWidth: 460,
+      title: Text('Faculty Day Vibe for ${DateFormat('dd MMM').format(lockedDate)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: vibes.map((v) {
+          final isCurrent = _teacherVibes[dateKey]?['label'] == v['label'];
+          return Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              color: isCurrent ? Color(v['bgColor'] as int) : Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: isCurrent ? Color(v['color'] as int) : const Color(0xFFE2E8F0),
+                width: isCurrent ? 2 : 1,
+              ),
+            ),
+            child: ListTile(
+              onTap: () {
+                setState(() => _teacherVibes[dateKey] = v);
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Logged ${v['emoji']} ${v['label']}!'),
+                    backgroundColor: Color(v['color'] as int),
+                  ),
+                );
+              },
+              leading: Text(v['emoji'] as String, style: const TextStyle(fontSize: 22)),
+              title: Text(v['label'] as String, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              trailing: isCurrent ? Icon(Icons.check_circle_rounded, color: Color(v['color'] as int)) : null,
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   List<AgendaItem> get _filteredAgenda {
+    final listForDate = _agendaList.where((a) {
+      return a.date.year == _selectedDate.year &&
+          a.date.month == _selectedDate.month &&
+          a.date.day == _selectedDate.day;
+    }).toList();
+
     if (_selectedFilter == 'Classes') {
-      return _agendaList.where((a) => a.type == AgendaItemType.classPeriod).toList();
+      return listForDate.where((a) => a.type == AgendaItemType.classPeriod).toList();
     }
     if (_selectedFilter == 'Meetings & PTM') {
-      return _agendaList.where((a) => a.type == AgendaItemType.meeting || a.type == AgendaItemType.ptm).toList();
+      return listForDate.where((a) => a.type == AgendaItemType.meeting || a.type == AgendaItemType.ptm).toList();
+    }
+    if (_selectedFilter == 'Reminders') {
+      return listForDate.where((a) => a.type == AgendaItemType.reminder).toList();
     }
     if (_selectedFilter == 'To-Do') {
-      return _agendaList.where((a) => a.type == AgendaItemType.task).toList();
+      return listForDate.where((a) => a.type == AgendaItemType.task).toList();
     }
-    return _agendaList;
+    return listForDate;
   }
 
   @override
   Widget build(BuildContext context) {
-    final completedTasks = _taskList.where((t) => t.isDone).length;
-    final double taskCompletionProgress = _taskList.isEmpty ? 0 : (completedTasks / _taskList.length);
+    final dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
+    final dayVibe = _teacherVibes[dateKey];
+
+    final dailyTasks = _taskList.where((t) {
+      return t.date.year == _selectedDate.year &&
+          t.date.month == _selectedDate.month &&
+          t.date.day == _selectedDate.day;
+    }).toList();
+
+    final completedTasks = dailyTasks.where((t) => t.isDone).length;
+    final double taskCompletionProgress = dailyTasks.isEmpty ? 0 : (completedTasks / dailyTasks.length);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         title: const Text(
-          'Daily Agenda, Calendar & To-Do',
+          'Faculty Agenda, Planner & Mood Calendar',
           style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: Color(0xFF1E293B)),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.alarm_on_rounded, color: Color(0xFF6C5CE7)),
+            tooltip: 'Teacher Alarms & Bell Schedules',
+            onPressed: () => context.push('/teacher-alarms-reminders'),
+          ),
           ElevatedButton.icon(
-            onPressed: _showScheduleMeetingModal,
+            onPressed: () => _showScheduleMeetingModal(lockedDate: _selectedDate),
             icon: const Icon(Icons.add_rounded, size: 16),
             label: const Text('Schedule Meeting'),
             style: ElevatedButton.styleFrom(
@@ -413,88 +645,19 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. DATE SELECTOR RIBBON
-            FadeSlideEntry(
-              duration: const Duration(milliseconds: 250),
-              child: _buildDateRibbon(),
-            ),
-            const SizedBox(height: 18),
+            // 1. INTERACTIVE MONTHLY CALENDAR WITH MOOD / STATUS ICONS & CAPSULE SELECTION
+            _buildMonthCalendarCard(),
+            const SizedBox(height: 16),
 
-            // 2. SUMMARY HUD BANNER
-            FadeSlideEntry(
-              delay: const Duration(milliseconds: 80),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF0F172A).withValues(alpha: 0.2),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const PulsingLiveDot(size: 4, pulseScale: 2.2, color: Color(0xFF10B981)),
-                              const SizedBox(width: 8),
-                              Text(
-                                'TODAY\'S WORKSPACE SUMMARY • ${DateFormat('dd MMMM yyyy').format(_selectedDate).toUpperCase()}',
-                                style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            '3 Teaching Periods • 2 PTM Slots • 1 Faculty Sync',
-                            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Next upcoming: Period 2 (Maths - Class 9B) at 09:15 AM in Room 108',
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            '$completedTasks/${_taskList.length}',
-                            style: const TextStyle(color: Color(0xFF10B981), fontSize: 20, fontWeight: FontWeight.w900),
-                          ),
-                          const Text('Tasks Done', style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w700)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            // 2. SELECTED DATE ACTION COCKPIT
+            _buildDateActionCockpit(dayVibe, dailyTasks.length),
+            const SizedBox(height: 20),
+
+            // 3. SUMMARY HUD BANNER
+            _buildSummaryHudBanner(completedTasks, dailyTasks.length),
             const SizedBox(height: 24),
 
-            // 3. MAIN TWO COLUMN LAYOUT: SCHEDULE & TO-DO
+            // 4. MAIN TWO COLUMN LAYOUT: SCHEDULE & TO-DO
             LayoutBuilder(
               builder: (context, constraints) {
                 final isWide = constraints.maxWidth > 900;
@@ -512,7 +675,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
                       // Right Column: Teacher To-Do List
                       Expanded(
                         flex: 4,
-                        child: _buildTodoListSection(taskCompletionProgress, completedTasks),
+                        child: _buildTodoListSection(taskCompletionProgress, completedTasks, dailyTasks),
                       ),
                     ],
                   );
@@ -522,7 +685,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
                   children: [
                     _buildAgendaTimelineSection(),
                     const SizedBox(height: 24),
-                    _buildTodoListSection(taskCompletionProgress, completedTasks),
+                    _buildTodoListSection(taskCompletionProgress, completedTasks, dailyTasks),
                   ],
                 );
               },
@@ -534,53 +697,435 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
     );
   }
 
-  Widget _buildDateRibbon() {
+  // -------------------------------------------------------------
+  // MONTHLY CALENDAR CARD (INSPIRED BY SCREENSHOT)
+  // -------------------------------------------------------------
+  Widget _buildMonthCalendarCard() {
+    final daysInMonth = DateUtils.getDaysInMonth(_currentMonth.year, _currentMonth.month);
+    final firstDayOfMonth = DateTime(_currentMonth.year, _currentMonth.month, 1);
+    final startingWeekday = firstDayOfMonth.weekday % 7;
+
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat('MMMM yyyy').format(_currentMonth),
+                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, letterSpacing: -0.3, color: Color(0xFF1E293B)),
+                  ),
+                  const Text('Click any date to set tasks, reminders or meetings', style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chevron_left_rounded),
+                    onPressed: () {
+                      setState(() {
+                        _currentMonth = DateTime(_currentMonth.year, _currentMonth.month - 1);
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.chevron_right_rounded),
+                    onPressed: () {
+                      setState(() {
+                        _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Weekday header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) {
+              final isWeekend = day == 'Su' || day == 'Sa';
+              return SizedBox(
+                width: 36,
+                child: Text(
+                  day,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isWeekend ? const Color(0xFFE17055) : const Color(0xFF94A3B8)),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 10),
+
+          // Day Grid
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 6,
+              childAspectRatio: 0.78,
+            ),
+            itemCount: startingWeekday + daysInMonth,
+            itemBuilder: (context, index) {
+              if (index < startingWeekday) return const SizedBox.shrink();
+
+              final day = index - startingWeekday + 1;
+              final thisDate = DateTime(_currentMonth.year, _currentMonth.month, day);
+              final dateKey = DateFormat('yyyy-MM-dd').format(thisDate);
+
+              final isSelected = _selectedDate.year == thisDate.year &&
+                  _selectedDate.month == thisDate.month &&
+                  _selectedDate.day == thisDate.day;
+
+              final isToday = DateTime.now().year == thisDate.year &&
+                  DateTime.now().month == thisDate.month &&
+                  DateTime.now().day == thisDate.day;
+
+              final vibe = _teacherVibes[dateKey];
+              final eventsCount = _agendaList.where((a) => a.date.year == thisDate.year && a.date.month == thisDate.month && a.date.day == thisDate.day).length;
+
+              return InkWell(
+                onTap: () => setState(() => _selectedDate = thisDate),
+                borderRadius: BorderRadius.circular(22),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? const Color(0xFFFFF7ED)
+                        : isToday
+                            ? const Color(0xFF6C5CE7).withValues(alpha: 0.08)
+                            : Colors.transparent,
+                    borderRadius: BorderRadius.circular(22),
+                    border: isSelected
+                        ? Border.all(color: const Color(0xFFD97706), width: 2)
+                        : isToday
+                            ? Border.all(color: const Color(0xFF6C5CE7), width: 1.2)
+                            : null,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: const Color(0xFFD97706).withValues(alpha: 0.2),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$day',
+                        style: TextStyle(
+                          fontWeight: isSelected || isToday ? FontWeight.w900 : FontWeight.w700,
+                          fontSize: 13,
+                          color: isSelected
+                              ? const Color(0xFF92400E)
+                              : isToday
+                                  ? const Color(0xFF6C5CE7)
+                                  : const Color(0xFF1E293B),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      if (vibe != null)
+                        Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: Color(vibe['color'] as int),
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(vibe['emoji'] as String, style: const TextStyle(fontSize: 13)),
+                        )
+                      else if (eventsCount > 0)
+                        Container(
+                          width: 26,
+                          height: 26,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF6C5CE7),
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$eventsCount',
+                            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      else
+                        Container(
+                          width: 24,
+                          height: 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // -------------------------------------------------------------
+  // SELECTED DATE ACTION COCKPIT
+  // -------------------------------------------------------------
+  Widget _buildDateActionCockpit(Map<String, dynamic>? vibe, int tasksCount) {
+    final formatted = DateFormat('EEEE, dd MMMM yyyy').format(_selectedDate);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF6C5CE7).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.event_available_rounded, color: Color(0xFF6C5CE7), size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      formatted,
+                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Color(0xFF1E293B)),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Selected Date Planning & Immediate Actions',
+                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+              if (vibe != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Color(vibe['bgColor'] as int),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Color(vibe['color'] as int).withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(vibe['emoji'] as String, style: const TextStyle(fontSize: 13)),
+                      const SizedBox(width: 4),
+                      Text(
+                        vibe['label'] as String,
+                        style: TextStyle(color: Color(vibe['color'] as int), fontSize: 10, fontWeight: FontWeight.w800),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: Color(0xFFF1F5F9)),
+          const SizedBox(height: 14),
+
+          // 5 Action Buttons
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildCockpitBtn(
+                icon: Icons.add_task_rounded,
+                label: '+ Teacher Task',
+                color: const Color(0xFF0984E3),
+                bgColor: const Color(0xFFEBF5FB),
+                onTap: () {
+                  _newTaskController.text = 'Grade Class 10 Physics Papers';
+                  _addNewTask(targetDate: _selectedDate);
+                },
+              ),
+              _buildCockpitBtn(
+                icon: Icons.notifications_active_rounded,
+                label: '🔔 Reminder',
+                color: const Color(0xFF8B5CF6),
+                bgColor: const Color(0xFFF5F3FF),
+                onTap: () => _showAddReminderModal(lockedDate: _selectedDate),
+              ),
+              _buildCockpitBtn(
+                icon: Icons.groups_rounded,
+                label: '🤝 PTM Slot',
+                color: const Color(0xFFE17055),
+                bgColor: const Color(0xFFFDF2E9),
+                onTap: () => _showScheduleMeetingModal(lockedDate: _selectedDate),
+              ),
+              _buildCockpitBtn(
+                icon: Icons.meeting_room_rounded,
+                label: '🏢 Faculty Sync',
+                color: const Color(0xFFFD79A8),
+                bgColor: const Color(0xFFFDF2E9),
+                onTap: () => _showScheduleMeetingModal(lockedDate: _selectedDate),
+              ),
+              _buildCockpitBtn(
+                icon: Icons.mood_rounded,
+                label: '☕ Faculty Vibe',
+                color: const Color(0xFF00B894),
+                bgColor: const Color(0xFFE8F8F5),
+                onTap: () => _showLogVibeModal(lockedDate: _selectedDate),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCockpitBtn({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required Color bgColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 15, color: color),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // -------------------------------------------------------------
+  // SUMMARY HUD BANNER
+  // -------------------------------------------------------------
+  Widget _buildSummaryHudBanner(int completedTasks, int totalTasks) {
+    final list = _filteredAgenda;
+    final periods = list.where((a) => a.type == AgendaItemType.classPeriod).length;
+    final ptms = list.where((a) => a.type == AgendaItemType.ptm).length;
+    final meetings = list.where((a) => a.type == AgendaItemType.meeting).length;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withValues(alpha: 0.2),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _selectedDate = _selectedDate.subtract(const Duration(days: 1));
-              });
-            },
-            icon: const Icon(Icons.chevron_left_rounded, color: Color(0xFF64748B)),
-          ),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            flex: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.event_available_rounded, color: Color(0xFF6C5CE7), size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  DateFormat('EEEE, dd MMMM yyyy').format(_selectedDate),
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF1E293B)),
+                Row(
+                  children: [
+                    const PulsingLiveDot(size: 4, pulseScale: 2.2, color: Color(0xFF10B981)),
+                    const SizedBox(width: 8),
+                    Text(
+                      'WORKSPACE SUMMARY • ${DateFormat('dd MMMM yyyy').format(_selectedDate).toUpperCase()}',
+                      style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Text('Today', style: TextStyle(color: Color(0xFF10B981), fontSize: 10, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 8),
+                Text(
+                  '$periods Teaching Periods • $ptms PTM Slots • $meetings Faculty Sync',
+                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  list.isEmpty
+                      ? 'No scheduled classes or meetings for this date.'
+                      : 'Next upcoming: ${list.first.title} at ${list.first.time}',
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 12),
                 ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _selectedDate = _selectedDate.add(const Duration(days: 1));
-              });
-            },
-            icon: const Icon(Icons.chevron_right_rounded, color: Color(0xFF64748B)),
+          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  '$completedTasks/$totalTasks',
+                  style: const TextStyle(color: Color(0xFF10B981), fontSize: 20, fontWeight: FontWeight.w900),
+                ),
+                const Text('Tasks Done', style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w700)),
+              ],
+            ),
           ),
         ],
       ),
@@ -603,9 +1148,9 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Today\'s Teaching Schedule & Agenda',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF1E293B)),
+              Text(
+                'Schedule for ${DateFormat('dd MMM').format(_selectedDate)}',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Color(0xFF1E293B)),
               ),
               Text(
                 '${list.length} Events',
@@ -619,7 +1164,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: ['All', 'Classes', 'Meetings & PTM', 'To-Do'].map((f) {
+            children: ['All', 'Classes', 'Meetings & PTM', 'Reminders', 'To-Do'].map((f) {
               final isSel = _selectedFilter == f;
               return ChoiceChip(
                 label: Text(f),
@@ -638,17 +1183,29 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
           ),
           const SizedBox(height: 18),
 
-          // TIMELINE ITEMS
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: list.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) {
-              final item = list[index];
-              return _buildAgendaItemCard(item);
-            },
-          ),
+          if (list.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  const Icon(Icons.event_available, size: 40, color: Color(0xFF94A3B8)),
+                  const SizedBox(height: 8),
+                  Text('No events matching "$_selectedFilter" on this date', style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.bold, fontSize: 13)),
+                ],
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: list.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final item = list[index];
+                return _buildAgendaItemCard(item);
+              },
+            ),
         ],
       ),
     );
@@ -771,7 +1328,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
     );
   }
 
-  Widget _buildTodoListSection(double progress, int completed) {
+  Widget _buildTodoListSection(double progress, int completed, List<TeacherTask> dailyTasks) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -820,9 +1377,9 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
               Expanded(
                 child: TextField(
                   controller: _newTaskController,
-                  onSubmitted: (_) => _addNewTask(),
+                  onSubmitted: (_) => _addNewTask(targetDate: _selectedDate),
                   decoration: InputDecoration(
-                    hintText: 'Add task (e.g. Check Physics copies)...',
+                    hintText: 'Add task for ${DateFormat('dd MMM').format(_selectedDate)}...',
                     hintStyle: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8)),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
@@ -832,7 +1389,7 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
               ),
               const SizedBox(width: 8),
               ElevatedButton(
-                onPressed: _addNewTask,
+                onPressed: () => _addNewTask(targetDate: _selectedDate),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6C5CE7),
                   foregroundColor: Colors.white,
@@ -846,94 +1403,101 @@ class _TeacherCalendarScreenState extends State<TeacherCalendarScreen> {
           ),
           const SizedBox(height: 16),
 
-          // TASK LIST
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _taskList.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final task = _taskList[index];
+          if (dailyTasks.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              alignment: Alignment.center,
+              child: const Text('No tasks pending for this date.', style: TextStyle(color: Color(0xFF94A3B8), fontSize: 12)),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: dailyTasks.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final task = dailyTasks[index];
 
-              final Color priorityColor = task.priority == 'HIGH'
-                  ? const Color(0xFFEF4444)
-                  : task.priority == 'MEDIUM'
-                      ? const Color(0xFFF59E0B)
-                      : const Color(0xFF10B981);
+                final Color priorityColor = task.priority == 'HIGH'
+                    ? const Color(0xFFEF4444)
+                    : task.priority == 'MEDIUM'
+                        ? const Color(0xFFF59E0B)
+                        : const Color(0xFF10B981);
 
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: task.isDone ? const Color(0xFFF8FAFC) : Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: task.isDone ? const Color(0xFFE2E8F0) : const Color(0xFFCBD5E1),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        setState(() => task.isDone = !task.isDone);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 2),
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: task.isDone ? const Color(0xFF10B981) : Colors.white,
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: task.isDone ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: task.isDone ? const Icon(Icons.check_rounded, size: 14, color: Colors.white) : null,
-                      ),
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: task.isDone ? const Color(0xFFF8FAFC) : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: task.isDone ? const Color(0xFFE2E8F0) : const Color(0xFFCBD5E1),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            task.title,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: task.isDone ? const Color(0xFF94A3B8) : const Color(0xFF1E293B),
-                              decoration: task.isDone ? TextDecoration.lineThrough : null,
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() => task.isDone = !task.isDone);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 2),
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: task.isDone ? const Color(0xFF10B981) : Colors.white,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: task.isDone ? const Color(0xFF10B981) : const Color(0xFF94A3B8),
+                              width: 1.5,
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: priorityColor.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  task.priority,
-                                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: priorityColor),
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(task.dueTime, style: const TextStyle(fontSize: 10, color: Color(0xFF64748B))),
-                            ],
-                          ),
-                        ],
+                          child: task.isDone ? const Icon(Icons.check_rounded, size: 14, color: Colors.white) : null,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              task.title,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: task.isDone ? const Color(0xFF94A3B8) : const Color(0xFF1E293B),
+                                decoration: task.isDone ? TextDecoration.lineThrough : null,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: priorityColor.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    task.priority,
+                                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: priorityColor),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(task.dueTime, style: const TextStyle(fontSize: 10, color: Color(0xFF64748B))),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );
   }
 }
+
